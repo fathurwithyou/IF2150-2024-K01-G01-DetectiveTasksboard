@@ -18,7 +18,7 @@ http.createServer((req, res) => {
         });
     }
     // Serve style.css
-    else if (req.url === '/style.css') {
+    else if (req.url === '/components/cases/style.css') {
         fs.readFile('components/cases/style.css', (err, data) => {
             if (err) {
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
