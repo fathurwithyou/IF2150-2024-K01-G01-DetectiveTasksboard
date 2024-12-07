@@ -21,6 +21,17 @@
         color: #aaa;
     }
 
+    .sidebar ul li a {
+        color: #aaa;
+        text-decoration: none;
+        /* Removes the underline */
+        display: block;
+        /* Makes the link cover the entire list item area */
+        font-size: 16px;
+    }
+
+
+
     .sidebar ul li i {
         margin-right: 5px;
     }
@@ -62,11 +73,11 @@
 </style>
 <div class="sidebar">
     <ul>
-        <li><i class="fas fa-th-large"></i> Dashboard</li>
-        <li class="active"><i class="fas fa-folder"></i> Cases</li>
-        <li><i class="fas fa-user-secret"></i> Suspects</li>
-        <li><i class="fas fa-user"></i> Victims</li>
-        <li><i class="fas fa-user-tie"></i> Detectives</li>
-        <li><i class="fas fa-cog"></i> Settings</li>
+        <li><a href="#" id="dashboard-link"><i class="fas fa-th-large"></i> Dashboard</a></li>
+        <li class="active"><a href="#" id="cases-link"><i class="fas fa-folder"></i> Cases</a></li>
+        <li><a href="#" id="suspects-link"><i class="fas fa-user-secret"></i> Suspects</a></li>
+        <li><a href="#" id="victims-link"><i class="fas fa-user"></i> Victims</a></li>
+        <li><a href="#" id="detectives-link"><i class="fas fa-user-tie"></i> Detectives</a></li>
+        <li><a href="#" id="settings-link"><i class="fas fa-cog"></i> Settings</a></li>
     </ul>
 </div>
