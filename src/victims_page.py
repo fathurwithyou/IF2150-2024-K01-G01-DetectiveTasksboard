@@ -4,14 +4,13 @@ from models.victims import Victims
 
 
 def victims_content(page: ft.Page):
-    # Initialize the Victims class
     victims_model = Victims()
-    filtered_data = victims_model.get_victims()  # Initialize with all data
+    filtered_data = victims_model.get_victims() 
     rows_per_page = 10
-    current_page = 0  # Start from page 0
+    current_page = 0 
     total_pages = math.ceil(len(filtered_data) / rows_per_page)
-    sort_column = None  # Column to sort by
-    sort_order = "asc"  # Sorting order: 'asc' or 'desc'
+    sort_column = None 
+    sort_order = "asc"  
 
     # Modal for adding or editing victims
     modal_dialog = ft.AlertDialog(
@@ -21,23 +20,23 @@ def victims_content(page: ft.Page):
         actions=None,
     )
 
-    # Function to build the data table for the current page
+
     def build_table(page_index):
         start_index = page_index * rows_per_page
         end_index = start_index + rows_per_page
-        page_data = filtered_data.iloc[start_index:end_index]  # Use pandas for slicing
+        page_data = filtered_data.iloc[start_index:end_index]  
 
         table_rows = [
             ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(str(row["id"]))),               # ID
-                    ft.DataCell(ft.Text(str(row["nama"]))),             # Name
-                    ft.DataCell(ft.Text(str(row["foto"]))),             # Photo
-                    ft.DataCell(ft.Text(str(row["nik"]))),              # NIK
-                    ft.DataCell(ft.Text(str(row["usia"]))),             # Usia
-                    ft.DataCell(ft.Text(str(row["jk"]))),               # Gender
-                    ft.DataCell(ft.Text(str(row["hasil_forensik"]))),   # Forensic Results
-                    ft.DataCell(ft.Text(str(row["id_kasus"]))),         # Case ID
+                    ft.DataCell(ft.Text(str(row["id"]))),              
+                    ft.DataCell(ft.Text(str(row["nama"]))),             
+                    ft.DataCell(ft.Text(str(row["foto"]))),             
+                    ft.DataCell(ft.Text(str(row["nik"]))),              
+                    ft.DataCell(ft.Text(str(row["usia"]))),            
+                    ft.DataCell(ft.Text(str(row["jk"]))),               
+                    ft.DataCell(ft.Text(str(row["hasil_forensik"]))),   
+                    ft.DataCell(ft.Text(str(row["id_kasus"]))),         
                     ft.DataCell(
                         ft.IconButton(
                             icon=ft.icons.EDIT,
@@ -45,13 +44,12 @@ def victims_content(page: ft.Page):
                             tooltip="Edit",
                             on_click=lambda e, r=row: open_edit_victim_modal(row),
                         )
-                    ),                                                 # Edit Button
+                    ),                                                 
                 ]
             )
-            for _, row in page_data.iterrows()  # Use pandas iterrows for looping
+            for _, row in page_data.iterrows()  
         ]
 
-        # Build table columns with sort buttons
         columns = [
             ft.DataColumn(
                 ft.Row(
@@ -117,21 +115,20 @@ def victims_content(page: ft.Page):
         ]
         return ft.DataTable(columns=columns, rows=table_rows)
 
-    # Function to close the modal
     def close_modal():
         modal_dialog.open = False
+        modal_dialog.actions = None  
+        modal_dialog.content = None  
         page.update()
 
-    # Function to refresh the table
+
     def refresh_table():
         nonlocal filtered_data, total_pages
         filtered_data = victims_model.get_victims()
         total_pages = math.ceil(len(filtered_data) / rows_per_page)
         update_content(current_page)
 
-    # Function to open the add victim modal
     def open_add_victim_modal():
-        # Fields for adding a new victim
         name_field = ft.TextField(label="Name")
         nik_field = ft.TextField(label="NIK")
         usia_field = ft.TextField(label="Usia")
@@ -139,25 +136,64 @@ def victims_content(page: ft.Page):
         forensic_field = ft.TextField(label="Forensic Results")
         case_id_field = ft.TextField(label="Case ID")
 
-        # Function to save the new victim
         def save_new_victim(e):
-            # Collect values from the fields
+            errors = []
+            if not name_field.value.strip():
+                name_field.error_text = "Name is required"
+                errors.append("name")
+            else:
+                name_field.error_text = None
+
+            if not nik_field.value.strip():
+                nik_field.error_text = "NIK is required"
+                errors.append("nik")
+            else:
+                nik_field.error_text = None
+
+            if not usia_field.value.strip() or not usia_field.value.isdigit():
+                usia_field.error_text = "Valid age is required"
+                errors.append("usia")
+            else:
+                usia_field.error_text = None
+
+            if not gender_field.value.strip():
+                gender_field.error_text = "Gender is required"
+                errors.append("gender")
+            else:
+                gender_field.error_text = None
+
+            if not forensic_field.value.strip():
+                forensic_field.error_text = "Forensic Results are required"
+                errors.append("forensic")
+            else:
+                forensic_field.error_text = None
+
+            if not case_id_field.value.strip() or not case_id_field.value.isdigit():
+                case_id_field.error_text = "Valid Case ID is required"
+                errors.append("case_id")
+            else:
+                case_id_field.error_text = None
+
+            page.update()
+
+            if errors:
+                return
+            
             new_victim = {
                 "id": victims_model.get_last_victim_id() + 1,
                 "nama": name_field.value,
-                "foto": "",  # Photo is not required
+                "foto": "", 
                 "nik": nik_field.value,
                 "usia": int(usia_field.value),
                 "jk": gender_field.value,
-                "hasil_forensik": '"'+str(forensic_field.value)+'"',
+                "hasil_forensik": forensic_field.value,
                 "id_kasus": int(case_id_field.value),
             }
             # Add the new victim
             victims_model.add_victim(new_victim)
-            refresh_table()  # Refresh the table
+            refresh_table()  
             close_modal()
 
-        # Add content and actions to the modal
         modal_dialog.title = ft.Text("Add Victim")
         modal_dialog.content = ft.Column(
             [
@@ -183,9 +219,7 @@ def victims_content(page: ft.Page):
         page.dialog = modal_dialog
         page.update()
 
-    # Function to open the edit victim modal
     def open_edit_victim_modal(victim):
-        # Pre-filled fields with the existing victim data
         id_field = ft.TextField(label="ID", value=str(victim["id"]), read_only=True)
         name_field = ft.TextField(label="Name", value=victim["nama"])
         nik_field = ft.TextField(label="NIK", value=victim["nik"])
@@ -194,12 +228,53 @@ def victims_content(page: ft.Page):
         forensic_field = ft.TextField(label="Forensic Results", value=victim["hasil_forensik"])
         case_id_field = ft.TextField(label="Case ID", value=str(victim["id_kasus"]))
 
-        # Function to save updated victim
         def save_updated_victim(e):
+            errors = []
+            if not name_field.value.strip():
+                name_field.error_text = "Name is required"
+                errors.append("name")
+            else:
+                name_field.error_text = None
+
+            if not nik_field.value.strip():
+                nik_field.error_text = "NIK is required"
+                errors.append("nik")
+            else:
+                nik_field.error_text = None
+
+            if not usia_field.value.strip() or not usia_field.value.isdigit():
+                usia_field.error_text = "Valid age is required"
+                errors.append("usia")
+            else:
+                usia_field.error_text = None
+
+            if not gender_field.value.strip():
+                gender_field.error_text = "Gender is required"
+                errors.append("gender")
+            else:
+                gender_field.error_text = None
+
+            if not forensic_field.value.strip():
+                forensic_field.error_text = "Forensic Results are required"
+                errors.append("forensic")
+            else:
+                forensic_field.error_text = None
+
+            if not case_id_field.value.strip() or not case_id_field.value.isdigit():
+                case_id_field.error_text = "Valid Case ID is required"
+                errors.append("case_id")
+            else:
+                case_id_field.error_text = None
+
+            page.update()
+
+            if errors:
+                return
+            
             updated_victim = {
                 "id": int(id_field.value),
                 "nama": name_field.value,
-                "foto": victim["foto"],  # Photo remains unchanged
+                "foto": victim["foto"],  
                 "nik": nik_field.value,
                 "usia": int(usia_field.value),
                 "jk": gender_field.value,
@@ -210,13 +285,11 @@ def victims_content(page: ft.Page):
             refresh_table()
             close_modal()
 
-        # Function to delete the victim
         def delete_victim(e):
             victims_model.delete_victim(victim["id"])
             refresh_table()
             close_modal()
 
-        # Add content and actions to the modal
         modal_dialog.title = ft.Text(f"Edit Victim - {victim['nama']}")
         modal_dialog.content = ft.Column(
             [
@@ -230,6 +303,7 @@ def victims_content(page: ft.Page):
             ],
             tight=True,
         )
+        
         modal_dialog.actions = [
             ft.Row(
                 [
@@ -244,7 +318,6 @@ def victims_content(page: ft.Page):
         page.dialog = modal_dialog
         page.update()
 
-    # Function to sort data
     def sort_data(column):
         nonlocal filtered_data, sort_column, sort_order, current_page
         if sort_column == column:
@@ -253,10 +326,9 @@ def victims_content(page: ft.Page):
             sort_column = column
             sort_order = "asc"
         filtered_data = filtered_data.sort_values(by=column, ascending=(sort_order == "asc"))
-        current_page = 0  # Reset to first page after sorting
+        current_page = 0
         update_content(current_page)
 
-    # Function to update the content when a page is changed
     def update_content(page_index):
         nonlocal current_page, total_pages
         current_page = page_index
@@ -266,7 +338,6 @@ def victims_content(page: ft.Page):
         pagination_controls.controls[2].disabled = current_page == total_pages - 1
         page.update()
 
-    # Function to handle search input
     def handle_search(e):
         nonlocal filtered_data, current_page
         search_term = e.control.value
@@ -274,7 +345,6 @@ def victims_content(page: ft.Page):
         current_page = 0
         update_content(current_page)
 
-    # Pagination controls
     pagination_controls = ft.Row(
         [
             ft.IconButton(
@@ -292,10 +362,8 @@ def victims_content(page: ft.Page):
         alignment=ft.MainAxisAlignment.CENTER,
     )
 
-    # Table container
     table_container = ft.Container(content=build_table(current_page))
 
-    # Victims container
     container = ft.Container(
         content=ft.Column(
             [
