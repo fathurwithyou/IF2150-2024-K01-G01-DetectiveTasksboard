@@ -57,19 +57,14 @@ class MainWindow(QMainWindow):
             css_tag = f"<style>{css_content}</style>"
             final_content = final_content.replace("</head>", f"{css_tag}</head>")
 
-        # First, include the QWebChannel JavaScript API
         final_content = final_content.replace(
             "</head>",
             '<script src="qrc:///qtwebchannel/qwebchannel.js"></script></head>'
         )
 
-        # Modified JavaScript for navigation handling with proper WebChannel initialization
         js_script = """
-            // Wait for the document to load
             document.addEventListener('DOMContentLoaded', () => {
-                // Initialize the WebChannel
                 new QWebChannel(qt.webChannelTransport, function(channel) {
-                    // Get the bridge object
                     const bridge = channel.objects.bridge;
                     
                     const links = {
@@ -81,7 +76,6 @@ class MainWindow(QMainWindow):
                         "settings-link": ["components/settings/index.html", "components/settings/style.css"]
                     };
 
-                    // Add click handlers once bridge is available
                     Object.keys(links).forEach(id => {
                         const link = document.getElementById(id);
                         if (link) {
@@ -96,7 +90,6 @@ class MainWindow(QMainWindow):
         """
         final_content += f"<script>{js_script}</script>"
 
-        # Load the final content into the browser
         self.browser.setHtml(final_content)
 
 
