@@ -145,6 +145,8 @@ def victims_content(page: ft.Page):
         current_page = page_index
         table_container.content = build_table(page_index)
         pagination_controls.controls[1].value = f"Page {page_index + 1} of {total_pages}"
+        pagination_controls.controls[0].disabled = current_page == 0
+        pagination_controls.controls[2].disabled = current_page == total_pages - 1
         page.update()
 
     def open_add_victim_modal():
@@ -345,7 +347,7 @@ def victims_content(page: ft.Page):
                 on_click=lambda _: update_content(current_page - 1),
                 disabled=current_page == 0,
             ),
-            ft.Text(value=f"Page {total_pages}", size=18),
+            ft.Text(value=f"Page {current_page + 1} of {total_pages}", size=18),
             ft.IconButton(
                 ft.icons.CHEVRON_RIGHT,
                 on_click=lambda _: update_content(current_page + 1),
