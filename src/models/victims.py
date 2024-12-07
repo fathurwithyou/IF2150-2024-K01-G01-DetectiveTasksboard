@@ -33,9 +33,16 @@ class Victims:
         self.write_victims()
 
     def update_victim(self, updated_victim):
-        self.victims_df.loc[self.victims_df["id"] == updated_victim["id"], :] = pd.DataFrame([updated_victim])
+        updated_row = pd.DataFrame([updated_victim], index=[0])
+
+        for i in range(len(updated_row.columns)):
+            self.victims_df.loc[
+                self.victims_df["id"] == updated_row["id"].values[0], updated_row.columns[i]
+            ] = updated_row[updated_row.columns[i]].values[0]
+
         self.sort_victims()
         self.write_victims()
+
 
     def get_last_victim_id(self):
         if not self.victims_df.empty:

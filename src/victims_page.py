@@ -5,49 +5,44 @@ from models.victims import Victims
 
 def victims_content(page: ft.Page):
     victims_model = Victims()
-    filtered_data = victims_model.get_victims() 
+    filtered_data = victims_model.get_victims()
     rows_per_page = 10
-    current_page = 0 
+    current_page = 0
     total_pages = math.ceil(len(filtered_data) / rows_per_page)
-    sort_column = None 
-    sort_order = "asc"  
+    sort_column = None
+    sort_order = "asc"
 
-    # Modal for adding or editing victims
-    modal_dialog = ft.AlertDialog(
-        modal=True,
-        title=ft.Text(""),
-        content=None,
-        actions=None,
-    )
-
+    # Separate modals for adding and editing victims
+    add_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Add Victim"))
+    edit_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Edit Victim"))
 
     def build_table(page_index):
         start_index = page_index * rows_per_page
         end_index = start_index + rows_per_page
-        page_data = filtered_data.iloc[start_index:end_index]  
+        page_data = filtered_data.iloc[start_index:end_index]
 
         table_rows = [
             ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(str(row["id"]))),              
-                    ft.DataCell(ft.Text(str(row["nama"]))),             
-                    ft.DataCell(ft.Text(str(row["foto"]))),             
-                    ft.DataCell(ft.Text(str(row["nik"]))),              
-                    ft.DataCell(ft.Text(str(row["usia"]))),            
-                    ft.DataCell(ft.Text(str(row["jk"]))),               
-                    ft.DataCell(ft.Text(str(row["hasil_forensik"]))),   
-                    ft.DataCell(ft.Text(str(row["id_kasus"]))),         
+                    ft.DataCell(ft.Text(str(row["id"]))),
+                    ft.DataCell(ft.Text(str(row["nama"]))),
+                    ft.DataCell(ft.Text(str(row["foto"]))),
+                    ft.DataCell(ft.Text(str(row["nik"]))),
+                    ft.DataCell(ft.Text(str(row["usia"]))),
+                    ft.DataCell(ft.Text(str(row["jk"]))),
+                    ft.DataCell(ft.Text(str(row["hasil_forensik"]))),
+                    ft.DataCell(ft.Text(str(row["id_kasus"]))),
                     ft.DataCell(
                         ft.IconButton(
                             icon=ft.icons.EDIT,
                             icon_color="white",
                             tooltip="Edit",
-                            on_click=lambda e, r=row: open_edit_victim_modal(row),
+                            on_click=lambda e, victim_id=row["id"]: open_edit_victim_modal(victim_id),
                         )
-                    ),                                                 
+                    ),
                 ]
             )
-            for _, row in page_data.iterrows()  
+            for _, row in page_data.iterrows()
         ]
 
         columns = [
@@ -65,7 +60,20 @@ def victims_content(page: ft.Page):
                     alignment=ft.MainAxisAlignment.START,
                 )
             ),
-            ft.DataColumn(ft.Text("Name")),
+            ft.DataColumn(
+                ft.Row(
+                    [
+                        ft.Text("Name"),
+                        ft.IconButton(
+                            icon=ft.icons.ARROW_UPWARD if sort_column == "nama" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                            on_click=lambda _: sort_data("nama"),
+                            icon_color="white",
+                            tooltip="Sort by Name",
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                )
+            ),
             ft.DataColumn(ft.Text("Photo")),
             ft.DataColumn(
                 ft.Row(
@@ -89,7 +97,7 @@ def victims_content(page: ft.Page):
                             icon=ft.icons.ARROW_UPWARD if sort_column == "usia" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
                             on_click=lambda _: sort_data("usia"),
                             icon_color="white",
-                            tooltip="Sort by Usia",
+                            tooltip="Sort by Age",
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.START,
@@ -111,22 +119,33 @@ def victims_content(page: ft.Page):
                     alignment=ft.MainAxisAlignment.START,
                 )
             ),
-            ft.DataColumn(ft.Text("Edit")),
+            ft.DataColumn(ft.Text("Actions")),
         ]
         return ft.DataTable(columns=columns, rows=table_rows)
-
-    def close_modal():
-        modal_dialog.open = False
-        modal_dialog.actions = None  
-        modal_dialog.content = None  
-        page.update()
-
 
     def refresh_table():
         nonlocal filtered_data, total_pages
         filtered_data = victims_model.get_victims()
         total_pages = math.ceil(len(filtered_data) / rows_per_page)
         update_content(current_page)
+        
+    def sort_data(column):
+        nonlocal filtered_data, sort_column, sort_order, current_page
+        if sort_column == column:
+            sort_order = "desc" if sort_order == "asc" else "asc"
+        else:
+            sort_column = column
+            sort_order = "asc"
+        filtered_data = filtered_data.sort_values(by=column, ascending=(sort_order == "asc"))
+        current_page = 0
+        update_content(current_page)
+
+    def update_content(page_index):
+        nonlocal current_page, total_pages
+        current_page = page_index
+        table_container.content = build_table(page_index)
+        pagination_controls.controls[1].value = f"Page {page_index + 1} of {total_pages}"
+        page.update()
 
     def open_add_victim_modal():
         name_field = ft.TextField(label="Name")
@@ -182,20 +201,18 @@ def victims_content(page: ft.Page):
             new_victim = {
                 "id": victims_model.get_last_victim_id() + 1,
                 "nama": name_field.value,
-                "foto": "", 
+                "foto": "",
                 "nik": nik_field.value,
                 "usia": int(usia_field.value),
                 "jk": gender_field.value,
                 "hasil_forensik": forensic_field.value,
                 "id_kasus": int(case_id_field.value),
             }
-            # Add the new victim
             victims_model.add_victim(new_victim)
-            refresh_table()  
-            close_modal()
+            refresh_table()
+            page.close(add_modal_dialog)
 
-        modal_dialog.title = ft.Text("Add Victim")
-        modal_dialog.content = ft.Column(
+        add_modal_dialog.content = ft.Column(
             [
                 name_field,
                 nik_field,
@@ -206,23 +223,23 @@ def victims_content(page: ft.Page):
             ],
             tight=True,
         )
-        modal_dialog.actions = [
+        add_modal_dialog.actions = [
             ft.Row(
                 [
                     ft.ElevatedButton("Save", on_click=save_new_victim),
-                    ft.TextButton("Cancel", on_click=lambda _: close_modal()),
+                    ft.TextButton("Cancel", on_click=lambda _: page.close(add_modal_dialog)),
                 ],
                 alignment=ft.MainAxisAlignment.END,
             )
         ]
-        modal_dialog.open = True
-        page.dialog = modal_dialog
-        page.update()
+        page.open(add_modal_dialog)
 
-    def open_edit_victim_modal(victim):
+    def open_edit_victim_modal(victim_id):
+        victim = victims_model.get_victims().loc[victims_model.get_victims()["id"] == victim_id].iloc[0]
+
         id_field = ft.TextField(label="ID", value=str(victim["id"]), read_only=True)
         name_field = ft.TextField(label="Name", value=victim["nama"])
-        nik_field = ft.TextField(label="NIK", value=victim["nik"])
+        nik_field = ft.TextField(label="NIK", value=str(victim["nik"]))
         usia_field = ft.TextField(label="Usia", value=str(victim["usia"]))
         gender_field = ft.TextField(label="Gender", value=victim["jk"])
         forensic_field = ft.TextField(label="Forensic Results", value=victim["hasil_forensik"])
@@ -274,7 +291,7 @@ def victims_content(page: ft.Page):
             updated_victim = {
                 "id": int(id_field.value),
                 "nama": name_field.value,
-                "foto": victim["foto"],  
+                "foto": victim["foto"],
                 "nik": nik_field.value,
                 "usia": int(usia_field.value),
                 "jk": gender_field.value,
@@ -283,15 +300,14 @@ def victims_content(page: ft.Page):
             }
             victims_model.update_victim(updated_victim)
             refresh_table()
-            close_modal()
+            page.close(edit_modal_dialog)
 
         def delete_victim(e):
             victims_model.delete_victim(victim["id"])
             refresh_table()
-            close_modal()
+            page.close(edit_modal_dialog)
 
-        modal_dialog.title = ft.Text(f"Edit Victim - {victim['nama']}")
-        modal_dialog.content = ft.Column(
+        edit_modal_dialog.content = ft.Column(
             [
                 id_field,
                 name_field,
@@ -303,44 +319,21 @@ def victims_content(page: ft.Page):
             ],
             tight=True,
         )
-        
-        modal_dialog.actions = [
+        edit_modal_dialog.actions = [
             ft.Row(
                 [
                     ft.ElevatedButton("Save", on_click=save_updated_victim),
                     ft.ElevatedButton("Delete", bgcolor="red", color="white", on_click=delete_victim),
-                    ft.TextButton("Cancel", on_click=lambda _: close_modal()),
+                    ft.TextButton("Cancel", on_click=lambda _: page.close(edit_modal_dialog)),
                 ],
                 alignment=ft.MainAxisAlignment.END,
             )
         ]
-        modal_dialog.open = True
-        page.dialog = modal_dialog
-        page.update()
-
-    def sort_data(column):
-        nonlocal filtered_data, sort_column, sort_order, current_page
-        if sort_column == column:
-            sort_order = "desc" if sort_order == "asc" else "asc"
-        else:
-            sort_column = column
-            sort_order = "asc"
-        filtered_data = filtered_data.sort_values(by=column, ascending=(sort_order == "asc"))
-        current_page = 0
-        update_content(current_page)
-
-    def update_content(page_index):
-        nonlocal current_page, total_pages
-        current_page = page_index
-        table_container.content = build_table(page_index)
-        pagination_controls.controls[1].value = f"Page {page_index + 1} of {total_pages}"
-        pagination_controls.controls[0].disabled = current_page == 0
-        pagination_controls.controls[2].disabled = current_page == total_pages - 1
-        page.update()
+        page.open(edit_modal_dialog)
 
     def handle_search(e):
         nonlocal filtered_data, current_page
-        search_term = e.control.value
+        search_term = e.control.value.lower()
         filtered_data = victims_model.search_victims(search_term)
         current_page = 0
         update_content(current_page)
@@ -352,7 +345,7 @@ def victims_content(page: ft.Page):
                 on_click=lambda _: update_content(current_page - 1),
                 disabled=current_page == 0,
             ),
-            ft.Text(value=f"Page 1 of {total_pages}", size=18),
+            ft.Text(value=f"Page {total_pages}", size=18),
             ft.IconButton(
                 ft.icons.CHEVRON_RIGHT,
                 on_click=lambda _: update_content(current_page + 1),
@@ -378,19 +371,16 @@ def victims_content(page: ft.Page):
                         ft.ElevatedButton(
                             text="Add Victim",
                             icon=ft.icons.ADD,
-                            on_click=lambda _: open_add_victim_modal(),
                             bgcolor="white",
                             color="black",
+                            on_click=lambda _: open_add_victim_modal(),
                         ),
                     ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 ),
                 table_container,
                 pagination_controls,
             ]
-        ),
-        expand=True,
-        padding=20,
+        )
     )
 
     return container
