@@ -27,3 +27,17 @@ class Victims:
         self.victims_df = pd.concat([self.victims_df, new_victim_df], ignore_index=True)
         self.sort_victims()
         self.write_victims()
+
+    def delete_victim(self, victim_id):
+        self.victims_df = self.victims_df[self.victims_df["id"] != victim_id]
+        self.write_victims()
+
+    def update_victim(self, updated_victim):
+        self.victims_df.loc[self.victims_df["id"] == updated_victim["id"], :] = pd.DataFrame([updated_victim])
+        self.sort_victims()
+        self.write_victims()
+
+    def get_last_victim_id(self):
+        if not self.victims_df.empty:
+            return self.victims_df["id"].max()
+        return 0 
