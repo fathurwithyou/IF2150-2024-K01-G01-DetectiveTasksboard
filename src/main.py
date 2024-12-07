@@ -76,7 +76,7 @@ class MainWindow(QMainWindow):
                         "dashboard-link": ["components/dashboard/index.html", "components/dashboard/style.css"],
                         "cases-link": ["components/cases/index.html", "components/cases/style.css"],
                         "suspects-link": ["components/suspect/index.html", "components/suspects/style.css"],
-                        "victims-link": ["components/victim/index.html", "components/victims/style.css"],
+                        "victims-link": ["components/victims/index.html", "components/victims/style.css"],
                         "detectives-link": ["components/detective/index.html", "components/detectives/style.css"],
                         "settings-link": ["components/settings/index.html", "components/settings/style.css"]
                     };
