@@ -13,10 +13,10 @@ def victims_content(page: ft.Page):
     sort_column = None  # Column to sort by
     sort_order = "asc"  # Sorting order: 'asc' or 'desc'
 
-    # Modal for adding victims
+    # Modal for adding or editing victims
     modal_dialog = ft.AlertDialog(
         modal=True,
-        title=ft.Text("Add Victim"),
+        title=ft.Text(""),
         content=None,
         actions=None,
     )
@@ -43,7 +43,7 @@ def victims_content(page: ft.Page):
                             icon=ft.icons.EDIT,
                             icon_color="white",
                             tooltip="Edit",
-                            on_click=lambda e, r=row: print(f"Edit clicked for {r['nama']}"),
+                            on_click=lambda e, r=row: open_edit_victim_modal(row),
                         )
                     ),                                                 # Edit Button
                 ]
@@ -132,7 +132,6 @@ def victims_content(page: ft.Page):
     # Function to open the add victim modal
     def open_add_victim_modal():
         # Fields for adding a new victim
-        id_field = ft.TextField(label="ID")
         name_field = ft.TextField(label="Name")
         nik_field = ft.TextField(label="NIK")
         usia_field = ft.TextField(label="Usia")
@@ -144,13 +143,13 @@ def victims_content(page: ft.Page):
         def save_new_victim(e):
             # Collect values from the fields
             new_victim = {
-                "id": int(id_field.value),
+                "id": victims_model.get_last_victim_id() + 1,
                 "nama": name_field.value,
                 "foto": "",  # Photo is not required
                 "nik": nik_field.value,
                 "usia": int(usia_field.value),
                 "jk": gender_field.value,
-                "hasil_forensik": forensic_field.value,
+                "hasil_forensik": '"'+str(forensic_field.value)+'"',
                 "id_kasus": int(case_id_field.value),
             }
             # Add the new victim
@@ -159,6 +158,66 @@ def victims_content(page: ft.Page):
             close_modal()
 
         # Add content and actions to the modal
+        modal_dialog.title = ft.Text("Add Victim")
+        modal_dialog.content = ft.Column(
+            [
+                name_field,
+                nik_field,
+                usia_field,
+                gender_field,
+                forensic_field,
+                case_id_field,
+            ],
+            tight=True,
+        )
+        modal_dialog.actions = [
+            ft.Row(
+                [
+                    ft.ElevatedButton("Save", on_click=save_new_victim),
+                    ft.TextButton("Cancel", on_click=lambda _: close_modal()),
+                ],
+                alignment=ft.MainAxisAlignment.END,
+            )
+        ]
+        modal_dialog.open = True
+        page.dialog = modal_dialog
+        page.update()
+
+    # Function to open the edit victim modal
+    def open_edit_victim_modal(victim):
+        # Pre-filled fields with the existing victim data
+        id_field = ft.TextField(label="ID", value=str(victim["id"]), read_only=True)
+        name_field = ft.TextField(label="Name", value=victim["nama"])
+        nik_field = ft.TextField(label="NIK", value=victim["nik"])
+        usia_field = ft.TextField(label="Usia", value=str(victim["usia"]))
+        gender_field = ft.TextField(label="Gender", value=victim["jk"])
+        forensic_field = ft.TextField(label="Forensic Results", value=victim["hasil_forensik"])
+        case_id_field = ft.TextField(label="Case ID", value=str(victim["id_kasus"]))
+
+        # Function to save updated victim
+        def save_updated_victim(e):
+            updated_victim = {
+                "id": int(id_field.value),
+                "nama": name_field.value,
+                "foto": victim["foto"],  # Photo remains unchanged
+                "nik": nik_field.value,
+                "usia": int(usia_field.value),
+                "jk": gender_field.value,
+                "hasil_forensik": forensic_field.value,
+                "id_kasus": int(case_id_field.value),
+            }
+            victims_model.update_victim(updated_victim)
+            refresh_table()
+            close_modal()
+
+        # Function to delete the victim
+        def delete_victim(e):
+            victims_model.delete_victim(victim["id"])
+            refresh_table()
+            close_modal()
+
+        # Add content and actions to the modal
+        modal_dialog.title = ft.Text(f"Edit Victim - {victim['nama']}")
         modal_dialog.content = ft.Column(
             [
                 id_field,
@@ -174,7 +233,8 @@ def victims_content(page: ft.Page):
         modal_dialog.actions = [
             ft.Row(
                 [
-                    ft.ElevatedButton("Save", on_click=save_new_victim),
+                    ft.ElevatedButton("Save", on_click=save_updated_victim),
+                    ft.ElevatedButton("Delete", bgcolor="red", color="white", on_click=delete_victim),
                     ft.TextButton("Cancel", on_click=lambda _: close_modal()),
                 ],
                 alignment=ft.MainAxisAlignment.END,
