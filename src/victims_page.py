@@ -1,59 +1,343 @@
 import flet as ft
-import csv
+import math
+from models.victims import Victims
 
 
-def victims_content():
-    # Read data from the CSV file using the csv library
-    data = []
-    with open("data/victims.csv", "r") as csv_file:
-        reader = csv.DictReader(csv_file)
-        for row in reader:
-            data.append(row)
-
-    # Pagination variables
+def victims_content(page: ft.Page):
+    victims_model = Victims()
+    filtered_data = victims_model.get_victims()
     rows_per_page = 10
-    current_page = 0  # Start from page 0
+    current_page = 0
+    total_pages = math.ceil(len(filtered_data) / rows_per_page)
+    sort_column = None
+    sort_order = "asc"
 
-    # Function to build the data table for the current page
-    def build_table(page):
-        start_index = page * rows_per_page
+    # Separate modals for adding and editing victims
+    add_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Add Victim"))
+    edit_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Edit Victim"))
+
+    def build_table(page_index):
+        start_index = page_index * rows_per_page
         end_index = start_index + rows_per_page
-        page_data = data[start_index:end_index]
+        page_data = filtered_data.iloc[start_index:end_index]
 
         table_rows = [
             ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(row["nama"])),
-                    ft.DataCell(ft.Text(row["id_kasus"])),
-                    ft.DataCell(ft.Text(row["hasil_forensik"])),
-                    ft.DataCell(ft.Text(row["nik"])),
-                    ft.DataCell(ft.Text("Edit")),
+                    ft.DataCell(ft.Text(str(row["id"]))),
+                    ft.DataCell(ft.Text(str(row["nama"]))),
+                    ft.DataCell(ft.Text(str(row["foto"]))),
+                    ft.DataCell(ft.Text(str(row["nik"]))),
+                    ft.DataCell(ft.Text(str(row["usia"]))),
+                    ft.DataCell(ft.Text(str(row["jk"]))),
+                    ft.DataCell(ft.Text(str(row["hasil_forensik"]))),
+                    ft.DataCell(ft.Text(str(row["id_kasus"]))),
+                    ft.DataCell(
+                        ft.IconButton(
+                            icon=ft.icons.EDIT,
+                            icon_color="white",
+                            tooltip="Edit",
+                            on_click=lambda e, victim_id=row["id"]: open_edit_victim_modal(victim_id),
+                        )
+                    ),
                 ]
             )
-            for row in page_data
+            for _, row in page_data.iterrows()
         ]
-        return ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("Name")),
-                ft.DataColumn(ft.Text("Case ID")),
-                ft.DataColumn(ft.Text("Forensic Results")),
-                ft.DataColumn(ft.Text("NIK")),
-                ft.DataColumn(ft.Text("Actions")),
+
+        columns = [
+            ft.DataColumn(
+                ft.Row(
+                    [
+                        ft.Text("ID"),
+                        ft.IconButton(
+                            icon=ft.icons.ARROW_UPWARD if sort_column == "id" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                            on_click=lambda _: sort_data("id"),
+                            icon_color="white",
+                            tooltip="Sort by ID",
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                )
+            ),
+            ft.DataColumn(
+                ft.Row(
+                    [
+                        ft.Text("Name"),
+                        ft.IconButton(
+                            icon=ft.icons.ARROW_UPWARD if sort_column == "nama" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                            on_click=lambda _: sort_data("nama"),
+                            icon_color="white",
+                            tooltip="Sort by Name",
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                )
+            ),
+            ft.DataColumn(ft.Text("Photo")),
+            ft.DataColumn(
+                ft.Row(
+                    [
+                        ft.Text("NIK"),
+                        ft.IconButton(
+                            icon=ft.icons.ARROW_UPWARD if sort_column == "nik" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                            on_click=lambda _: sort_data("nik"),
+                            icon_color="white",
+                            tooltip="Sort by NIK",
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                )
+            ),
+            ft.DataColumn(
+                ft.Row(
+                    [
+                        ft.Text("Usia"),
+                        ft.IconButton(
+                            icon=ft.icons.ARROW_UPWARD if sort_column == "usia" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                            on_click=lambda _: sort_data("usia"),
+                            icon_color="white",
+                            tooltip="Sort by Age",
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                )
+            ),
+            ft.DataColumn(ft.Text("Gender")),
+            ft.DataColumn(ft.Text("Forensic Results")),
+            ft.DataColumn(
+                ft.Row(
+                    [
+                        ft.Text("Case ID"),
+                        ft.IconButton(
+                            icon=ft.icons.ARROW_UPWARD if sort_column == "id_kasus" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                            on_click=lambda _: sort_data("id_kasus"),
+                            icon_color="white",
+                            tooltip="Sort by Case ID",
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                )
+            ),
+            ft.DataColumn(ft.Text("Actions")),
+        ]
+        return ft.DataTable(columns=columns, rows=table_rows)
+
+    def refresh_table():
+        nonlocal filtered_data, total_pages
+        filtered_data = victims_model.get_victims()
+        total_pages = math.ceil(len(filtered_data) / rows_per_page)
+        update_content(current_page)
+        
+    def sort_data(column):
+        nonlocal filtered_data, sort_column, sort_order, current_page
+        if sort_column == column:
+            sort_order = "desc" if sort_order == "asc" else "asc"
+        else:
+            sort_column = column
+            sort_order = "asc"
+        filtered_data = filtered_data.sort_values(by=column, ascending=(sort_order == "asc"))
+        current_page = 0
+        update_content(current_page)
+
+    def update_content(page_index):
+        nonlocal current_page, total_pages
+        current_page = page_index
+        table_container.content = build_table(page_index)
+        pagination_controls.controls[1].value = f"Page {page_index + 1} of {total_pages}"
+        page.update()
+
+    def open_add_victim_modal():
+        name_field = ft.TextField(label="Name")
+        nik_field = ft.TextField(label="NIK")
+        usia_field = ft.TextField(label="Usia")
+        gender_field = ft.TextField(label="Gender")
+        forensic_field = ft.TextField(label="Forensic Results")
+        case_id_field = ft.TextField(label="Case ID")
+
+        def save_new_victim(e):
+            errors = []
+            if not name_field.value.strip():
+                name_field.error_text = "Name is required"
+                errors.append("name")
+            else:
+                name_field.error_text = None
+
+            if not nik_field.value.strip():
+                nik_field.error_text = "NIK is required"
+                errors.append("nik")
+            else:
+                nik_field.error_text = None
+
+            if not usia_field.value.strip() or not usia_field.value.isdigit():
+                usia_field.error_text = "Valid age is required"
+                errors.append("usia")
+            else:
+                usia_field.error_text = None
+
+            if not gender_field.value.strip():
+                gender_field.error_text = "Gender is required"
+                errors.append("gender")
+            else:
+                gender_field.error_text = None
+
+            if not forensic_field.value.strip():
+                forensic_field.error_text = "Forensic Results are required"
+                errors.append("forensic")
+            else:
+                forensic_field.error_text = None
+
+            if not case_id_field.value.strip() or not case_id_field.value.isdigit():
+                case_id_field.error_text = "Valid Case ID is required"
+                errors.append("case_id")
+            else:
+                case_id_field.error_text = None
+
+            page.update()
+
+            if errors:
+                return
+            
+            new_victim = {
+                "id": victims_model.get_last_victim_id() + 1,
+                "nama": name_field.value,
+                "foto": "",
+                "nik": nik_field.value,
+                "usia": int(usia_field.value),
+                "jk": gender_field.value,
+                "hasil_forensik": forensic_field.value,
+                "id_kasus": int(case_id_field.value),
+            }
+            victims_model.add_victim(new_victim)
+            refresh_table()
+            page.close(add_modal_dialog)
+
+        add_modal_dialog.content = ft.Column(
+            [
+                name_field,
+                nik_field,
+                usia_field,
+                gender_field,
+                forensic_field,
+                case_id_field,
             ],
-            rows=table_rows,
+            tight=True,
         )
+        add_modal_dialog.actions = [
+            ft.Row(
+                [
+                    ft.ElevatedButton("Save", on_click=save_new_victim),
+                    ft.TextButton("Cancel", on_click=lambda _: page.close(add_modal_dialog)),
+                ],
+                alignment=ft.MainAxisAlignment.END,
+            )
+        ]
+        page.open(add_modal_dialog)
 
-    # Function to update the content when a page is changed
-    def update_content(page):
-        nonlocal current_page
-        current_page = page  # Update the current page
-        table_container.content = build_table(page)  # Update the table
-        pagination_controls.controls[1].value = str(page + 1)  # Update the page number
-        pagination_controls.controls[0].disabled = current_page == 0  # Disable previous button
-        pagination_controls.controls[2].disabled = (current_page + 1) * rows_per_page >= len(data)  # Disable next button
-        container.update()
+    def open_edit_victim_modal(victim_id):
+        victim = victims_model.get_victims().loc[victims_model.get_victims()["id"] == victim_id].iloc[0]
 
-    # Pagination controls
+        id_field = ft.TextField(label="ID", value=str(victim["id"]), read_only=True)
+        name_field = ft.TextField(label="Name", value=victim["nama"])
+        nik_field = ft.TextField(label="NIK", value=str(victim["nik"]))
+        usia_field = ft.TextField(label="Usia", value=str(victim["usia"]))
+        gender_field = ft.TextField(label="Gender", value=victim["jk"])
+        forensic_field = ft.TextField(label="Forensic Results", value=victim["hasil_forensik"])
+        case_id_field = ft.TextField(label="Case ID", value=str(victim["id_kasus"]))
+
+        def save_updated_victim(e):
+            errors = []
+            if not name_field.value.strip():
+                name_field.error_text = "Name is required"
+                errors.append("name")
+            else:
+                name_field.error_text = None
+
+            if not nik_field.value.strip():
+                nik_field.error_text = "NIK is required"
+                errors.append("nik")
+            else:
+                nik_field.error_text = None
+
+            if not usia_field.value.strip() or not usia_field.value.isdigit():
+                usia_field.error_text = "Valid age is required"
+                errors.append("usia")
+            else:
+                usia_field.error_text = None
+
+            if not gender_field.value.strip():
+                gender_field.error_text = "Gender is required"
+                errors.append("gender")
+            else:
+                gender_field.error_text = None
+
+            if not forensic_field.value.strip():
+                forensic_field.error_text = "Forensic Results are required"
+                errors.append("forensic")
+            else:
+                forensic_field.error_text = None
+
+            if not case_id_field.value.strip() or not case_id_field.value.isdigit():
+                case_id_field.error_text = "Valid Case ID is required"
+                errors.append("case_id")
+            else:
+                case_id_field.error_text = None
+
+            page.update()
+
+            if errors:
+                return
+            
+            updated_victim = {
+                "id": int(id_field.value),
+                "nama": name_field.value,
+                "foto": victim["foto"],
+                "nik": nik_field.value,
+                "usia": int(usia_field.value),
+                "jk": gender_field.value,
+                "hasil_forensik": forensic_field.value,
+                "id_kasus": int(case_id_field.value),
+            }
+            victims_model.update_victim(updated_victim)
+            refresh_table()
+            page.close(edit_modal_dialog)
+
+        def delete_victim(e):
+            victims_model.delete_victim(victim["id"])
+            refresh_table()
+            page.close(edit_modal_dialog)
+
+        edit_modal_dialog.content = ft.Column(
+            [
+                id_field,
+                name_field,
+                nik_field,
+                usia_field,
+                gender_field,
+                forensic_field,
+                case_id_field,
+            ],
+            tight=True,
+        )
+        edit_modal_dialog.actions = [
+            ft.Row(
+                [
+                    ft.ElevatedButton("Save", on_click=save_updated_victim),
+                    ft.ElevatedButton("Delete", bgcolor="red", color="white", on_click=delete_victim),
+                    ft.TextButton("Cancel", on_click=lambda _: page.close(edit_modal_dialog)),
+                ],
+                alignment=ft.MainAxisAlignment.END,
+            )
+        ]
+        page.open(edit_modal_dialog)
+
+    def handle_search(e):
+        nonlocal filtered_data, current_page
+        search_term = e.control.value.lower()
+        filtered_data = victims_model.search_victims(search_term)
+        current_page = 0
+        update_content(current_page)
+
     pagination_controls = ft.Row(
         [
             ft.IconButton(
@@ -61,31 +345,42 @@ def victims_content():
                 on_click=lambda _: update_content(current_page - 1),
                 disabled=current_page == 0,
             ),
-            ft.Text(value="1", size=18),  # Current page number
+            ft.Text(value=f"Page {total_pages}", size=18),
             ft.IconButton(
                 ft.icons.CHEVRON_RIGHT,
                 on_click=lambda _: update_content(current_page + 1),
-                disabled=(current_page + 1) * rows_per_page >= len(data),
+                disabled=current_page == total_pages - 1,
             ),
         ],
         alignment=ft.MainAxisAlignment.CENTER,
     )
 
-    # Table container
     table_container = ft.Container(content=build_table(current_page))
 
-    # Victims container
     container = ft.Container(
         content=ft.Column(
             [
                 ft.Text("Victims", size=30, weight=ft.FontWeight.BOLD, color="white"),
-                ft.TextField(label="Search Victims...", width=300),
-                table_container,  # Initial table for page 0
-                pagination_controls,  # Add pagination controls
+                ft.Row(
+                    [
+                        ft.TextField(
+                            label="Search Victims...",
+                            width=300,
+                            on_change=handle_search,
+                        ),
+                        ft.ElevatedButton(
+                            text="Add Victim",
+                            icon=ft.icons.ADD,
+                            bgcolor="white",
+                            color="black",
+                            on_click=lambda _: open_add_victim_modal(),
+                        ),
+                    ],
+                ),
+                table_container,
+                pagination_controls,
             ]
-        ),
-        expand=True,
-        padding=20,
+        )
     )
 
     return container
