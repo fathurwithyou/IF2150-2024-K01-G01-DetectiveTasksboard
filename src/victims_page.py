@@ -72,7 +72,7 @@ def victims_content():
         pagination_controls.controls[2].disabled = current_page == total_pages - 1  # Disable next button
         container.update()
 
-    # Function to handle search input
+    # Function to handle search input so that the table is updated with the filtered data
     def handle_search(e):
         nonlocal filtered_data, current_page
         search_term = e.control.value.lower()
