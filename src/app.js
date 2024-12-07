@@ -17,7 +17,7 @@ http.createServer((req, res) => {
             }
         });
     }
-    // Serve style.css
+
     else if (req.url === '/components/cases/style.css') {
         fs.readFile('components/cases/style.css', (err, data) => {
             if (err) {
@@ -29,7 +29,7 @@ http.createServer((req, res) => {
             }
         });
     }
-    // Serve sidebar/index.html
+
     else if (req.url === '/sidebar/index.html') {
         fs.readFile('components/sidebar/index.html', (err, data) => {
             if (err) {
