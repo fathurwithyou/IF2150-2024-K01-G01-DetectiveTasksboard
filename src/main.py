@@ -22,7 +22,7 @@ def main(page: ft.Page):
         elif page_name == "victims":
             page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), victims_content(page)], expand=True))
         elif page_name == "suspects":
-            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), suspects_content()], expand=True))
+            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), suspects_content(page)], expand=True))
         elif page_name == "detectives":
             page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), detectives_content(page)], expand=True))
         page.update()
