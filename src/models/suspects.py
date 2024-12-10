@@ -2,11 +2,17 @@ import pandas as pd
 
 class Suspects:
     def __init__(self):
-        self.path = "data/suspects.csv"
-        self.suspects_df = pd.read_csv(self.path)
+        self.suspects_path = "data/suspects.csv"
+        self.cases_path = "data/suspects_cases.csv"
+        self.suspects_df = pd.read_csv(self.suspects_path)
+        self.cases_df = pd.read_csv(self.cases_path)
 
     def get_suspects(self):
-        return self.suspects_df
+        merged_df = self.suspects_df.merge(self.cases_df, left_on='id', right_on='id_suspect', how='left')
+        merged_df['id_kasus'] = merged_df['id_kasus'].fillna(0).astype(int)
+        merged_df = merged_df.fillna("not provided")
+        grouped_df = merged_df.groupby(['id','nama','foto','nik','usia','jk','catatan_kriminal'])['id_kasus'].apply(list).reset_index()
+        return grouped_df
 
     def search_suspects(self, term):
         term = term.lower()
@@ -20,7 +26,7 @@ class Suspects:
         self.suspects_df = self.suspects_df.sort_values(by=["id"], ascending=True)
 
     def write_suspects(self):
-        self.suspects_df.to_csv(self.path, index=False)
+        self.suspects_df.to_csv(self.suspects_path, index=False)
 
     def add_suspect(self, suspect):
         new_suspect_df = pd.DataFrame([suspect])

@@ -12,9 +12,7 @@ class Victims:
         merged_df = self.victims_df.merge(self.cases_df, left_on='id', right_on='id_victim', how='left')
         merged_df['id_kasus'] = merged_df['id_kasus'].fillna(0).astype(int)
         merged_df = merged_df.fillna("not provided")
-        print(merged_df)
         grouped_df = merged_df.groupby(['id', 'nama', 'foto', 'nik', 'usia', 'jk', 'hasil_forensik'])['id_kasus'].apply(list).reset_index()
-        print(grouped_df)
         return grouped_df
     
     def search_victims(self, term):
@@ -29,7 +27,7 @@ class Victims:
         self.victims_df = self.victims_df.sort_values(by=["id"], ascending=True)
 
     def write_victims(self):
-        self.victims_df.to_csv(self.path, index=False)
+        self.victims_df.to_csv(self.victims_path, index=False)
 
     def add_victim(self, victim):
         new_victim_df = pd.DataFrame([victim])

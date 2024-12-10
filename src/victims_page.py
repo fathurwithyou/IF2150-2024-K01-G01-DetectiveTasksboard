@@ -13,7 +13,7 @@ def victims_content(page: ft.Page):
 
     # Separate modals for adding and editing victims
     add_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Add Victim"))
-    edit_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Edit Victim"))
+    view_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("View Victim"))
 
     def build_table(page_index):
         start_index = page_index * rows_per_page
@@ -30,13 +30,13 @@ def victims_content(page: ft.Page):
                     ft.DataCell(ft.Text(str(row["usia"]))),
                     ft.DataCell(ft.Text(str(row["jk"]))),
                     ft.DataCell(ft.Text(str(row["hasil_forensik"]))),
-                    ft.DataCell(ft.Text(", ".join(map(str, row["id_kasus"])))),
+                    ft.DataCell(ft.Text(", ".join(map(lambda x: '-' if x == 0 else str(x), row["id_kasus"])))),
                     ft.DataCell(
                         ft.IconButton(
-                            icon=ft.icons.EDIT,
+                            icon=ft.icons.VISIBILITY,
                             icon_color="white",
-                            tooltip="Edit",
-                            on_click=lambda e, victim_id=row["id"]: open_edit_victim_modal(victim_id),
+                            tooltip="View",
+                            on_click=lambda e, victim_id=row["id"]: open_view_victim_modal(victim_id),
                         )
                     ),
                 ]
@@ -118,7 +118,7 @@ def victims_content(page: ft.Page):
                     alignment=ft.MainAxisAlignment.START,
                 )
             ),
-            ft.DataColumn(ft.Text("Actions")),
+            ft.DataColumn(ft.Text("Details")),
         ]
         return ft.DataTable(columns=columns, rows=table_rows)
 
@@ -154,7 +154,6 @@ def victims_content(page: ft.Page):
         usia_field = ft.TextField(label="Usia")
         gender_field = ft.TextField(label="Gender")
         forensic_field = ft.TextField(label="Forensic Results")
-        case_id_field = ft.TextField(label="Case IDs (comma separated)")
 
         def save_new_victim(e):
             errors = []
@@ -188,12 +187,6 @@ def victims_content(page: ft.Page):
             else:
                 forensic_field.error_text = None
 
-            if not case_id_field.value.strip():
-                case_id_field.error_text = "Case IDs are required"
-                errors.append("case_id")
-            else:
-                case_id_field.error_text = None
-
             page.update()
 
             if errors:
@@ -207,7 +200,6 @@ def victims_content(page: ft.Page):
                 "usia": int(usia_field.value),
                 "jk": gender_field.value,
                 "hasil_forensik": forensic_field.value,
-                "id_kasus": list(map(int, case_id_field.value.split(", "))),
             }
             victims_model.add_victim(new_victim)
             refresh_table()
@@ -220,7 +212,6 @@ def victims_content(page: ft.Page):
                 usia_field,
                 gender_field,
                 forensic_field,
-                case_id_field,
             ],
             tight=True,
         )
@@ -235,16 +226,98 @@ def victims_content(page: ft.Page):
         ]
         page.open(add_modal_dialog)
 
-    def open_edit_victim_modal(victim_id):
+    def open_view_victim_modal(victim_id):
         victim = victims_model.get_victims().loc[victims_model.get_victims()["id"] == victim_id].iloc[0]
 
-        id_field = ft.TextField(label="ID", value=str(victim["id"]), read_only=True)
-        name_field = ft.TextField(label="Name", value=victim["nama"])
-        nik_field = ft.TextField(label="NIK", value=str(victim["nik"]))
-        usia_field = ft.TextField(label="Usia", value=str(victim["usia"]))
-        gender_field = ft.TextField(label="Gender", value=victim["jk"])
-        forensic_field = ft.TextField(label="Forensic Results", value=victim["hasil_forensik"])
-        case_id_field = ft.TextField(label="Case IDs (comma separated)", value=", ".join(map(str, victim["id_kasus"])))
+        id_text = ft.Text(f"ID: {victim['id']}")
+        name_text = ft.Text(f"Name: {victim['nama']}")
+        photo_text = ft.Text(f"Photo: {victim['foto']}")
+        nik_text = ft.Text(f"NIK: {victim['nik']}")
+        age_text = ft.Text(f"Age: {victim['usia']}")
+        gender_text = ft.Text(f"Gender: {victim['jk']}")
+        forensic_text = ft.Text(f"Forensic Results: {victim['hasil_forensik']}")
+        case_id_text = ft.Text(f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), victim["id_kasus"]))}')
+
+        id_field = ft.TextField(label="ID", value=str(victim["id"]), read_only=True, visible=False)
+        name_field = ft.TextField(label="Name", value=victim["nama"], read_only=True, visible=False)
+        nik_field = ft.TextField(label="NIK", value=str(victim["nik"]), read_only=True, visible=False)
+        usia_field = ft.TextField(label="Usia", value=str(victim["usia"]), read_only=True, visible=False)
+        gender_field = ft.TextField(label="Gender", value=victim["jk"], read_only=True, visible=False)
+        forensic_field = ft.TextField(label="Forensic Results", value=victim["hasil_forensik"], read_only=True, visible=False)
+        case_id_field = ft.TextField(label="Case IDs (comma separated)", value=", ".join(map(str, victim["id_kasus"])), read_only=True, visible=False)
+
+        def open_edit_victim_modal(e):
+            id_text.visible = False
+            name_text.visible = False
+            photo_text.visible = False
+            nik_text.visible = False
+            age_text.visible = False
+            gender_text.visible = False
+            forensic_text.visible = False
+            case_id_text.visible = False
+
+            id_field.visible = True
+            name_field.visible = True
+            nik_field.visible = True
+            usia_field.visible = True
+            gender_field.visible = True
+            forensic_field.visible = True
+            case_id_field.visible = True
+
+            name_field.read_only = False
+            nik_field.read_only = False
+            usia_field.read_only = False
+            gender_field.read_only = False
+            forensic_field.read_only = False
+
+            view_modal_dialog.title = ft.Text("Edit Victim")
+            view_modal_dialog.actions = [
+                ft.Row(
+                    [
+                        ft.ElevatedButton("Save", on_click=save_updated_victim),
+                        ft.ElevatedButton("Delete", bgcolor="red", color="white", on_click=delete_victim),
+                        ft.TextButton("Cancel", on_click=cancel_edit),
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                )
+            ]
+            page.update()
+
+        def cancel_edit(e):
+            id_text.visible = True
+            name_text.visible = True
+            photo_text.visible = True
+            nik_text.visible = True
+            age_text.visible = True
+            gender_text.visible = True
+            forensic_text.visible = True
+            case_id_text.visible = True
+
+            id_field.visible = False
+            name_field.visible = False
+            nik_field.visible = False
+            usia_field.visible = False
+            gender_field.visible = False
+            forensic_field.visible = False
+            case_id_field.visible = False
+
+            name_field.read_only = True
+            nik_field.read_only = True
+            usia_field.read_only = True
+            gender_field.read_only = True
+            forensic_field.read_only = True
+
+            view_modal_dialog.title = ft.Text("View Victim")
+            view_modal_dialog.actions = [
+                ft.Row(
+                    [
+                        ft.ElevatedButton("Edit", on_click=open_edit_victim_modal),
+                        ft.TextButton("Close", on_click=lambda _: page.close(view_modal_dialog)),
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                )
+            ]
+            page.update()
 
         def save_updated_victim(e):
             errors = []
@@ -278,12 +351,6 @@ def victims_content(page: ft.Page):
             else:
                 forensic_field.error_text = None
 
-            if not case_id_field.value.strip():
-                case_id_field.error_text = "Case IDs are required"
-                errors.append("case_id")
-            else:
-                case_id_field.error_text = None
-
             page.update()
 
             if errors:
@@ -297,19 +364,26 @@ def victims_content(page: ft.Page):
                 "usia": int(usia_field.value),
                 "jk": gender_field.value,
                 "hasil_forensik": forensic_field.value,
-                "id_kasus": list(map(int, case_id_field.value.split(", "))),
             }
             victims_model.update_victim(updated_victim)
             refresh_table()
-            page.close(edit_modal_dialog)
+            page.close(view_modal_dialog)
 
         def delete_victim(e):
             victims_model.delete_victim(victim["id"])
             refresh_table()
-            page.close(edit_modal_dialog)
+            page.close(view_modal_dialog)
 
-        edit_modal_dialog.content = ft.Column(
+        view_modal_dialog.content = ft.Column(
             [
+                id_text,
+                name_text,
+                photo_text,
+                nik_text,
+                age_text,
+                gender_text,
+                forensic_text,
+                case_id_text,
                 id_field,
                 name_field,
                 nik_field,
@@ -320,17 +394,16 @@ def victims_content(page: ft.Page):
             ],
             tight=True,
         )
-        edit_modal_dialog.actions = [
+        view_modal_dialog.actions = [
             ft.Row(
                 [
-                    ft.ElevatedButton("Save", on_click=save_updated_victim),
-                    ft.ElevatedButton("Delete", bgcolor="red", color="white", on_click=delete_victim),
-                    ft.TextButton("Cancel", on_click=lambda _: page.close(edit_modal_dialog)),
+                    ft.ElevatedButton("Edit", on_click=open_edit_victim_modal),
+                    ft.TextButton("Close", on_click=lambda _: page.close(view_modal_dialog)),
                 ],
                 alignment=ft.MainAxisAlignment.END,
             )
         ]
-        page.open(edit_modal_dialog)
+        page.open(view_modal_dialog)
 
     def handle_search(e):
         nonlocal filtered_data, current_page

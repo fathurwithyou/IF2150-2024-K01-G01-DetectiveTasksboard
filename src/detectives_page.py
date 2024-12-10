@@ -13,7 +13,7 @@ def detectives_content(page: ft.Page):
 
     # Separate modals for adding and editing detectives
     add_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Add Detective"))
-    edit_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Edit Detective"))
+    view_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("View Detective"))
 
     def build_table(page_index):
         start_index = page_index * rows_per_page
@@ -26,13 +26,13 @@ def detectives_content(page: ft.Page):
                     ft.DataCell(ft.Text(str(row["id"]))),
                     ft.DataCell(ft.Text(str(row["nama"]))),
                     ft.DataCell(ft.Text(str(row["nik"]))),
-                    ft.DataCell(ft.Text(", ".join(map(str, row["id_kasus"])))),
+                    ft.DataCell(ft.Text(", ".join(map(lambda x: '-' if x == 0 else str(x), row["id_kasus"])))),
                     ft.DataCell(
                         ft.IconButton(
-                            icon=ft.icons.EDIT,
+                            icon=ft.icons.VISIBILITY,
                             icon_color="white",
-                            tooltip="Edit",
-                            on_click=lambda e, detective_id=row["id"]: open_edit_detective_modal(detective_id),
+                            tooltip="View",
+                            on_click=lambda e, detective_id=row["id"]: open_view_detective_modal(detective_id),
                         )
                     ),
                 ]
@@ -97,7 +97,7 @@ def detectives_content(page: ft.Page):
                     alignment=ft.MainAxisAlignment.START,
                 )
             ),
-            ft.DataColumn(ft.Text("Actions")),
+            ft.DataColumn(ft.Text("Details")),
         ]
         return ft.DataTable(columns=columns, rows=table_rows)
 
@@ -130,7 +130,6 @@ def detectives_content(page: ft.Page):
     def open_add_detective_modal():
         name_field = ft.TextField(label="Name")
         nik_field = ft.TextField(label="NIK")
-        case_id_field = ft.TextField(label="Case ID")
 
         def save_new_detective(e):
             errors = []
@@ -146,12 +145,6 @@ def detectives_content(page: ft.Page):
             else:
                 nik_field.error_text = None
 
-            if not case_id_field.value.strip() or not case_id_field.value.isdigit():
-                case_id_field.error_text = "Valid Case ID is required"
-                errors.append("case_id")
-            else:
-                case_id_field.error_text = None
-
             page.update()
 
             if errors:
@@ -161,7 +154,6 @@ def detectives_content(page: ft.Page):
                 "id": detective_model.get_last_detective_id() + 1,
                 "nama": name_field.value,
                 "nik": nik_field.value,
-                "id_kasus": [int(case_id_field.value)],
             }
             detective_model.add_detective(new_detective)
             refresh_table()
@@ -171,7 +163,6 @@ def detectives_content(page: ft.Page):
             [
                 name_field,
                 nik_field,
-                case_id_field,
             ],
             tight=True,
         )
@@ -186,13 +177,71 @@ def detectives_content(page: ft.Page):
         ]
         page.open(add_modal_dialog)
 
-    def open_edit_detective_modal(detective_id):
+    def open_view_detective_modal(detective_id):
         detective = detective_model.get_detectives().loc[detective_model.get_detectives()["id"] == detective_id].iloc[0]
 
-        id_field = ft.TextField(label="ID", value=str(detective["id"]), read_only=True)
-        name_field = ft.TextField(label="Name", value=detective["nama"])
-        nik_field = ft.TextField(label="NIK", value=str(detective["nik"]))
-        case_id_field = ft.TextField(label="Case ID", value=", ".join(map(str, detective["id_kasus"])))
+        id_text = ft.Text(f"ID: {detective['id']}")
+        name_text = ft.Text(f"Name: {detective['nama']}")
+        nik_text = ft.Text(f"NIK: {detective['nik']}")
+        case_id_text = ft.Text(f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), detective["id_kasus"]))}')
+
+        id_field = ft.TextField(label="ID", value=str(detective["id"]), read_only=True, visible=False)
+        name_field = ft.TextField(label="Name", value=detective["nama"], read_only=True, visible=False)
+        nik_field = ft.TextField(label="NIK", value=str(detective["nik"]), read_only=True, visible=False)
+        case_id_field = ft.TextField(label="Case ID", value=", ".join(map(lambda x: '-' if x == 0 else str(x), detective["id_kasus"])), read_only=True, visible=False)
+
+        def open_edit_detective_modal(e):
+            id_text.visible = False
+            name_text.visible = False
+            nik_text.visible = False
+            case_id_text.visible = False
+
+            id_field.visible = True
+            name_field.visible = True
+            nik_field.visible = True
+            case_id_field.visible = True
+
+            name_field.read_only = False
+            nik_field.read_only = False
+
+            view_modal_dialog.title = ft.Text("Edit Detective")
+            view_modal_dialog.actions = [
+                ft.Row(
+                    [
+                        ft.ElevatedButton("Save", on_click=save_updated_detective),
+                        ft.ElevatedButton("Delete", bgcolor="red", color="white", on_click=delete_detective),
+                        ft.TextButton("Cancel", on_click=cancel_edit),
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                )
+            ]
+            page.update()
+
+        def cancel_edit(e):
+            id_text.visible = True
+            name_text.visible = True
+            nik_text.visible = True
+            case_id_text.visible = True
+
+            id_field.visible = False
+            name_field.visible = False
+            nik_field.visible = False
+            case_id_field.visible = False
+
+            name_field.read_only = True
+            nik_field.read_only = True
+
+            view_modal_dialog.title = ft.Text("View Detective")
+            view_modal_dialog.actions = [
+                ft.Row(
+                    [
+                        ft.ElevatedButton("Edit", on_click=open_edit_detective_modal),
+                        ft.TextButton("Close", on_click=lambda _: page.close(view_modal_dialog)),
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                )
+            ]
+            page.update()
 
         def save_updated_detective(e):
             errors = []
@@ -208,12 +257,6 @@ def detectives_content(page: ft.Page):
             else:
                 nik_field.error_text = None
 
-            if not case_id_field.value.strip():
-                case_id_field.error_text = "Case IDs are required"
-                errors.append("case_id")
-            else:
-                case_id_field.error_text = None
-
             page.update()
 
             if errors:
@@ -223,19 +266,22 @@ def detectives_content(page: ft.Page):
                 "id": int(id_field.value),
                 "nama": name_field.value,
                 "nik": nik_field.value,
-                "id_kasus": list(map(int, case_id_field.value.split(", "))),
             }
             detective_model.update_detective(updated_detective)
             refresh_table()
-            page.close(edit_modal_dialog)
+            page.close(view_modal_dialog)
 
         def delete_detective(e):
             detective_model.delete_detective(detective["id"])
             refresh_table()
-            page.close(edit_modal_dialog)
+            page.close(view_modal_dialog)
 
-        edit_modal_dialog.content = ft.Column(
+        view_modal_dialog.content = ft.Column(
             [
+                id_text,
+                name_text,
+                nik_text,
+                case_id_text,
                 id_field,
                 name_field,
                 nik_field,
@@ -243,17 +289,16 @@ def detectives_content(page: ft.Page):
             ],
             tight=True,
         )
-        edit_modal_dialog.actions = [
+        view_modal_dialog.actions = [
             ft.Row(
                 [
-                    ft.ElevatedButton("Save", on_click=save_updated_detective),
-                    ft.ElevatedButton("Delete", bgcolor="red", color="white", on_click=delete_detective),
-                    ft.TextButton("Cancel", on_click=lambda _: page.close(edit_modal_dialog)),
+                    ft.ElevatedButton("Edit", on_click=open_edit_detective_modal),
+                    ft.TextButton("Close", on_click=lambda _: page.close(view_modal_dialog)),
                 ],
                 alignment=ft.MainAxisAlignment.END,
             )
         ]
-        page.open(edit_modal_dialog)
+        page.open(view_modal_dialog)
 
     def handle_search(e):
         nonlocal filtered_data, current_page

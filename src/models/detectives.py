@@ -8,7 +8,6 @@ class Detective:
         self.cases_df = pd.read_csv(self.cases_path)
         
     def get_detectives(self):
-        print(self.detective_df)
         merged_df = self.detective_df.merge(self.cases_df, left_on='id', right_on='id_detective', how='left')
         merged_df['id_kasus'] = merged_df['id_kasus'].fillna(0).astype(int)
         grouped_df = merged_df.groupby(['id', 'nama', 'nik'])['id_kasus'].apply(list).reset_index()
@@ -27,7 +26,6 @@ class Detective:
 
     def write_detectives(self):
         self.detective_df.to_csv(self.detective_path, index=False)
-        self.cases_df.to_csv(self.cases_path, index=False)
 
     def add_detective(self, detective):
         new_detective_df = pd.DataFrame([detective])
