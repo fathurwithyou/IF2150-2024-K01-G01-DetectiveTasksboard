@@ -2,12 +2,21 @@ import pandas as pd
 
 class Victims:
     def __init__(self):
-        self.path = "data/victims.csv"
-        self.victims_df = pd.read_csv(self.path)
+        self.victims_path = "data/victims.csv"
+        self.cases_path = "data/victim_cases.csv"
+        self.victims_df = pd.read_csv(self.victims_path)
+        self.cases_df = pd.read_csv(self.cases_path)
+
 
     def get_victims(self):
-        return self.victims_df
-
+        merged_df = self.victims_df.merge(self.cases_df, left_on='id', right_on='id_victim', how='left')
+        merged_df['id_kasus'] = merged_df['id_kasus'].fillna(0).astype(int)
+        merged_df = merged_df.fillna("not provided")
+        print(merged_df)
+        grouped_df = merged_df.groupby(['id', 'nama', 'foto', 'nik', 'usia', 'jk', 'hasil_forensik'])['id_kasus'].apply(list).reset_index()
+        print(grouped_df)
+        return grouped_df
+    
     def search_victims(self, term):
         term = term.lower()
         return self.victims_df[

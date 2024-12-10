@@ -2,7 +2,6 @@ import flet as ft
 import math
 from models.victims import Victims
 
-
 def victims_content(page: ft.Page):
     victims_model = Victims()
     filtered_data = victims_model.get_victims()
@@ -31,7 +30,7 @@ def victims_content(page: ft.Page):
                     ft.DataCell(ft.Text(str(row["usia"]))),
                     ft.DataCell(ft.Text(str(row["jk"]))),
                     ft.DataCell(ft.Text(str(row["hasil_forensik"]))),
-                    ft.DataCell(ft.Text(str(row["id_kasus"]))),
+                    ft.DataCell(ft.Text(", ".join(map(str, row["id_kasus"])))),
                     ft.DataCell(
                         ft.IconButton(
                             icon=ft.icons.EDIT,
@@ -108,12 +107,12 @@ def victims_content(page: ft.Page):
             ft.DataColumn(
                 ft.Row(
                     [
-                        ft.Text("Case ID"),
+                        ft.Text("Case IDs"),
                         ft.IconButton(
                             icon=ft.icons.ARROW_UPWARD if sort_column == "id_kasus" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
                             on_click=lambda _: sort_data("id_kasus"),
                             icon_color="white",
-                            tooltip="Sort by Case ID",
+                            tooltip="Sort by Case IDs",
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.START,
@@ -145,6 +144,8 @@ def victims_content(page: ft.Page):
         current_page = page_index
         table_container.content = build_table(page_index)
         pagination_controls.controls[1].value = f"Page {page_index + 1} of {total_pages}"
+        pagination_controls.controls[0].disabled = current_page == 0
+        pagination_controls.controls[2].disabled = current_page == total_pages - 1
         page.update()
 
     def open_add_victim_modal():
@@ -153,7 +154,7 @@ def victims_content(page: ft.Page):
         usia_field = ft.TextField(label="Usia")
         gender_field = ft.TextField(label="Gender")
         forensic_field = ft.TextField(label="Forensic Results")
-        case_id_field = ft.TextField(label="Case ID")
+        case_id_field = ft.TextField(label="Case IDs (comma separated)")
 
         def save_new_victim(e):
             errors = []
@@ -187,8 +188,8 @@ def victims_content(page: ft.Page):
             else:
                 forensic_field.error_text = None
 
-            if not case_id_field.value.strip() or not case_id_field.value.isdigit():
-                case_id_field.error_text = "Valid Case ID is required"
+            if not case_id_field.value.strip():
+                case_id_field.error_text = "Case IDs are required"
                 errors.append("case_id")
             else:
                 case_id_field.error_text = None
@@ -206,7 +207,7 @@ def victims_content(page: ft.Page):
                 "usia": int(usia_field.value),
                 "jk": gender_field.value,
                 "hasil_forensik": forensic_field.value,
-                "id_kasus": int(case_id_field.value),
+                "id_kasus": list(map(int, case_id_field.value.split(", "))),
             }
             victims_model.add_victim(new_victim)
             refresh_table()
@@ -243,7 +244,7 @@ def victims_content(page: ft.Page):
         usia_field = ft.TextField(label="Usia", value=str(victim["usia"]))
         gender_field = ft.TextField(label="Gender", value=victim["jk"])
         forensic_field = ft.TextField(label="Forensic Results", value=victim["hasil_forensik"])
-        case_id_field = ft.TextField(label="Case ID", value=str(victim["id_kasus"]))
+        case_id_field = ft.TextField(label="Case IDs (comma separated)", value=", ".join(map(str, victim["id_kasus"])))
 
         def save_updated_victim(e):
             errors = []
@@ -277,8 +278,8 @@ def victims_content(page: ft.Page):
             else:
                 forensic_field.error_text = None
 
-            if not case_id_field.value.strip() or not case_id_field.value.isdigit():
-                case_id_field.error_text = "Valid Case ID is required"
+            if not case_id_field.value.strip():
+                case_id_field.error_text = "Case IDs are required"
                 errors.append("case_id")
             else:
                 case_id_field.error_text = None
@@ -296,7 +297,7 @@ def victims_content(page: ft.Page):
                 "usia": int(usia_field.value),
                 "jk": gender_field.value,
                 "hasil_forensik": forensic_field.value,
-                "id_kasus": int(case_id_field.value),
+                "id_kasus": list(map(int, case_id_field.value.split(", "))),
             }
             victims_model.update_victim(updated_victim)
             refresh_table()
@@ -345,7 +346,7 @@ def victims_content(page: ft.Page):
                 on_click=lambda _: update_content(current_page - 1),
                 disabled=current_page == 0,
             ),
-            ft.Text(value=f"Page {total_pages}", size=18),
+            ft.Text(value=f"Page {current_page + 1} of {total_pages}", size=18),
             ft.IconButton(
                 ft.icons.CHEVRON_RIGHT,
                 on_click=lambda _: update_content(current_page + 1),

@@ -1,4 +1,4 @@
-id,nama,foto,nik,usia,jk,catatan_kriminal,id_kasus
-1,Rudi,rudi.jpg,556677889,35,Laki-laki,Pernah terlibat dalam kasus kekerasan,1
-2,Maryam,maryam.jpg,223344556,28,Perempuan,Terlibat dalam kasus penipuan di masa lalu,2
-3,Andi,andi.jpg,334455667,40,Laki-laki,Terlibat dalam penggelapan dana perusahaan,3
+id,nama,foto,nik,usia,jk,catatan_kriminal
+1,Rudi,rudi.jpg,556677889,35,Laki-laki,Pernah terlibat dalam kasus kekerasan
+2,Maryam,maryam.jpg,223344556,28,Perempuan,Terlibat dalam kasus penipuan di masa lalu
+3,Andi,andi.jpg,334455667,40,Laki-laki,Terlibat dalam penggelapan dana perusahaan
