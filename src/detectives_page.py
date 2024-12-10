@@ -26,7 +26,7 @@ def detectives_content(page: ft.Page):
                     ft.DataCell(ft.Text(str(row["id"]))),
                     ft.DataCell(ft.Text(str(row["nama"]))),
                     ft.DataCell(ft.Text(str(row["nik"]))),
-                    ft.DataCell(ft.Text(str(row["id_kasus"]))),
+                    ft.DataCell(ft.Text(", ".join(map(str, row["id_kasus"])))),
                     ft.DataCell(
                         ft.IconButton(
                             icon=ft.icons.EDIT,
@@ -86,12 +86,12 @@ def detectives_content(page: ft.Page):
             ft.DataColumn(
                 ft.Row(
                     [
-                        ft.Text("Case ID"),
+                        ft.Text("Case IDs"),
                         ft.IconButton(
                             icon=ft.icons.ARROW_UPWARD if sort_column == "id_kasus" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
                             on_click=lambda _: sort_data("id_kasus"),
                             icon_color="white",
-                            tooltip="Sort by Case ID",
+                            tooltip="Sort by Case IDs",
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.START,
@@ -161,7 +161,7 @@ def detectives_content(page: ft.Page):
                 "id": detective_model.get_last_detective_id() + 1,
                 "nama": name_field.value,
                 "nik": nik_field.value,
-                "id_kasus": int(case_id_field.value),
+                "id_kasus": [int(case_id_field.value)],
             }
             detective_model.add_detective(new_detective)
             refresh_table()
@@ -192,7 +192,7 @@ def detectives_content(page: ft.Page):
         id_field = ft.TextField(label="ID", value=str(detective["id"]), read_only=True)
         name_field = ft.TextField(label="Name", value=detective["nama"])
         nik_field = ft.TextField(label="NIK", value=str(detective["nik"]))
-        case_id_field = ft.TextField(label="Case ID", value=str(detective["id_kasus"]))
+        case_id_field = ft.TextField(label="Case ID", value=", ".join(map(str, detective["id_kasus"])))
 
         def save_updated_detective(e):
             errors = []
@@ -208,8 +208,8 @@ def detectives_content(page: ft.Page):
             else:
                 nik_field.error_text = None
 
-            if not case_id_field.value.strip() or not case_id_field.value.isdigit():
-                case_id_field.error_text = "Valid Case ID is required"
+            if not case_id_field.value.strip():
+                case_id_field.error_text = "Case IDs are required"
                 errors.append("case_id")
             else:
                 case_id_field.error_text = None
@@ -223,7 +223,7 @@ def detectives_content(page: ft.Page):
                 "id": int(id_field.value),
                 "nama": name_field.value,
                 "nik": nik_field.value,
-                "id_kasus": int(case_id_field.value),
+                "id_kasus": list(map(int, case_id_field.value.split(", "))),
             }
             detective_model.update_detective(updated_detective)
             refresh_table()
