@@ -11,9 +11,9 @@ def suspects_content(page: ft.Page):
     sort_column = None
     sort_order = "asc"
 
-    # Separate modals for adding and editing suspects
+    # Separate modals for adding and viewing suspects
     add_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Add Suspect"))
-    edit_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Edit Suspect"))
+    view_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("View Suspect"))
 
     def build_table(page_index):
         start_index = page_index * rows_per_page
@@ -33,10 +33,10 @@ def suspects_content(page: ft.Page):
                     ft.DataCell(ft.Text(str(row["id_kasus"]))),
                     ft.DataCell(
                         ft.IconButton(
-                            icon=ft.icons.EDIT,
+                            icon=ft.icons.VISIBILITY,
                             icon_color="white",
-                            tooltip="Edit",
-                            on_click=lambda e, suspect_id=row["id"]: open_edit_suspect_modal(suspect_id),
+                            tooltip="View",
+                            on_click=lambda e, suspect_id=row["id"]: open_view_suspect_modal(suspect_id),
                         )
                     ),
                 ]
@@ -118,7 +118,7 @@ def suspects_content(page: ft.Page):
                     alignment=ft.MainAxisAlignment.START,
                 )
             ),
-            ft.DataColumn(ft.Text("Actions")),
+            ft.DataColumn(ft.Text("Details")),
         ]
         return ft.DataTable(columns=columns, rows=table_rows)
 
@@ -237,17 +237,89 @@ def suspects_content(page: ft.Page):
         ]
         page.open(add_modal_dialog)
 
-    def open_edit_suspect_modal(suspect_id):
+    def open_view_suspect_modal(suspect_id):
         suspect = suspects_model.get_suspects().loc[suspects_model.get_suspects()["id"] == suspect_id].iloc[0]
 
-        id_field = ft.TextField(label="ID", value=str(suspect["id"]), read_only=True)
-        name_field = ft.TextField(label="Name", value=suspect["nama"])
-        photo_field = ft.TextField(label="Photo", value=suspect["foto"])
-        nik_field = ft.TextField(label="NIK", value=str(suspect["nik"]))
-        age_field = ft.TextField(label="Age", value=str(suspect["usia"]))
-        gender_field = ft.TextField(label="Gender", value=suspect["jk"])
-        criminal_record_field = ft.TextField(label="Criminal Record", value=suspect["catatan_kriminal"])
-        case_id_field = ft.TextField(label="Case ID", value=str(suspect["id_kasus"]))
+        id_text = ft.Text(f"ID: {suspect['id']}")
+        name_text = ft.Text(f"Name: {suspect['nama']}")
+        photo_text = ft.Text(f"Photo: {suspect['foto']}")
+        nik_text = ft.Text(f"NIK: {suspect['nik']}")
+        age_text = ft.Text(f"Age: {suspect['usia']}")
+        gender_text = ft.Text(f"Gender: {suspect['jk']}")
+        criminal_record_text = ft.Text(f"Criminal Record: {suspect['catatan_kriminal']}")
+        case_id_text = ft.Text(f"Case ID: {suspect['id_kasus']}")
+
+        id_field = ft.TextField(label="ID", value=str(suspect["id"]), read_only=True, visible=False)
+        name_field = ft.TextField(label="Name", value=suspect["nama"], read_only=True, visible=False)
+        photo_field = ft.TextField(label="Photo", value=suspect["foto"], read_only=True, visible=False)
+        nik_field = ft.TextField(label="NIK", value=str(suspect["nik"]), read_only=True, visible=False)
+        age_field = ft.TextField(label="Age", value=str(suspect["usia"]), read_only=True, visible=False)
+        gender_field = ft.TextField(label="Gender", value=suspect["jk"], read_only=True, visible=False)
+        criminal_record_field = ft.TextField(label="Criminal Record", value=suspect["catatan_kriminal"], read_only=True, visible=False)
+        case_id_field = ft.TextField(label="Case ID", value=str(suspect["id_kasus"]), read_only=True, visible=False)
+
+        def open_edit_suspect_modal(e):
+            id_text.visible = False
+            name_text.visible = False
+            photo_text.visible = False
+            nik_text.visible = False
+            age_text.visible = False
+            gender_text.visible = False
+            criminal_record_text.visible = False
+            case_id_text.visible = False
+
+            id_field.visible = True
+            name_field.visible = True
+            photo_field.visible = True
+            nik_field.visible = True
+            age_field.visible = True
+            gender_field.visible = True
+            criminal_record_field.visible = True
+            case_id_field.visible = True
+
+            view_modal_dialog.title = ft.Text("Edit Suspect")
+            view_modal_dialog.actions = [
+                ft.Row(
+                    [
+                        ft.ElevatedButton("Save", on_click=save_updated_suspect),
+                        ft.ElevatedButton("Delete", bgcolor="red", color="white", on_click=delete_suspect),
+                        ft.TextButton("Cancel", on_click=cancel_edit),
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                )
+            ]
+            page.update()
+
+        def cancel_edit(e):
+            id_text.visible = True
+            name_text.visible = True
+            photo_text.visible = True
+            nik_text.visible = True
+            age_text.visible = True
+            gender_text.visible = True
+            criminal_record_text.visible = True
+            case_id_text.visible = True
+
+            id_field.visible = False
+            name_field.visible = False
+            photo_field.visible = False
+            nik_field.visible = False
+            age_field.visible = False
+            gender_field.visible = False
+            criminal_record_field.visible = False
+            case_id_field.visible = False
+
+            view_modal_dialog.title = ft.Text("View Suspect")
+            view_modal_dialog.actions = [
+                ft.Row(
+                    [
+                        ft.ElevatedButton("Edit", on_click=open_edit_suspect_modal),
+                        ft.TextButton("Close", on_click=lambda _: page.close(view_modal_dialog)),
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                )
+            ]
+            page.update()
 
         def save_updated_suspect(e):
             errors = []
@@ -304,15 +376,23 @@ def suspects_content(page: ft.Page):
             }
             suspects_model.update_suspect(updated_suspect)
             refresh_table()
-            page.close(edit_modal_dialog)
+            cancel_edit(e)
 
         def delete_suspect(e):
             suspects_model.delete_suspect(suspect["id"])
             refresh_table()
-            page.close(edit_modal_dialog)
+            page.close(view_modal_dialog)
 
-        edit_modal_dialog.content = ft.Column(
+        view_modal_dialog.content = ft.Column(
             [
+                id_text,
+                name_text,
+                photo_text,
+                nik_text,
+                age_text,
+                gender_text,
+                criminal_record_text,
+                case_id_text,
                 id_field,
                 name_field,
                 photo_field,
@@ -324,17 +404,16 @@ def suspects_content(page: ft.Page):
             ],
             tight=True,
         )
-        edit_modal_dialog.actions = [
+        view_modal_dialog.actions = [
             ft.Row(
                 [
-                    ft.ElevatedButton("Save", on_click=save_updated_suspect),
-                    ft.ElevatedButton("Delete", bgcolor="red", color="white", on_click=delete_suspect),
-                    ft.TextButton("Cancel", on_click=lambda _: page.close(edit_modal_dialog)),
+                    ft.ElevatedButton("Edit", on_click=open_edit_suspect_modal),
+                    ft.TextButton("Close", on_click=lambda _: page.close(view_modal_dialog)),
                 ],
                 alignment=ft.MainAxisAlignment.END,
             )
         ]
-        page.open(edit_modal_dialog)
+        page.open(view_modal_dialog)
 
     def handle_search(e):
         nonlocal filtered_data, current_page
