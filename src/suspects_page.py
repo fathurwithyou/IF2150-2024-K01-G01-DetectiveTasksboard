@@ -30,7 +30,7 @@ def suspects_content(page: ft.Page):
                     ft.DataCell(ft.Text(str(row["usia"]))),
                     ft.DataCell(ft.Text(str(row["jk"]))),
                     ft.DataCell(ft.Text(str(row["catatan_kriminal"]))),
-                    ft.DataCell(ft.Text(str(row["id_kasus"]))),
+                    ft.DataCell(ft.Text(", ".join(map(lambda x: '-' if x == 0 else str(x), row["id_kasus"])))),
                     ft.DataCell(
                         ft.IconButton(
                             icon=ft.icons.VISIBILITY,
@@ -155,7 +155,6 @@ def suspects_content(page: ft.Page):
         age_field = ft.TextField(label="Age")
         gender_field = ft.TextField(label="Gender")
         criminal_record_field = ft.TextField(label="Criminal Record")
-        case_id_field = ft.TextField(label="Case ID")
 
         def save_new_suspect(e):
             errors = []
@@ -189,12 +188,6 @@ def suspects_content(page: ft.Page):
             else:
                 criminal_record_field.error_text = None
 
-            if not case_id_field.value.strip() or not case_id_field.value.isdigit():
-                case_id_field.error_text = "Valid Case ID is required"
-                errors.append("case_id")
-            else:
-                case_id_field.error_text = None
-
             page.update()
 
             if errors:
@@ -208,7 +201,6 @@ def suspects_content(page: ft.Page):
                 "usia": int(age_field.value),
                 "jk": gender_field.value,
                 "catatan_kriminal": criminal_record_field.value,
-                "id_kasus": int(case_id_field.value),
             }
             suspects_model.add_suspect(new_suspect)
             refresh_table()
@@ -222,7 +214,6 @@ def suspects_content(page: ft.Page):
                 age_field,
                 gender_field,
                 criminal_record_field,
-                case_id_field,
             ],
             tight=True,
         )
@@ -247,7 +238,7 @@ def suspects_content(page: ft.Page):
         age_text = ft.Text(f"Age: {suspect['usia']}")
         gender_text = ft.Text(f"Gender: {suspect['jk']}")
         criminal_record_text = ft.Text(f"Criminal Record: {suspect['catatan_kriminal']}")
-        case_id_text = ft.Text(f"Case ID: {suspect['id_kasus']}")
+        case_id_text = ft.Text(f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), suspect["id_kasus"]))}')
 
         id_field = ft.TextField(label="ID", value=str(suspect["id"]), read_only=True, visible=False)
         name_field = ft.TextField(label="Name", value=suspect["nama"], read_only=True, visible=False)
@@ -256,8 +247,8 @@ def suspects_content(page: ft.Page):
         age_field = ft.TextField(label="Age", value=str(suspect["usia"]), read_only=True, visible=False)
         gender_field = ft.TextField(label="Gender", value=suspect["jk"], read_only=True, visible=False)
         criminal_record_field = ft.TextField(label="Criminal Record", value=suspect["catatan_kriminal"], read_only=True, visible=False)
-        case_id_field = ft.TextField(label="Case ID", value=str(suspect["id_kasus"]), read_only=True, visible=False)
-
+        case_id_field = ft.TextField(label="Case ID", value=", ".join(map(lambda x: '-' if x == 0 else str(x), suspect["id_kasus"])), read_only=True, visible=False)
+        
         def open_edit_suspect_modal(e):
             id_text.visible = False
             name_text.visible = False
@@ -276,6 +267,13 @@ def suspects_content(page: ft.Page):
             gender_field.visible = True
             criminal_record_field.visible = True
             case_id_field.visible = True
+
+            name_field.read_only = False
+            photo_field.read_only = False
+            nik_field.read_only = False
+            age_field.read_only = False
+            gender_field.read_only = False
+            criminal_record_field.read_only = False
 
             view_modal_dialog.title = ft.Text("Edit Suspect")
             view_modal_dialog.actions = [
@@ -308,6 +306,13 @@ def suspects_content(page: ft.Page):
             gender_field.visible = False
             criminal_record_field.visible = False
             case_id_field.visible = False
+
+            name_field.read_only = True
+            photo_field.read_only = True
+            nik_field.read_only = True
+            age_field.read_only = True
+            gender_field.read_only = True
+            criminal_record_field.read_only = True
 
             view_modal_dialog.title = ft.Text("View Suspect")
             view_modal_dialog.actions = [
@@ -353,12 +358,6 @@ def suspects_content(page: ft.Page):
             else:
                 criminal_record_field.error_text = None
 
-            if not case_id_field.value.strip() or not case_id_field.value.isdigit():
-                case_id_field.error_text = "Valid Case ID is required"
-                errors.append("case_id")
-            else:
-                case_id_field.error_text = None
-
             page.update()
 
             if errors:
@@ -372,11 +371,10 @@ def suspects_content(page: ft.Page):
                 "usia": int(age_field.value),
                 "jk": gender_field.value,
                 "catatan_kriminal": criminal_record_field.value,
-                "id_kasus": int(case_id_field.value),
             }
             suspects_model.update_suspect(updated_suspect)
             refresh_table()
-            cancel_edit(e)
+            page.close(view_modal_dialog)
 
         def delete_suspect(e):
             suspects_model.delete_suspect(suspect["id"])
