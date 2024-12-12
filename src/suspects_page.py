@@ -240,14 +240,14 @@ def suspects_content(page: ft.Page):
         criminal_record_text = ft.Text(f"Criminal Record: {suspect['catatan_kriminal']}")
         case_id_text = ft.Text(f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), suspect["id_kasus"]))}')
 
-        id_field = ft.TextField(label="ID", value=str(suspect["id"]), read_only=True, visible=False)
+        id_field = ft.TextField(label="ID", value=str(suspect["id"]), read_only=True, visible=False, disabled=True, color="grey")
         name_field = ft.TextField(label="Name", value=suspect["nama"], read_only=True, visible=False)
         photo_field = ft.TextField(label="Photo", value=suspect["foto"], read_only=True, visible=False)
         nik_field = ft.TextField(label="NIK", value=str(suspect["nik"]), read_only=True, visible=False)
         age_field = ft.TextField(label="Age", value=str(suspect["usia"]), read_only=True, visible=False)
         gender_field = ft.TextField(label="Gender", value=suspect["jk"], read_only=True, visible=False)
         criminal_record_field = ft.TextField(label="Criminal Record", value=suspect["catatan_kriminal"], read_only=True, visible=False)
-        case_id_field = ft.TextField(label="Case ID", value=", ".join(map(lambda x: '-' if x == 0 else str(x), suspect["id_kasus"])), read_only=True, visible=False)
+        case_id_field = ft.TextField(label="Case ID", value=", ".join(map(lambda x: '-' if x == 0 else str(x), suspect["id_kasus"])), read_only=True, visible=False, disabled=True, color="grey")
         
         def open_edit_suspect_modal(e):
             id_text.visible = False

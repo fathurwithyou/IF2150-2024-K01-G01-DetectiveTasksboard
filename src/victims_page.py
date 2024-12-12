@@ -238,13 +238,13 @@ def victims_content(page: ft.Page):
         forensic_text = ft.Text(f"Forensic Results: {victim['hasil_forensik']}")
         case_id_text = ft.Text(f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), victim["id_kasus"]))}')
 
-        id_field = ft.TextField(label="ID", value=str(victim["id"]), read_only=True, visible=False)
+        id_field = ft.TextField(label="ID", value=str(victim["id"]), read_only=True, visible=False, disabled=True, color="grey")
         name_field = ft.TextField(label="Name", value=victim["nama"], read_only=True, visible=False)
         nik_field = ft.TextField(label="NIK", value=str(victim["nik"]), read_only=True, visible=False)
         usia_field = ft.TextField(label="Usia", value=str(victim["usia"]), read_only=True, visible=False)
         gender_field = ft.TextField(label="Gender", value=victim["jk"], read_only=True, visible=False)
         forensic_field = ft.TextField(label="Forensic Results", value=victim["hasil_forensik"], read_only=True, visible=False)
-        case_id_field = ft.TextField(label="Case IDs (comma separated)", value=", ".join(map(str, victim["id_kasus"])), read_only=True, visible=False)
+        case_id_field = ft.TextField(label="Case IDs (comma separated)", value=", ".join(map(str, victim["id_kasus"])), read_only=True, visible=False, disabled=True, color="grey")
 
         def open_edit_victim_modal(e):
             id_text.visible = False

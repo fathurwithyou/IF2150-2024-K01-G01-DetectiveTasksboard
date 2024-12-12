@@ -16,8 +16,8 @@ class Suspects:
 
     def search_suspects(self, term):
         term = term.lower()
-        return self.suspects_df[
-            self.suspects_df.apply(
+        return self.get_suspects()[
+            self.get_suspects().apply(
                 lambda row: term in str(row.values).lower(), axis=1
             )
         ]

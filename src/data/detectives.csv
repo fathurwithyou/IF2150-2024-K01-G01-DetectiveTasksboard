@@ -1,5 +1,5 @@
 id,nama,nik
-1,Detektif A2,1123
+1,Detektif A2,1123123123
 2,Detektif B,2
 3,Detektif C,3
 4,Detektif D,4
@@ -13,9 +13,8 @@ id,nama,nik
 13,Detektif M,13
 14,Detektif N,14
 15,Detektif O,15
-16,Detektif P,16
+16,Detektif P,2
 17,Detektif Q,17
 18,Detektif R,18
 19,Detektif S,19
 20,Detektif T,20
-21,nice,123123

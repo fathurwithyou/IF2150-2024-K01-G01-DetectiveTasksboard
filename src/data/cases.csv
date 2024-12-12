@@ -1,8 +1,9 @@
 id,judul,status,tanggal_mulai,tanggal_selesai,perkembangan_kasus,catatan
-1,Pembunuhan di Sekeloa,Selesai,2021-01-01,2021-01-02,Seorang mahasiswa ditemukan tewas,Seorang mahasiswa ditemukan tewas di kamar kosnya
-2,Perampokan di Bandung,On-going,2023-05-10,,Pencurian dengan kekerasan terjadi di sebuah rumah,Masih dalam penyelidikan
-3,aaa,Belum Selesai,2024-12-12,,Tidak ada perkembangan,aaa
-7,tes,Belum Selesai,2024-12-12,,Tidak ada perkembangan,tes
 4,Kasus Penipuan,Belum Dimulai,2024-01-01,,Tindak penipuan di sektor perbankan,Belum ada perkembangan
 5,Kasus Pembunuhan,Belum Dimulai,2024-01-01,,Pembunuhan,Belum ada perkembangan
 6,Kasus Penipuan,Belum Dimulai,2024-01-01,,Tindak penipuan di sektor perbankan,Belum ada perkembangan
+3,aaa,Belum Selesai,2024-12-12,,Tidak ada perkembangan,aaa
+7,tes,Belum Selesai,2024-12-12,,Tidak ada perkembangan,tes
+2,Perampokan di Bandung,On-going,2023-05-10,,Pencurian dengan kekerasan terjadi di sebuah rumah,Masih dalam penyelidikan
+8,penipuan,On-going,2024-12-12,,Tidak ada perkembangan,agus
+1,Pembunuhan di Sekeloa,Selesai,2021-01-01,2021-01-02,Seorang mahasiswa ditemukan tewas,Seorang mahasiswa ditemukan tewas di kamar kosnya
