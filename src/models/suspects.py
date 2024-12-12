@@ -3,7 +3,7 @@ import pandas as pd
 class Suspects:
     def __init__(self):
         self.suspects_path = "data/suspects.csv"
-        self.cases_path = "data/suspects_cases.csv"
+        self.cases_path = "data/suspect_cases.csv"
         self.suspects_df = pd.read_csv(self.suspects_path)
         self.cases_df = pd.read_csv(self.cases_path)
 
@@ -53,3 +53,6 @@ class Suspects:
         if not self.suspects_df.empty:
             return self.suspects_df["id"].max()
         return 0
+    
+    def get_suspect_by_id_kasus(self, id_kasus):
+        return self.suspects_

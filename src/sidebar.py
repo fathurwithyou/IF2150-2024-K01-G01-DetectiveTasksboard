@@ -4,7 +4,7 @@ def create_sidebar(on_navigate):
     return ft.Container(
         content=ft.Column(
             [
-                ft.Text("Navigation", size=20, weight=ft.FontWeight.BOLD),
+                ft.Text("Detective Tasksboard", size=20, weight=ft.FontWeight.BOLD),
                 ft.Divider(),
                 ft.ListTile(
                     leading=ft.Icon(ft.icons.DASHBOARD),

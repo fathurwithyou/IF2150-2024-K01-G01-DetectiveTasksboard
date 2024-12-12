@@ -18,7 +18,7 @@ def main(page: ft.Page):
         if page_name == "dashboard":
             page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), dashboard_content()], expand=True))
         elif page_name == "cases":
-            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), cases_content()], expand=True))
+            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), cases_content(page)], expand=True))
         elif page_name == "victims":
             page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), victims_content(page)], expand=True))
         elif page_name == "suspects":
