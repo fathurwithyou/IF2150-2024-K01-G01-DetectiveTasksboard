@@ -17,8 +17,8 @@ class Victims:
     
     def search_victims(self, term):
         term = term.lower()
-        return self.victims_df[
-            self.victims_df.apply(
+        return self.get_victims()[
+            self.get_victims().apply(
                 lambda row: term in str(row.values).lower(), axis=1
             )
         ]
