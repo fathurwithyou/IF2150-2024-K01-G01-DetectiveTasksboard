@@ -1,6 +1,7 @@
 # IF2150-2024-K01-G01-DetectiveTasksboard
 
-# Detective Tasksboard
+![Detective Tasksboard Text Logo](https://github.com/user-attachments/assets/a1e7d5db-9ef3-437d-9e41-b69ce7ac5b7c)
+
 Detective Tasksboard adalah perangkat lunak yang dirancang untuk membantu lawyer dalam mengelola berbagai kasus hukum yang ditangani secara efisien dan terstruktur. Dengan perangkat lunak ini, pengelolaan data hukum menjadi lebih mudah, cepat, dan akurat.
 
 # Fitur Utama
