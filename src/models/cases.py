@@ -39,13 +39,11 @@ class Cases:
                                               == id_kasus]['id_detective'].tolist()
         return self.detectives_df.loc[self.detectives_df.index.isin(id_detectives)]
 
-    def get_cases_info(self, id_kasus: int) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-        # get suspects, victims, and detectives
+    def get_cases_info(self, id_kasus: int) -> Tuple[dict, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         case = self.cases_df.loc[self.cases_df.index == id_kasus]
-        suspects = self.get_suspects_by_id_kasus(id_kasus)['nama'].tolist()
-        victims = self.get_victims_by_id_kasus(id_kasus)['nama'].tolist()
-        detectives = self.get_detectives_by_id_kasus(id_kasus)['nama'].tolist()
-        # convert case to dictionary
+        suspects = self.get_suspects_by_id_kasus(id_kasus)
+        victims = self.get_victims_by_id_kasus(id_kasus)
+        detectives = self.get_detectives_by_id_kasus(id_kasus)
         case = case.to_dict(orient='records')[0]
         return case, suspects, victims, detectives
 
@@ -59,21 +57,51 @@ class Cases:
 
     def write_cases(self):
         self.cases_df.to_csv(self.path, index_label='id')
-
-    def update_case(self, new_case):
-        updated_row = pd.DataFrame([new_case], index=[0])
-
-        for i in range(len(updated_row.columns)):
-            self.cases_df.loc[
-                self.cases_df["id"] == updated_row["id"].values[0], updated_row.columns[i]
-            ] = updated_row[updated_row.columns[i]].values[0]
-
-        self.sort_cases()
+        
+    def write_updated_case(self):
+        self.suspect_id.to_csv("data/suspect_cases.csv", index=False)
+        self.victim_id.to_csv("data/victim_cases.csv", index=False)
+        self.detective_id.to_csv("data/detective_cases.csv", index=False)
         self.write_cases()
 
+    def update_case(self, id_kasus, updated_case, list_of_suspect_id, list_of_victim_id, list_of_detective_id):
+        """Dropping all the previous data and updating with the new one"""
+        self.cases_df.drop(self.cases_df[self.cases_df.index == id_kasus].index, inplace=True)
+        self.suspect_id.drop(self.suspect_id[self.suspect_id['id_kasus'] == id_kasus].index, inplace=True)
+        self.victim_id.drop(self.victim_id[self.victim_id['id_kasus'] == id_kasus].index, inplace=True)
+        self.detective_id.drop(self.detective_id[self.detective_id['id_kasus'] == id_kasus].index, inplace=True)
+        
+        for id_suspect in list_of_suspect_id:
+            self.suspect_id = pd.concat([self.suspect_id, pd.DataFrame([[id_suspect, id_kasus]], columns=['id_suspect', 'id_kasus'])])
+        
+        for id_victim in list_of_victim_id:
+            self.victim_id = pd.concat([self.victim_id, pd.DataFrame([[id_victim, id_kasus]], columns=['id_victim', 'id_kasus'])])
+            
+        for id_detective in list_of_detective_id:
+            self.detective_id = pd.concat([self.detective_id, pd.DataFrame([[id_detective, id_kasus]], columns=['id_detective', 'id_kasus'])])
+        
+        self.cases_df = pd.concat([self.cases_df, pd.DataFrame([updated_case], index=[id_kasus])])
+        
+        self.write_updated_case()
+        self.sort_cases()
+
     def add_case(self, case):
-        new_case_df = pd.DataFrame([case], index=[self.cases_df.index.max() + 1 if not self.cases_df.empty else 0])
+        new_case_df = pd.DataFrame(
+            [case], index=[self.cases_df.index.max() + 1 if not self.cases_df.empty else 0])
         self.cases_df = pd.concat([self.cases_df, new_case_df])
         self.sort_cases()
         self.write_cases()
+        
+    def get_name_list(self, df: pd.DataFrame) -> List[str]:
+        return df['nama'].tolist()
 
+    def get_all_suspects_id(self) -> pd.DataFrame:
+        return self.suspect_id
+    
+    def get_all_victims_id(self) -> pd.DataFrame:
+        return self.victim_id
+    
+    def get_all_detectives_id(self) -> pd.DataFrame:
+        return self.detective_id
+    
+    

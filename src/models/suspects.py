@@ -6,7 +6,11 @@ class Suspects:
         self.cases_path = "data/suspect_cases.csv"
         self.suspects_df = pd.read_csv(self.suspects_path)
         self.cases_df = pd.read_csv(self.cases_path)
-
+        
+    def get_suspect_by_id(self, id):
+        _df = self.suspects_df[self.suspects_df["id"] == id]
+        return _df.to_dict(orient="records")[0] if not _df.empty else {}
+        
     def get_suspects(self):
         merged_df = self.suspects_df.merge(self.cases_df, left_on='id', right_on='id_suspect', how='left')
         merged_df['id_kasus'] = merged_df['id_kasus'].fillna(0).astype(int)
