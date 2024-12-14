@@ -54,7 +54,6 @@ def dashboard_content(page: ft.Page):
                         ft.Text(
                             f" ({len(all_cases[all_cases['status'] == 'Belum Selesai']) / len(all_cases) * 100:.0f}%)"),
                     ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     # spacing=10
                 ),
                 ft.Row(
