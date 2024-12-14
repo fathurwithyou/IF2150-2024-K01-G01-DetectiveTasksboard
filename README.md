@@ -1,11 +1,17 @@
 # IF2150-2024-K01-G01-DetectiveTasksboard
 
-![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)
-![Supported OS](https://img.shields.io/badge/os-windows%20|%20macOS%20|%20linux-lightgrey)
-![Flet](https://img.shields.io/badge/Flet-0.25.1-green?logo=flet&logoColor=white)
-![FPDF](https://img.shields.io/badge/FPDF-1.7.2-orange?logo=fpdf&logoColor=white)
-![Pylint](https://img.shields.io/badge/Pylint-3.3.2-yellow?logo=python&logoColor=white)
-![Pytest](https://img.shields.io/badge/Pytest-7.4.0-red?logo=pytest&logoColor=white)
+# Badges for Project Requirements
+
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python)
+![OS](https://img.shields.io/badge/Supported%20OS-Windows%20|%20macOS%20|%20Linux-lightgrey?logo=windows)
+![Flet](https://img.shields.io/badge/Flet-0.25.1-purple?logo=flet)
+![FPDF](https://img.shields.io/badge/FPDF-1.7.2-orange?logo=readthedocs)
+![Pandas](https://img.shields.io/badge/Pandas-1.5.3-teal?logo=pandas)
+![Pillow](https://img.shields.io/badge/Pillow-10.1.0-green?logo=pillow)
+![Pylint](https://img.shields.io/badge/Pylint-3.3.2-red?logo=pylint)
+![Pytest](https://img.shields.io/badge/Pytest-7.4.0-yellow?logo=pytest)
+![python-dateutil](https://img.shields.io/badge/python--dateutil-2.8.2-darkblue?logo=python)
+![Typing](https://img.shields.io/badge/Typing-3.7.4.3-brown?logo=typeform)
 
 
 ![Detective Tasksboard Text Logo](image.png)
