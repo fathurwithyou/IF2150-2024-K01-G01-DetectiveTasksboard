@@ -22,6 +22,7 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.DARK
     page.bgcolor = COLORS["background_dark"]
     page.padding = 10
+    page.window_min_width = 1200 
 
     # Custom theme to match Daredevil palette
     page.theme = ft.Theme(

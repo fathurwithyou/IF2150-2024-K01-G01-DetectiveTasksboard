@@ -204,6 +204,7 @@ def dashboard_content(page: ft.Page):
             border=None,
             bgcolor=COLORS["background_dark"],
             visible=False,  # Hidden by default
+
         )
 
         toggle_button = ft.IconButton(
@@ -961,7 +962,6 @@ def dashboard_content(page: ft.Page):
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN
         )
     )
-
     container = ft.Container(
         content=ft.Column(
             [
