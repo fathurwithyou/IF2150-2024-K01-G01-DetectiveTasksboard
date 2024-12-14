@@ -147,7 +147,7 @@ def suspects_content(page: ft.Page):
                     ],
                     spacing=10,  # Add spacing between columns
                 ),
-                ft.Divider(thickness=1, color="grey"),  # Line under the header
+                ft.Divider(thickness=1, color="text_muted"),  # Line under the header
             ],
             spacing=0,  # Minimize space between header elements
         )
@@ -214,7 +214,7 @@ def suspects_content(page: ft.Page):
                 )
             )
             # Add a separator line after each row
-            table_rows.append(ft.Divider(thickness=1, color="grey"))
+            table_rows.append(ft.Divider(thickness=1, color="text_muted"))
 
         return ft.Column(
             table_rows,
@@ -405,6 +405,9 @@ def suspects_content(page: ft.Page):
         filtered_data = filtered_data.sort_values(by=column, ascending=(sort_order == "asc"))
         current_page = 0
         update_content(current_page)
+        table_header.content = build_table_header()
+        table_header.update()
+        page.update()
 
     def update_content(page_index):
         nonlocal current_page, total_pages
@@ -628,7 +631,10 @@ def suspects_content(page: ft.Page):
         alignment=ft.MainAxisAlignment.CENTER,
     )
 
-    table_header = build_table_header()
+    table_header = ft.Container(
+        content=build_table_header(),
+        bgcolor=COLORS["background_dark"],
+    )
 
     table_container = ft.Container(
         content=ft.Column(
@@ -642,47 +648,86 @@ def suspects_content(page: ft.Page):
         height=450,  # Adjust the height as needed
     )
 
-    table_container = ft.Container(content=build_table(current_page))
+    def update_border_color(e):
+        if e.data == "true":
+            search_field.border_color = COLORS["secondary_red"]
+            search_field.label_style = ft.TextStyle(
+                color=COLORS["primary_red"])
+        else:
+            search_field.border_color = COLORS["background_dark"]
+
+        search_field.update()
+
+    search_field = ft.TextField(
+        label="Search Detectives...",
+        width=300,
+        border_color=COLORS["background_dark"],
+        focused_border_color=COLORS["secondary_red"],
+        color=COLORS["text_light"],
+        cursor_color=COLORS["text_light"],
+        on_change=handle_search,
+        on_focus=update_border_color,
+        on_blur=update_border_color
+    )
 
     container = ft.Container(
         content=ft.Column(
             [
-                ft.Text("Suspects", size=30,
-                        weight=ft.FontWeight.BOLD, color="white"),
-                ft.Row(
+                ft.ShaderMask(
+                    content=ft.Text(
+                        "Victims",
+                        size=30,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.colors.WHITE,  # Text color should be white for gradient
+                    ),
+                    shader=ft.LinearGradient(
+                        colors=[COLORS["primary_red"],
+                                COLORS["secondary_red"], COLORS["primary_red"]],
+                        begin=ft.Alignment(-1, -1),
+                        end=ft.Alignment(1, 1),
+                    ),
+                    blend_mode=ft.BlendMode.SRC_IN,  # Blend mode to apply gradient
+                ),
+                ft.Column(
                     [
-                        ft.TextField(
-                            label="Search Suspects...",
-                            width=300,
-                            on_change=handle_search,
+                        ft.Column(
+                            [
+                                ft.Row(
+                                    [
+                                        search_field,
+                                        ft.ElevatedButton(
+                                            text="Add Suspect",
+                                            icon=ft.icons.ADD,
+                                            bgcolor=COLORS["primary_red"],
+                                            color=COLORS["text_light"],
+                                            style=ft.ButtonStyle(
+                                                shape=ft.RoundedRectangleBorder(radius=10),
+                                                overlay_color={
+                                                    ft.MaterialState.HOVERED: COLORS["secondary_red"]
+                                                }
+                                            ),
+                                            on_click=lambda _: open_add_suspect_modal(),
+                                        ),
+                                    ],
+                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                ),
+                                table_header,
+                            ],
+                            spacing=20
                         ),
-                        ft.ElevatedButton(
-                            text="Add Suspect",
-                            icon=ft.icons.ADD,
-                            bgcolor=COLORS["primary_red"],
-                            color=COLORS["text_light"],
-                            style=ft.ButtonStyle(
-                                shape=ft.RoundedRectangleBorder(radius=10),
-                                overlay_color={
-                                    ft.MaterialState.HOVERED: COLORS["secondary_red"]
-                                }
-                            ),
-                            on_click=lambda _: open_add_suspect_modal(),
+                        table_container,
+                        ft.Container(
+                            content=pagination_controls,
+                            alignment=ft.alignment.center,
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                ),
-                table_header,
-                table_container,
-                ft.Container(
-                    content=pagination_controls,
-                    alignment=ft.alignment.center,
+                    expand=True
                 ),
             ],
-            alignment=ft.MainAxisAlignment.START,
-            spacing=20  # Add spacing between elements
+            expand=True
         ),
-        expand=True,
+        bgcolor=COLORS["background_dark"],
         padding=10,
     )
 
