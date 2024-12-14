@@ -51,7 +51,7 @@ def suspects_content(page: ft.Page):
                                 tight=True,
                                 spacing=5  # Add spacing between elements
                             ),
-                            expand=1
+                            expand=True
                         ),
                         ft.Container(
                             ft.Row(
@@ -117,7 +117,7 @@ def suspects_content(page: ft.Page):
                         ),
                         ft.Container(
                             ft.Text("Criminal Record"),
-                            expand=2
+                            expand=True
                         ),
                         ft.Container(
                             ft.Row(
@@ -165,7 +165,7 @@ def suspects_content(page: ft.Page):
                 ft.Row(
                     [
                         ft.Container(
-                            ft.Text(str(row["id"]), overflow=ft.TextOverflow.ELLIPSIS), expand=1, alignment=ft.alignment.top_left),
+                            ft.Text(str(row["id"]), overflow=ft.TextOverflow.ELLIPSIS), expand=True, alignment=ft.alignment.top_left),
                         ft.Container(
                             ft.Text(str(row["nama"]), overflow=ft.TextOverflow.ELLIPSIS), expand=2, alignment=ft.alignment.top_left),
                         ft.Container(
@@ -177,7 +177,7 @@ def suspects_content(page: ft.Page):
                         ft.Container(
                             ft.Text(str(row["jk"]), overflow=ft.TextOverflow.ELLIPSIS), expand=1, alignment=ft.alignment.top_left),
                         ft.Container(ft.Text(
-                            str(row["catatan_kriminal"]), overflow=ft.TextOverflow.ELLIPSIS), expand=2, alignment=ft.alignment.top_left),
+                            str(row["catatan_kriminal"]), overflow=ft.TextOverflow.ELLIPSIS), expand=True, alignment=ft.alignment.top_left),
                         ft.Container(
                             ft.Text(", ".join(map(lambda x: '-' if x == 0 else str(x), row["id_kasus"])), overflow=ft.TextOverflow.ELLIPSIS),
                             expand=True,
@@ -205,8 +205,6 @@ def suspects_content(page: ft.Page):
                             spacing=5,
                             alignment=ft.MainAxisAlignment.CENTER # Add spacing between buttons
                             ),
-                            ]),
-                            
                             expand=1,
                             alignment=ft.alignment.center,
                         ),
