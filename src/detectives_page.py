@@ -337,27 +337,34 @@ def detectives_content(page: ft.Page):
     container = ft.Container(
         content=ft.Column(
             [
-                ft.Text("Detectives", size=30, weight=ft.FontWeight.BOLD, color="white"),
-                ft.Row(
+                ft.Column(
                     [
-                        ft.TextField(
-                            label="Search Detectives...",
-                            width=300,
-                            on_change=handle_search,
+                        ft.Text("Detectives", size=30, weight=ft.FontWeight.BOLD, color="white"),
+                        ft.Row(
+                            [
+                                ft.TextField(
+                                    label="Search Detectives...",
+                                    width=300,
+                                    on_change=handle_search,
+                                ),
+                                ft.ElevatedButton(
+                                    text="Add Detective",
+                                    icon=ft.icons.ADD,
+                                    bgcolor="white",
+                                    color="black",
+                                    on_click=lambda _: open_add_detective_modal(),
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         ),
-                        ft.ElevatedButton(
-                            text="Add Detective",
-                            icon=ft.icons.ADD,
-                            bgcolor="white",
-                            color="black",
-                            on_click=lambda _: open_add_detective_modal(),
-                        ),
-                    ],
+                        table_container,
+                    ]
                 ),
-                table_container,
                 pagination_controls,
-            ]
-        )
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        ),
+        expand=True
     )
 
     return container

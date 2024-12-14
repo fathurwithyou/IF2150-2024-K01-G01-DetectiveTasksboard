@@ -16,16 +16,22 @@ def main(page: ft.Page):
         page.controls.clear()  # Clear the current content
         sidebar = create_sidebar(on_navigate)
         if page_name == "dashboard":
-            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), dashboard_content()], expand=True))
+            container, show_ongoing_cases = dashboard_content(page)
+            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), container], expand=True))
+            page.update()
+            show_ongoing_cases(None)
         elif page_name == "cases":
             page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), cases_content(page)], expand=True))
+            page.update()
         elif page_name == "victims":
             page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), victims_content(page)], expand=True))
+            page.update()
         elif page_name == "suspects":
             page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), suspects_content(page)], expand=True))
+            page.update()
         elif page_name == "detectives":
             page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), detectives_content(page)], expand=True))
-        page.update()
+            page.update()
 
     # Initialize to Dashboard
     on_navigate("dashboard")
