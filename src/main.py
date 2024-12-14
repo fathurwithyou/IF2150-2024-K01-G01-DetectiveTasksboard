@@ -16,10 +16,8 @@ def main(page: ft.Page):
         page.controls.clear()  # Clear the current content
         sidebar = create_sidebar(on_navigate)
         if page_name == "dashboard":
-            container, show_ongoing_cases = dashboard_content(page)
-            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), container], expand=True))
+            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), dashboard_content(page)], expand=True))
             page.update()
-            show_ongoing_cases(None)
         elif page_name == "cases":
             page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), cases_content(page)], expand=True))
             page.update()

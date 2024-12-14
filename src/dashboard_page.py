@@ -6,11 +6,10 @@ from models.detectives import Detective
 from calendar import HTMLCalendar
 from dateutil.relativedelta import relativedelta
 import calendar
-from datetime import datetime
+from datetime import datetime, date
 
 
 def dashboard_content(page: ft.Page):
-    current_view = "Ongoing Cases"
     case_model = Cases()
     victim_model = Victims()
     suspect_model = Suspects()
@@ -19,6 +18,7 @@ def dashboard_content(page: ft.Page):
     all_cases = case_model.get_cases()
     ongoing_cases = all_cases[all_cases['status'] == 'On-going']
     filtered_cases = ongoing_cases.copy()
+    filtered_cases_calender = all_cases.copy()
     search_query = ""
 
     def create_case_tile(id_kasus):
@@ -137,15 +137,32 @@ def dashboard_content(page: ft.Page):
             [create_case_tile(idx) for idx, case in filtered_cases.iterrows()],
             scroll="auto",  
         )
-        if current_view == "Calendar":
-            show_calendar(None)
         page.update()
+    
+    def refresh_calendar():
+        """Refresh the calendar based on the current search query."""
+        nonlocal filtered_cases_calender
+        if search_query.strip():
+            filtered_cases_calender = all_cases[
+                all_cases.apply(
+                    lambda row: search_query.lower() in str(row.values).lower(),
+                    axis=1,
+                )
+            ]
+        else:
+            filtered_cases_calender = all_cases
+
+        build_calendar()
+        calendar_container.update()
+
+
 
     def handle_search(e):
         """Handle the search input."""
         nonlocal search_query
         search_query = e.control.value
         refresh_list()
+        refresh_calendar()
 
 
     def edit_case_modal(case):
@@ -723,164 +740,139 @@ def dashboard_content(page: ft.Page):
 
         page.open(add_case_modal)
 
-    def show_ongoing_cases(e):
-        nonlocal current_view
-        current_view = "Ongoing Cases"
-        main_container.content = ft.Column(
-            [
-                ft.Text("Ongoing Cases", size=30, weight=ft.FontWeight.BOLD),
-                list_container,
-            ],
-        )
-        main_container.update()
+    # Calendar logic directly within show_calendar
+    today = datetime.today()
+    current_month = today.month
+    current_year = today.year
 
-    def show_calendar(e):
-        nonlocal current_view
-        current_view = "Calendar"
-        # Calendar logic directly within show_calendar
-        today = datetime.today()
-        current_month = today.month
-        current_day = today.day
-        current_year = today.year
-    
-        # Set theme
-        border_color = ft.colors.PINK_700
-        text_color = ft.colors.PINK_50
-        date_valid_color = ft.colors.PINK_700
-    
-        def get_calendar():
-            """Return the calendar for the current month and year."""
-            cal = HTMLCalendar()
-            return cal.monthdayscalendar(current_year, current_month)
-    
-        def change_month(delta):
-            """Change the month by the specified delta."""
-            nonlocal current_year, current_month
-            current = datetime.date(current_year, current_month, 1)
-            next_month = current + relativedelta(months=delta)
-            current_year = next_month.year
-            current_month = next_month.month
-            build_calendar()
-            main_container.update()
+    # Set theme
+    border_color = ft.colors.PINK_700
+    text_color = ft.colors.PINK_50
+    date_valid_color = ft.colors.PINK_700
 
-    
-        def on_date_selected(e):
-            """Handle the date selection event."""
-            selected_date = e.control.data
-            year, month, day = map(int, selected_date.split('-'))
-            valid = is_date_valid(year, month, day)
-            # output.value = f"Selected date: {selected_date} - {'Valid' if valid else 'Invalid'}"
-            # output.update()
-        
-            if valid:
-                cases_on_date = ongoing_cases[ongoing_cases['tanggal_mulai'] == selected_date]
-                case_tiles = [create_case_tile(idx) for idx, case in cases_on_date.iterrows()]
-        
-                case_modal = ft.AlertDialog(
-                    title=ft.Text(f"Cases on {selected_date}", size=20, weight=ft.FontWeight.BOLD),
-                    content=ft.Container(
-                        content=ft.Column(case_tiles, spacing=10),
-                        width=500,
-                        height=300,
-                    ),
-                    actions=[
-                        ft.TextButton(
-                            "Close",
-                            on_click=lambda _: page.close(case_modal),
-                            style=ft.ButtonStyle(
-                                color=ft.colors.ERROR,
-                                shape=ft.RoundedRectangleBorder(radius=5),
-                            )
-                        ),
-                    ],
-                    modal=True,
-                    shape=ft.RoundedRectangleBorder(radius=5),
-                )
-        
-                page.open(case_modal)
-    
-        def is_date_valid(year, month, day):
-            """Check if the date is in ongoing_cases."""
-            date_str = f"{year}-{month:02}-{day:02}"
-            return any(case['tanggal_mulai'] == date_str for _, case in filtered_cases.iterrows())
-    
-        def build_calendar():
-            """Build the calendar UI."""
-            current_calendar = get_calendar()
-    
-            # Date header with navigation
-            str_date = f"{calendar.month_name[current_month]} {current_year}"
-            header = ft.Row(
-                controls=[
-                    ft.IconButton(icon=ft.icons.CHEVRON_LEFT, on_click=lambda e: change_month(-1)),
-                    ft.Text(str_date, size=20, color=text_color),
-                    ft.IconButton(icon=ft.icons.CHEVRON_RIGHT, on_click=lambda e: change_month(1)),
-                ],
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-            )
-    
-            # Days of the week header
-            week_header = ft.Row(
-                controls=[ft.Text(day[:2], color=text_color) for day in calendar.day_name],
-                alignment=ft.MainAxisAlignment.CENTER
-            )
-    
-            # Calendar grid
-            calendar_rows = []
-            for week in current_calendar:
-                week_row = ft.Row(spacing=2, alignment=ft.MainAxisAlignment.CENTER)
-                for day in week:
-                    if day > 0:
-                        date_valid = is_date_valid(current_year, current_month, day)
-                        day_button = ft.Container(
-                            content=ft.Text(str(day), color=text_color, weight=ft.FontWeight.BOLD if date_valid else ft.FontWeight.NORMAL),
-                            on_click=on_date_selected,
-                            data=f"{current_year}-{current_month:02}-{day:02}",
-                            width=40,
-                            height=40,
-                            alignment=ft.alignment.center,
-                            bgcolor=date_valid_color if date_valid else ft.colors.TRANSPARENT,
-                            border_radius=ft.border_radius.all(5)
-                        )
-                    else:
-                        day_button = ft.Container(width=40, height=40)
-                    week_row.controls.append(day_button)
-                calendar_rows.append(week_row)
-    
-            # Combine all components into the column
-            calendar_column = ft.Column(
-                controls=[header, week_header] + calendar_rows,
-                spacing=5,
-                alignment=ft.MainAxisAlignment.START
-            )
-    
-            calendar_container.content = calendar_column
-    
-        # Output for selected date
-        # output = ft.Text()
-    
-        # Main calendar container
-        calendar_container = ft.Container(
-            width=355,
-            height=300,
-            padding=ft.padding.all(2),
-            border=ft.border.all(2, border_color),
-            border_radius=ft.border_radius.all(10),
-            alignment=ft.alignment.bottom_center
-        )
-    
-        # Build the initial calendar view
+    def get_calendar():
+        """Return the calendar for the current month and year."""
+        cal = HTMLCalendar()
+        return cal.monthdayscalendar(current_year, current_month)
+
+    def change_month(delta):
+        """Change the month by the specified delta."""
+        nonlocal current_year, current_month
+        current = date(current_year, current_month, 1)
+        next_month = current + relativedelta(months=delta)
+        current_year = next_month.year
+        current_month = next_month.month
         build_calendar()
-    
-        # Set calendar content into main container
-        main_container.content = ft.Column(
-            [
-                ft.Text("Calendar", size=30, weight=ft.FontWeight.BOLD),
-                calendar_container,
-                # output,
-            ],
-        )
         main_container.update()
+
+
+    def on_date_selected(e):
+        """Handle the date selection event."""
+        selected_date = e.control.data
+        year, month, day = map(int, selected_date.split('-'))
+        valid = is_date_valid(year, month, day)
+        # output.value = f"Selected date: {selected_date} - {'Valid' if valid else 'Invalid'}"
+        # output.update()
+    
+        if valid:
+            cases_on_date = filtered_cases_calender[filtered_cases_calender['tanggal_mulai'] == selected_date]
+            case_tiles = [create_case_tile(idx) for idx, case in cases_on_date.iterrows()]
+    
+            case_modal = ft.AlertDialog(
+                title=ft.Text(f"Cases on {selected_date}", size=20, weight=ft.FontWeight.BOLD),
+                content=ft.Container(
+                    content=ft.Column(case_tiles, spacing=10),
+                    width=500,
+                    height=300,
+                ),
+                actions=[
+                    ft.TextButton(
+                        "Close",
+                        on_click=lambda _: page.close(case_modal),
+                        style=ft.ButtonStyle(
+                            color=ft.colors.ERROR,
+                            shape=ft.RoundedRectangleBorder(radius=5),
+                        )
+                    ),
+                ],
+                modal=True,
+                shape=ft.RoundedRectangleBorder(radius=5),
+            )
+    
+            page.open(case_modal)
+
+    def is_date_valid(year, month, day):
+        """Check if the date is in ongoing_cases."""
+        date_str = f"{year}-{month:02}-{day:02}"
+        return any(case['tanggal_mulai'] == date_str for _, case in filtered_cases_calender.iterrows())
+
+    def build_calendar():
+        """Build the calendar UI."""
+        current_calendar = get_calendar()
+
+        # Date header with navigation
+        str_date = f"{calendar.month_name[current_month]} {current_year}"
+        header = ft.Row(
+            controls=[
+                ft.IconButton(icon=ft.icons.CHEVRON_LEFT, on_click=lambda e: change_month(-1)),
+                ft.Text(str_date, size=20, color=text_color),
+                ft.IconButton(icon=ft.icons.CHEVRON_RIGHT, on_click=lambda e: change_month(1)),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        )
+
+        # Days of the week header
+        week_header = ft.Row(
+            controls=[ft.Text(day[:2], color=text_color) for day in calendar.day_name],
+            alignment=ft.MainAxisAlignment.CENTER
+        )
+
+        # Calendar grid
+        calendar_rows = []
+        for week in current_calendar:
+            week_row = ft.Row(spacing=2, alignment=ft.MainAxisAlignment.CENTER)
+            for day in week:
+                if day > 0:
+                    date_valid = is_date_valid(current_year, current_month, day)
+                    day_button = ft.Container(
+                        content=ft.Text(str(day), color=text_color, weight=ft.FontWeight.BOLD if date_valid else ft.FontWeight.NORMAL),
+                        on_click=on_date_selected,
+                        data=f"{current_year}-{current_month:02}-{day:02}",
+                        width=40,
+                        height=40,
+                        alignment=ft.alignment.center,
+                        bgcolor=date_valid_color if date_valid else ft.colors.TRANSPARENT,
+                        border_radius=ft.border_radius.all(5)
+                    )
+                else:
+                    day_button = ft.Container(width=40, height=40)
+                week_row.controls.append(day_button)
+            calendar_rows.append(week_row)
+
+        # Combine all components into the column
+        calendar_column = ft.Column(
+            controls=[header, week_header] + calendar_rows,
+            spacing=5,
+            alignment=ft.MainAxisAlignment.START
+        )
+
+        calendar_container.content = calendar_column
+
+    # Output for selected date
+    # output = ft.Text()
+
+    # Main calendar container
+    calendar_container = ft.Container(
+        width=355,
+        height=300,
+        padding=ft.padding.all(2),
+        border=ft.border.all(2, border_color),
+        border_radius=ft.border_radius.all(10),
+        alignment=ft.alignment.bottom_center
+    )
+
+    # Build the initial calendar view
+    build_calendar()
 
     # List container for displaying cases
     list_container = ft.Container(
@@ -889,18 +881,18 @@ def dashboard_content(page: ft.Page):
                           scroll="auto"), height=200, expand=True
     )
 
-
     main_container = ft.Container(expand=True, padding=20)
 
-    header_controls = ft.Row(
+    main_container.content = ft.Column(
         [
-            ft.ElevatedButton("Ongoing Cases", on_click=show_ongoing_cases),
-            ft.ElevatedButton("Calendar", on_click=show_calendar),
+            ft.Text("Calendar", size=30, weight=ft.FontWeight.BOLD),
+            calendar_container,
+            ft.Text("Ongoing Cases", size=30, weight=ft.FontWeight.BOLD),
+            list_container,
         ],
-        alignment=ft.MainAxisAlignment.END,
     )
 
-    subheader_controls = ft.Row(
+    header_controls = ft.Row(
         [
             ft.TextField(
                 label="Search Cases...",
@@ -925,17 +917,12 @@ def dashboard_content(page: ft.Page):
     container = ft.Container(
         content=ft.Column(
             [
-                ft.Row([
-                    ft.Text("Dashboard", size=30, weight=ft.FontWeight.BOLD),
-                    header_controls
-                ],
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                ),
-                subheader_controls,
+                ft.Text("Dashboard", size=30, weight=ft.FontWeight.BOLD),
+                header_controls,
                 main_container,
             ],
         ),
         expand=True,
     )
 
-    return container, show_ongoing_cases
+    return container
