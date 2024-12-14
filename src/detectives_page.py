@@ -37,6 +37,7 @@ def detectives_content(page: ft.Page):
     )
 
     def build_table_header():
+        nonlocal sort_column, sort_order
         return ft.Column(
             [
                 ft.Row(
@@ -49,6 +50,7 @@ def detectives_content(page: ft.Page):
                                         icon=ft.icons.ARROW_UPWARD if sort_column == "id" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
                                         on_click=lambda _: sort_data("id"),
                                         icon_color="white",
+                                        icon_size=16,
                                         tooltip="Sort by ID",
                                     ),
                                 ],
@@ -62,9 +64,10 @@ def detectives_content(page: ft.Page):
                                 [
                                     ft.Text("Name"),
                                     ft.IconButton(
-                                        icon=ft.icons.ARROW_UPWARD if sort_column == "nama" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                                        icon=ft.icons.ARROW_UPWARD if (sort_column == "nama" and sort_order == "asc") else ft.icons.ARROW_DOWNWARD,
                                         on_click=lambda _: sort_data("nama"),
                                         icon_color="white",
+                                        icon_size=16,
                                         tooltip="Sort by Name",
                                     ),
                                 ],
@@ -81,6 +84,7 @@ def detectives_content(page: ft.Page):
                                         icon=ft.icons.ARROW_UPWARD if sort_column == "nik" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
                                         on_click=lambda _: sort_data("nik"),
                                         icon_color="white",
+                                        icon_size=16,
                                         tooltip="Sort by NIK",
                                     ),
                                 ],
@@ -98,6 +102,7 @@ def detectives_content(page: ft.Page):
                                         on_click=lambda _: sort_data(
                                             "id_kasus"),
                                         icon_color="white",
+                                        icon_size=16,
                                         tooltip="Sort by Case IDs",
                                     ),
                                 ],
@@ -112,9 +117,9 @@ def detectives_content(page: ft.Page):
                             alignment=ft.alignment.center
                         ),
                     ],
-                    spacing=0,  # No additional spacing inside the header row
+                    spacing=10,  # No additional spacing inside the header row
                 ),
-                ft.Divider(thickness=1, color="grey"),  # Line under the header
+                ft.Divider(thickness=1, color="text_muted"),  # Line under the header
             ],
             spacing=0,  # Minimize space between header elements
         )
@@ -148,6 +153,7 @@ def detectives_content(page: ft.Page):
                                 icon=ft.icons.VISIBILITY,
                                 icon_color="white",
                                 tooltip="View",
+                                icon_size=16,
                                 on_click=lambda e, detective_id=row["id"]: open_view_detective_modal(
                                     detective_id),
                             ),
@@ -159,7 +165,7 @@ def detectives_content(page: ft.Page):
                 )
             )
             # Add a separator line after each row
-            table_rows.append(ft.Divider(thickness=1, color="grey"))
+            table_rows.append(ft.Divider(thickness=1, color="text_muted"))
 
         return ft.Column(
             table_rows,
@@ -181,12 +187,14 @@ def detectives_content(page: ft.Page):
         else:
             sort_column = column
             sort_order = "asc"
+        
         filtered_data = filtered_data.sort_values(
             by=column, ascending=(sort_order == "asc"))
         current_page = 0
         update_content(current_page)
         # Rebuild the table header to update the sort icons
         table_header.content = build_table_header()
+        table_header.update()  # Ensure the header updates to reflect the new sort order
         page.update()  # Ensure the page updates to reflect the new sort order
 
     def update_content(page_index):
@@ -429,7 +437,10 @@ def detectives_content(page: ft.Page):
         alignment=ft.MainAxisAlignment.CENTER,
     )
 
-    table_header = build_table_header()
+    table_header = ft.Container(
+        content=build_table_header(),
+        bgcolor=COLORS["background_dark"],
+    )
 
     table_container = ft.Container(
         content=ft.Column(
@@ -485,24 +496,31 @@ def detectives_content(page: ft.Page):
                 ),
                 ft.Column(
                     [
-                        ft.Row(
+                        ft.Column(
                             [
-                                search_field,
-                                ft.ElevatedButton(
-                                    text="Add Detective",
-                                    icon=ft.icons.ADD,
-                                    bgcolor=COLORS["primary_red"],
-                                    color=COLORS["text_light"],
-                                    style=ft.ButtonStyle(
-                                        shape=ft.RoundedRectangleBorder(
-                                            radius=10),
-                                    ),
-                                    on_click=lambda _: open_add_detective_modal(),
+                                ft.Row(
+                                    [
+                                        search_field,
+                                        ft.ElevatedButton(
+                                            text="Add Detective",
+                                            icon=ft.icons.ADD,
+                                            bgcolor=COLORS["primary_red"],
+                                            color=COLORS["text_light"],
+                                            style=ft.ButtonStyle(
+                                                shape=ft.RoundedRectangleBorder(radius=10),
+                                                overlay_color={
+                                                    ft.MaterialState.HOVERED: COLORS["secondary_red"]
+                                                }
+                                            ),
+                                            on_click=lambda _: open_add_detective_modal(),
+                                        ),
+                                    ],
+                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                 ),
+                                table_header,
                             ],
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            spacing=20
                         ),
-                        table_header,
                         table_container,
                         ft.Container(
                             content=pagination_controls,
@@ -516,6 +534,7 @@ def detectives_content(page: ft.Page):
             expand=True
         ),
         bgcolor=COLORS["background_dark"],
+        padding=10
     )
 
     return container
