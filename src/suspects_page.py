@@ -50,9 +50,8 @@ def suspects_content(page: ft.Page):
                                 ],
                                 alignment=ft.MainAxisAlignment.START,
                                 tight=True,
-                                spacing=5  # Add spacing between elements
                             ),
-                            expand=True
+                            expand=1
                         ),
                         ft.Container(
                             ft.Row(
@@ -68,7 +67,6 @@ def suspects_content(page: ft.Page):
                                 ],
                                 alignment=ft.MainAxisAlignment.START,
                                 tight=True,
-                                spacing=5  # Add spacing between elements
                             ),
                             expand=2
                         ),
@@ -90,7 +88,6 @@ def suspects_content(page: ft.Page):
                                 ],
                                 alignment=ft.MainAxisAlignment.START,
                                 tight=True,
-                                spacing=5  # Add spacing between elements
                             ),
                             expand=True
                         ),
@@ -108,7 +105,6 @@ def suspects_content(page: ft.Page):
                                 ],
                                 alignment=ft.MainAxisAlignment.START,
                                 tight=True,
-                                spacing=5  # Add spacing between elements
                             ),
                             expand=1
                         ),
@@ -135,7 +131,6 @@ def suspects_content(page: ft.Page):
                                 ],
                                 alignment=ft.MainAxisAlignment.START,
                                 tight=True,
-                                spacing=5  # Add spacing between elements
                             ),
                             expand=True
                         ),
@@ -145,7 +140,6 @@ def suspects_content(page: ft.Page):
                             alignment=ft.alignment.center
                         ),
                     ],
-                    spacing=10,  # Add spacing between columns
                 ),
                 ft.Divider(thickness=1, color="text_muted"),  # Line under the header
             ],
@@ -422,7 +416,10 @@ def suspects_content(page: ft.Page):
         name_field = ft.TextField(label="Name")
         result_text = ft.Text()
         result_text.visible = False
+        photo_path = None  # Variable to store the photo path
+    
         def handle_file_picker_result(e: ft.FilePickerResultEvent):
+            nonlocal photo_path
             if e.files:
                 photo_path = convert_to_jpg(e.files[0])  # Convert uploaded file to JPG
                 if photo_path:
@@ -433,26 +430,29 @@ def suspects_content(page: ft.Page):
                 result_text.value = "No file selected."
             result_text.visible = True
             page.update()
-            
-        file_picker = ft.FilePicker(on_result=handle_file_picker_result)
-        photo_field = ft.ElevatedButton("Upload Photo", on_click=lambda _: file_picker.pick_files())
-        page.overlay.append(file_picker)
-        
+    
+        # Check if file_picker already exists on the page
+        if not hasattr(page, 'file_picker'):
+            page.file_picker = ft.FilePicker(on_result=handle_file_picker_result)
+            page.overlay.append(page.file_picker)
+    
+        photo_field = ft.ElevatedButton("Upload Photo", on_click=lambda _: page.file_picker.pick_files())
+    
         def convert_to_jpg(file):
             if file:
                 # ensure filename always unique using hash
                 img = Image.open(file.path)
-                photo_field.value = f"{hash(file.path)}.jpg"
-                jpg_path = f"data/suspects/{photo_field.value}"
-                
+                unique_filename = f"{hash(file.path)}.jpg"
+                jpg_path = f"data/suspects/{unique_filename}"
+    
                 if img.mode in ("RGBA", "P"):
                     img = img.convert("RGB")
-                
+    
                 img.save(jpg_path, "JPEG")
-                
+    
                 page.update()
                 return jpg_path
-            
+    
         nik_field = ft.TextField(label="NIK")
         age_field = ft.TextField(label="Age")
         gender_field = ft.Dropdown(
@@ -463,7 +463,7 @@ def suspects_content(page: ft.Page):
             ]
         )
         criminal_record_field = ft.TextField(label="Criminal Record")
-
+    
         def save_new_suspect(e):
             errors = []
             if not name_field.value.strip():
@@ -471,40 +471,40 @@ def suspects_content(page: ft.Page):
                 errors.append("name")
             else:
                 name_field.error_text = None
-
+    
             if not nik_field.value.strip():
                 nik_field.error_text = "NIK is required"
                 errors.append("nik")
             else:
                 nik_field.error_text = None
-
+    
             if not age_field.value.strip() or not age_field.value.isdigit():
                 age_field.error_text = "Valid age is required"
                 errors.append("age")
             else:
                 age_field.error_text = None
-
-            if not gender_field.value.strip():
+    
+            if not gender_field.value:
                 gender_field.error_text = "Gender is required"
                 errors.append("gender")
             else:
                 gender_field.error_text = None
-
+    
             if not criminal_record_field.value.strip():
                 criminal_record_field.error_text = "Criminal Record is required"
                 errors.append("criminal_record")
             else:
                 criminal_record_field.error_text = None
-
+    
             page.update()
-
+    
             if errors:
                 return
-
+    
             new_suspect = {
                 "id": suspects_model.get_last_suspect_id() + 1,
                 "nama": name_field.value,
-                "foto": photo_field.value,
+                "foto": photo_path,  # Use the photo_path variable
                 "nik": nik_field.value,
                 "usia": int(age_field.value),
                 "jk": gender_field.value,
@@ -513,7 +513,7 @@ def suspects_content(page: ft.Page):
             suspects_model.add_suspect(new_suspect)
             refresh_table()
             page.close(add_modal_dialog)
-
+    
         add_modal_dialog.content = ft.Column(
             [
                 name_field,
@@ -675,7 +675,7 @@ def suspects_content(page: ft.Page):
             [
                 ft.ShaderMask(
                     content=ft.Text(
-                        "Victims",
+                        "Suspects",
                         size=30,
                         weight=ft.FontWeight.BOLD,
                         color=ft.colors.WHITE,  # Text color should be white for gradient

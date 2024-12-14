@@ -1,0 +1,284 @@
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\cases_page.py...
+************* Module cases_page
+cases_page.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+cases_page.py:21:0: C0116: Missing function or method docstring (missing-function-docstring)
+cases_page.py:21:0: R0914: Too many local variables (21/15) (too-many-locals)
+cases_page.py:31:4: R0914: Too many local variables (16/15) (too-many-locals)
+cases_page.py:41:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:58:31: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:67:16: W0612: Unused variable 'all_cases' (unused-variable)
+cases_page.py:71:30: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:56:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:241:21: W0108: Lambda may not be necessary (unnecessary-lambda)
+cases_page.py:250:4: R0913: Too many arguments (6/5) (too-many-arguments)
+cases_page.py:250:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+cases_page.py:250:4: R0914: Too many local variables (19/15) (too-many-locals)
+cases_page.py:376:15: W0718: Catching too general exception Exception (broad-exception-caught)
+cases_page.py:350:40: R1732: Consider using 'with' for resource-allocating operations (consider-using-with)
+cases_page.py:357:12: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+cases_page.py:362:62: E1101: Instance of '_VirtualList' has no 'mediabox' member (no-member)
+cases_page.py:362:99: E1101: Instance of '_VirtualList' has no 'mediabox' member (no-member)
+cases_page.py:250:4: R0915: Too many statements (85/50) (too-many-statements)
+cases_page.py:413:19: W0718: Catching too general exception Exception (broad-exception-caught)
+cases_page.py:422:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:421:33: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:475:8: C0415: Import outside toplevel (json) (import-outside-toplevel)
+cases_page.py:476:8: C0415: Import outside toplevel (os) (import-outside-toplevel)
+cases_page.py:481:8: E0102: function already defined line 421 (function-redefined)
+cases_page.py:482:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:481:33: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:535:8: W0404: Reimport 'json' (imported line 475) (reimported)
+cases_page.py:535:8: C0415: Import outside toplevel (json) (import-outside-toplevel)
+cases_page.py:536:8: W0404: Reimport 'os' (imported line 476) (reimported)
+cases_page.py:536:8: C0415: Import outside toplevel (os) (import-outside-toplevel)
+cases_page.py:380:4: R0915: Too many statements (62/50) (too-many-statements)
+cases_page.py:566:4: R0914: Too many local variables (34/15) (too-many-locals)
+cases_page.py:621:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:899:30: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:566:4: R0915: Too many statements (84/50) (too-many-statements)
+cases_page.py:621:8: W0612: Unused variable 'save_new_case' (unused-variable)
+cases_page.py:1094:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:21:0: R0915: Too many statements (341/50) (too-many-statements)
+cases_page.py:8:0: C0411: standard import "datetime.datetime" should be placed before third party imports "PyPDF2.PdfReader", "flet" and first party imports "models.cases.Cases", "models.victims.Victims", "models.suspects.Suspects", "models.detectives.Detective"  (wrong-import-order)
+cases_page.py:9:0: C0411: third party import "fpdf.FPDF" should be placed before first party imports "models.cases.Cases", "models.victims.Victims", "models.suspects.Suspects", "models.detectives.Detective"  (wrong-import-order)
+
+-----------------------------------
+Your code has been rated at 8.62/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\dashboard_page.py...
+************* Module dashboard_page
+dashboard_page.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+dashboard_page.py:24:0: C0116: Missing function or method docstring (missing-function-docstring)
+dashboard_page.py:24:0: R0914: Too many local variables (32/15) (too-many-locals)
+dashboard_page.py:36:4: W0105: String statement has no effect (pointless-string-statement)
+dashboard_page.py:120:26: W0613: Unused argument 'e' (unused-argument)
+dashboard_page.py:299:21: W0108: Lambda may not be necessary (unnecessary-lambda)
+dashboard_page.py:346:4: R0914: Too many local variables (34/15) (too-many-locals)
+dashboard_page.py:401:26: W0613: Unused argument 'e' (unused-argument)
+dashboard_page.py:679:30: W0613: Unused argument 'e' (unused-argument)
+dashboard_page.py:346:4: R0915: Too many statements (84/50) (too-many-statements)
+dashboard_page.py:401:8: W0612: Unused variable 'save_new_case' (unused-variable)
+dashboard_page.py:24:0: R0915: Too many statements (180/50) (too-many-statements)
+dashboard_page.py:339:4: W0612: Unused variable 'handle_search' (unused-variable)
+dashboard_page.py:6:0: C0411: standard import "calendar.HTMLCalendar" should be placed before third party import "flet" and first party imports "models.cases.Cases", "models.victims.Victims", "models.suspects.Suspects", "models.detectives.Detective"  (wrong-import-order)
+dashboard_page.py:7:0: C0411: third party import "dateutil.relativedelta.relativedelta" should be placed before first party imports "models.cases.Cases", "models.victims.Victims", "models.suspects.Suspects", "models.detectives.Detective"  (wrong-import-order)
+dashboard_page.py:8:0: C0411: standard import "calendar" should be placed before third party imports "flet", "dateutil.relativedelta.relativedelta" and first party imports "models.cases.Cases", "models.victims.Victims", "models.suspects.Suspects", "models.detectives.Detective"  (wrong-import-order)
+dashboard_page.py:9:0: C0411: standard import "datetime.datetime" should be placed before third party imports "flet", "dateutil.relativedelta.relativedelta" and first party imports "models.cases.Cases", "models.victims.Victims", "models.suspects.Suspects", "models.detectives.Detective"  (wrong-import-order)
+
+-----------------------------------
+Your code has been rated at 9.21/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\detectives_page.py...
+************* Module detectives_page
+detectives_page.py:192:0: C0325: Unnecessary parens after '=' keyword (superfluous-parens)
+detectives_page.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+detectives_page.py:15:0: C0116: Missing function or method docstring (missing-function-docstring)
+detectives_page.py:15:0: R0914: Too many local variables (24/15) (too-many-locals)
+detectives_page.py:213:31: W0613: Unused argument 'e' (unused-argument)
+detectives_page.py:299:38: W0613: Unused argument 'e' (unused-argument)
+detectives_page.py:328:24: W0613: Unused argument 'e' (unused-argument)
+detectives_page.py:356:35: W0613: Unused argument 'e' (unused-argument)
+detectives_page.py:384:29: W0613: Unused argument 'e' (unused-argument)
+detectives_page.py:273:4: R0915: Too many statements (59/50) (too-many-statements)
+detectives_page.py:15:0: R0915: Too many statements (136/50) (too-many-statements)
+detectives_page.py:2:0: C0411: standard import "math" should be placed before third party import "flet" (wrong-import-order)
+
+-----------------------------------
+Your code has been rated at 9.22/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\main.py...
+************* Module main
+main.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+main.py:20:0: C0116: Missing function or method docstring (missing-function-docstring)
+main.py:45:8: W0612: Unused variable 'divider' (unused-variable)
+
+-----------------------------------
+Your code has been rated at 9.12/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\pylint_script.py...
+************* Module pylint_script
+pylint_script.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+pylint_script.py:4:0: C0116: Missing function or method docstring (missing-function-docstring)
+pylint_script.py:17:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+pylint_script.py:22:25: W1510: 'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)
+pylint_script.py:38:4: C0103: Constant name "output_log" doesn't conform to UPPER_CASE naming style (invalid-name)
+
+-----------------------------------
+Your code has been rated at 8.28/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\sidebar.py...
+************* Module sidebar
+sidebar.py:82:0: C0304: Final newline missing (missing-final-newline)
+sidebar.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+sidebar.py:12:0: C0116: Missing function or method docstring (missing-function-docstring)
+
+-----------------------------------
+Your code has been rated at 8.00/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\suspects_page.py...
+************* Module suspects_page
+suspects_page.py:399:0: C0325: Unnecessary parens after '=' keyword (superfluous-parens)
+suspects_page.py:734:0: C0304: Final newline missing (missing-final-newline)
+suspects_page.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+suspects_page.py:19:0: C0116: Missing function or method docstring (missing-function-docstring)
+suspects_page.py:19:0: R0914: Too many local variables (26/15) (too-many-locals)
+suspects_page.py:220:4: R0914: Too many local variables (16/15) (too-many-locals)
+suspects_page.py:244:8: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+suspects_page.py:271:33: W0613: Unused argument 'e' (unused-argument)
+suspects_page.py:321:27: W0613: Unused argument 'e' (unused-argument)
+suspects_page.py:220:4: R0915: Too many statements (68/50) (too-many-statements)
+suspects_page.py:441:8: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+suspects_page.py:467:29: W0613: Unused argument 'e' (unused-argument)
+suspects_page.py:415:4: R0915: Too many statements (67/50) (too-many-statements)
+suspects_page.py:559:8: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+suspects_page.py:19:0: R0915: Too many statements (217/50) (too-many-statements)
+suspects_page.py:30:4: W0612: Unused variable 'edit_modal_dialog' (unused-variable)
+suspects_page.py:2:0: C0411: standard import "math" should be placed before third party import "flet" (wrong-import-order)
+suspects_page.py:4:0: C0411: standard import "os" should be placed before third party import "flet" and first party import "models.suspects.Suspects"  (wrong-import-order)
+suspects_page.py:5:0: C0411: third party import "PIL.Image" should be placed before first party import "models.suspects.Suspects"  (wrong-import-order)
+suspects_page.py:6:0: C0411: standard import "time" should be placed before third party imports "flet", "PIL.Image" and first party import "models.suspects.Suspects"  (wrong-import-order)
+
+-----------------------------------
+Your code has been rated at 9.15/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\victims_page.py...
+************* Module victims_page
+victims_page.py:405:0: C0325: Unnecessary parens after '=' keyword (superfluous-parens)
+victims_page.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+victims_page.py:18:0: C0116: Missing function or method docstring (missing-function-docstring)
+victims_page.py:18:0: R0914: Too many local variables (26/15) (too-many-locals)
+victims_page.py:225:4: R0914: Too many local variables (16/15) (too-many-locals)
+victims_page.py:249:8: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+victims_page.py:276:32: W0613: Unused argument 'e' (unused-argument)
+victims_page.py:326:26: W0613: Unused argument 'e' (unused-argument)
+victims_page.py:225:4: R0915: Too many statements (68/50) (too-many-statements)
+victims_page.py:448:8: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+victims_page.py:474:28: W0613: Unused argument 'e' (unused-argument)
+victims_page.py:422:4: R0915: Too many statements (67/50) (too-many-statements)
+victims_page.py:565:8: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+victims_page.py:18:0: R0915: Too many statements (217/50) (too-many-statements)
+victims_page.py:29:4: W0612: Unused variable 'edit_modal_dialog' (unused-variable)
+victims_page.py:2:0: C0411: standard import "math" should be placed before third party import "flet" (wrong-import-order)
+victims_page.py:4:0: C0411: third party import "PIL.Image" should be placed before first party import "models.victims.Victims"  (wrong-import-order)
+victims_page.py:5:0: C0411: standard import "os" should be placed before third party imports "flet", "PIL.Image" and first party import "models.victims.Victims"  (wrong-import-order)
+victims_page.py:6:0: C0411: standard import "time" should be placed before third party imports "flet", "PIL.Image" and first party import "models.victims.Victims"  (wrong-import-order)
+
+-----------------------------------
+Your code has been rated at 9.19/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\models\cases.py...
+************* Module cases
+models\cases.py:113:0: C0304: Final newline missing (missing-final-newline)
+models\cases.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+models\cases.py:3:0: E0401: Unable to import 'models.suspects' (import-error)
+models\cases.py:4:0: E0401: Unable to import 'models.victims' (import-error)
+models\cases.py:5:0: E0401: Unable to import 'models.detectives' (import-error)
+models\cases.py:9:0: C0115: Missing class docstring (missing-class-docstring)
+models\cases.py:9:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
+models\cases.py:27:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:32:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:37:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:42:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:50:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:54:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:58:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:61:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:67:4: R0913: Too many arguments (6/5) (too-many-arguments)
+models\cases.py:67:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+models\cases.py:88:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:95:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:98:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:101:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:104:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\cases.py:6:0: C0411: standard import "typing.List" should be placed before third party import "pandas" and first party imports "models.suspects.Suspects", "models.victims.Victims", "models.detectives.Detective"  (wrong-import-order)
+models\cases.py:3:0: W0611: Unused Suspects imported from models.suspects (unused-import)
+models\cases.py:4:0: W0611: Unused Victims imported from models.victims (unused-import)
+models\cases.py:5:0: W0611: Unused Detective imported from models.detectives (unused-import)
+
+-----------------------------------
+Your code has been rated at 5.00/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\models\dashboard.py...
+************* Module dashboard
+models\dashboard.py:5:0: C0304: Final newline missing (missing-final-newline)
+models\dashboard.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+models\dashboard.py:3:0: C0115: Missing class docstring (missing-class-docstring)
+models\dashboard.py:3:0: R0903: Too few public methods (0/2) (too-few-public-methods)
+models\dashboard.py:1:0: W0611: Unused pandas imported as pd (unused-import)
+
+-----------------------------------
+Your code has been rated at 0.00/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\models\detectives.py...
+************* Module detectives
+models\detectives.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+models\detectives.py:3:0: C0115: Missing class docstring (missing-class-docstring)
+models\detectives.py:10:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\detectives.py:14:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\detectives.py:20:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\detectives.py:28:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\detectives.py:31:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\detectives.py:34:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\detectives.py:40:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\detectives.py:45:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\detectives.py:48:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+models\detectives.py:56:4: C0116: Missing function or method docstring (missing-function-docstring)
+
+-----------------------------------
+Your code has been rated at 7.07/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\models\suspects.py...
+************* Module suspects
+models\suspects.py:62:0: C0304: Final newline missing (missing-final-newline)
+models\suspects.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+models\suspects.py:3:0: C0115: Missing class docstring (missing-class-docstring)
+models\suspects.py:10:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\suspects.py:10:32: W0622: Redefining built-in 'id' (redefined-builtin)
+models\suspects.py:14:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\suspects.py:21:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\suspects.py:29:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\suspects.py:32:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\suspects.py:35:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\suspects.py:41:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\suspects.py:45:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\suspects.py:48:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+models\suspects.py:56:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\suspects.py:61:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\suspects.py:62:15: E1101: Instance of 'Suspects' has no 'suspects_' member (no-member)
+models\suspects.py:61:38: W0613: Unused argument 'id_kasus' (unused-argument)
+
+-----------------------------------
+Your code has been rated at 5.12/10
+
+--------------------------------------------------------------------------------
+Linting C:\Users\omgit\repos\Tugas Besar Semester 3\IF2150-2024-K01-G01-DetectiveTasksboard\src\models\victims.py...
+************* Module victims
+models\victims.py:61:0: C0304: Final newline missing (missing-final-newline)
+models\victims.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+models\victims.py:3:0: C0115: Missing class docstring (missing-class-docstring)
+models\victims.py:10:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\victims.py:15:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\victims.py:22:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\victims.py:30:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\victims.py:33:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\victims.py:36:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\victims.py:42:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\victims.py:46:4: C0116: Missing function or method docstring (missing-function-docstring)
+models\victims.py:49:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+models\victims.py:58:4: C0116: Missing function or method docstring (missing-function-docstring)
+
+-----------------------------------
+Your code has been rated at 6.83/10
+
+--------------------------------------------------------------------------------

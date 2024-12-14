@@ -1,7 +1,5 @@
 # IF2150-2024-K01-G01-DetectiveTasksboard
 
-# Badges for Project Requirements
-
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python)
 ![OS](https://img.shields.io/badge/Supported%20OS-Windows%20|%20macOS%20|%20Linux-lightgrey?logo=windows)
 ![Flet](https://img.shields.io/badge/Flet-0.25.1-purple?logo=flet)
@@ -52,7 +50,7 @@ Setelah semua dependensi terinstal dan directory berada di dalam IF2150-2024-K01
 | **Cases**   | Muhammad Fathur Rizky        | ![Cases](img/Cases.png)  |
 | **Victims** | Nathaniel Jonathan Rusli     | ![Victims](<img/Victims.png>) |
 | **Suspects**| Dave Daniel Yanni            | ![Suspects](<img/Suspects.png>)|
-| **Detectives** | Alvin Christopher         | ![Detectives](img/Detectives.png)|
+| **Detectives** | Alvin Christopher Santausa        | ![Detectives](img/Detectives.png)|
 | **Dashboard** | Benedict Presley           | ![Dashboard](img/Dashboard.png)|
 
 

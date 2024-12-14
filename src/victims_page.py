@@ -139,7 +139,7 @@ def victims_content(page: ft.Page):
                             expand=True
                         ),
                         ft.Container(
-                            ft.Text("Details"),
+                            ft.Text("Actions"),
                             expand=1,
                             alignment=ft.alignment.center
                         ),
@@ -184,13 +184,26 @@ def victims_content(page: ft.Page):
                             alignment=ft.alignment.top_left,
                         ),
                         ft.Container(
-                            ft.IconButton(
-                                icon=ft.icons.VISIBILITY,
-                                icon_color="white",
-                                tooltip="View",
-                                icon_size=16,
-                                on_click=lambda e, victim_id=row["id"]: open_view_victim_modal(
-                                    victim_id),
+                            ft.Row([
+                                ft.IconButton(
+                                    icon=ft.icons.EDIT,
+                                    icon_color="white",
+                                    tooltip="View",
+                                    icon_size=16,
+                                    on_click=lambda e, victim_id=row["id"]: open_edit_victim_modal(
+                                        victim_id),
+                                ),
+                                ft.IconButton(
+                                    icon=ft.icons.VISIBILITY,
+                                    icon_color="white",
+                                    tooltip="View",
+                                    icon_size=16,
+                                    on_click=lambda e, victim_id=row["id"]: open_view_victim_modal(
+                                        victim_id),
+                                ),
+                            ],
+                            spacing=5,
+                            alignment=ft.MainAxisAlignment.CENTER # Add spacing between buttons
                             ),
                             expand=1,
                             alignment=ft.alignment.center,
@@ -410,7 +423,10 @@ def victims_content(page: ft.Page):
         name_field = ft.TextField(label="Name")
         result_text = ft.Text()
         result_text.visible = False
+        photo_path = None  # Variable to store the photo path
+    
         def handle_file_picker_result(e: ft.FilePickerResultEvent):
+            nonlocal photo_path
             if e.files:
                 photo_path = convert_to_jpg(e.files[0])  # Convert uploaded file to JPG
                 if photo_path:
@@ -421,10 +437,13 @@ def victims_content(page: ft.Page):
                 result_text.value = "No file selected."
             result_text.visible = True
             page.update()
-            
-        file_picker = ft.FilePicker(on_result=handle_file_picker_result)
-        photo_field = ft.ElevatedButton("Upload Photo", on_click=lambda _: file_picker.pick_files())
-        page.overlay.append(file_picker)
+    
+        # Check if file_picker already exists on the page
+        if not hasattr(page, 'file_picker'):
+            page.file_picker = ft.FilePicker(on_result=handle_file_picker_result)
+            page.overlay.append(page.file_picker)
+    
+        photo_field = ft.ElevatedButton("Upload Photo", on_click=lambda _: page.file_picker.pick_files())
         
         def convert_to_jpg(file):
             if file:
@@ -492,7 +511,7 @@ def victims_content(page: ft.Page):
             new_victim = {
                 "id": victims_model.get_last_victim_id() + 1,
                 "nama": name_field.value,
-                "foto": photo_field.value,
+                "foto": photo_path,
                 "nik": nik_field.value,
                 "usia": int(usia_field.value),
                 "jk": gender_field.value,
@@ -535,7 +554,7 @@ def victims_content(page: ft.Page):
         nik_text = ft.Text(f"NIK: {victim['nik']}")
         age_text = ft.Text(f"Age: {victim['usia']}")
         gender_text = ft.Text(f"Gender: {victim['jk']}")
-        forensic_result_text = ft.Text(f"Forensic Result: {victim['Hasil_forensik']}")
+        forensic_result_text = ft.Text(f"Forensic Result: {victim['hasil_forensik']}")
         case_id_text = ft.Text(f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), victim["id_kasus"]))}')
     
         photo_path = os.path.join("data", "victims", victim["foto"])
