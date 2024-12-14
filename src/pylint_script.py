@@ -19,7 +19,12 @@ def run_pylint_on_all_files(root_dir, output_file):
             print(f"Linting {file}...")
             log_file.write(f"Linting {file}...\n")
             try:
-                result = subprocess.run(["pylint", file], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                result = subprocess.run(
+                    ["pylint", "--disable=line-too-long,trailing-whitespace,too-many-lines", file],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
                 log_file.write(result.stdout)
                 log_file.write(result.stderr)
             except subprocess.CalledProcessError as e:

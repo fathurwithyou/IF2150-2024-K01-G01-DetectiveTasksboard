@@ -1,102 +1,45 @@
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\cases_page.py...
 ************* Module cases_page
-cases_page.py:38:27: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:45:25: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:49:51: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:50:45: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:51:49: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:52:0: C0301: Line too long (108/100) (line-too-long)
-cases_page.py:206:44: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:212:38: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:226:20: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:238:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:247:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:251:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:255:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:259:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:267:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:277:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:280:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:283:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:286:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:292:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:308:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:313:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:316:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:323:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:325:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:331:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:334:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:337:43: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:341:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:356:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:361:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:365:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:376:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:383:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:385:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:391:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:397:43: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:401:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:600:0: C0301: Line too long (101/100) (line-too-long)
-cases_page.py:613:0: C0301: Line too long (104/100) (line-too-long)
-cases_page.py:626:0: C0301: Line too long (110/100) (line-too-long)
-cases_page.py:637:0: C0301: Line too long (110/100) (line-too-long)
-cases_page.py:669:0: C0301: Line too long (101/100) (line-too-long)
-cases_page.py:701:0: C0301: Line too long (104/100) (line-too-long)
-cases_page.py:799:0: C0301: Line too long (121/100) (line-too-long)
-cases_page.py:868:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:875:0: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:931:0: C0301: Line too long (103/100) (line-too-long)
-cases_page.py:1060:24: C0303: Trailing whitespace (trailing-whitespace)
-cases_page.py:1:0: C0302: Too many lines in module (1124/1000) (too-many-lines)
 cases_page.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 cases_page.py:19:0: C0116: Missing function or method docstring (missing-function-docstring)
 cases_page.py:19:0: R0914: Too many local variables (20/15) (too-many-locals)
-cases_page.py:40:26: W0613: Unused argument 'e' (unused-argument)
-cases_page.py:228:21: W0108: Lambda may not be necessary (unnecessary-lambda)
-cases_page.py:264:15: W0718: Catching too general exception Exception (broad-exception-caught)
-cases_page.py:301:19: W0718: Catching too general exception Exception (broad-exception-caught)
-cases_page.py:310:26: W0613: Unused argument 'e' (unused-argument)
-cases_page.py:309:33: W0613: Unused argument 'e' (unused-argument)
-cases_page.py:363:8: C0415: Import outside toplevel (json) (import-outside-toplevel)
-cases_page.py:364:8: C0415: Import outside toplevel (os) (import-outside-toplevel)
-cases_page.py:369:8: E0102: function already defined line 309 (function-redefined)
-cases_page.py:370:26: W0613: Unused argument 'e' (unused-argument)
-cases_page.py:369:33: W0613: Unused argument 'e' (unused-argument)
-cases_page.py:423:8: W0404: Reimport 'json' (imported line 363) (reimported)
-cases_page.py:423:8: C0415: Import outside toplevel (json) (import-outside-toplevel)
-cases_page.py:424:8: W0404: Reimport 'os' (imported line 364) (reimported)
-cases_page.py:424:8: C0415: Import outside toplevel (os) (import-outside-toplevel)
-cases_page.py:268:4: R0915: Too many statements (62/50) (too-many-statements)
-cases_page.py:454:4: R0914: Too many local variables (34/15) (too-many-locals)
-cases_page.py:509:26: W0613: Unused argument 'e' (unused-argument)
-cases_page.py:787:30: W0613: Unused argument 'e' (unused-argument)
-cases_page.py:454:4: R0915: Too many statements (84/50) (too-many-statements)
-cases_page.py:509:8: W0612: Unused variable 'save_new_case' (unused-variable)
-cases_page.py:982:26: W0613: Unused argument 'e' (unused-argument)
-cases_page.py:19:0: R0915: Too many statements (261/50) (too-many-statements)
+cases_page.py:29:4: R0914: Too many local variables (16/15) (too-many-locals)
+cases_page.py:39:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:56:31: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:65:16: W0612: Unused variable 'all_cases' (unused-variable)
+cases_page.py:69:30: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:54:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:239:21: W0108: Lambda may not be necessary (unnecessary-lambda)
+cases_page.py:275:15: W0718: Catching too general exception Exception (broad-exception-caught)
+cases_page.py:312:19: W0718: Catching too general exception Exception (broad-exception-caught)
+cases_page.py:321:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:320:33: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:374:8: C0415: Import outside toplevel (json) (import-outside-toplevel)
+cases_page.py:375:8: C0415: Import outside toplevel (os) (import-outside-toplevel)
+cases_page.py:380:8: E0102: function already defined line 320 (function-redefined)
+cases_page.py:381:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:380:33: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:434:8: W0404: Reimport 'json' (imported line 374) (reimported)
+cases_page.py:434:8: C0415: Import outside toplevel (json) (import-outside-toplevel)
+cases_page.py:435:8: W0404: Reimport 'os' (imported line 375) (reimported)
+cases_page.py:435:8: C0415: Import outside toplevel (os) (import-outside-toplevel)
+cases_page.py:279:4: R0915: Too many statements (62/50) (too-many-statements)
+cases_page.py:465:4: R0914: Too many local variables (34/15) (too-many-locals)
+cases_page.py:520:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:798:30: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:465:4: R0915: Too many statements (84/50) (too-many-statements)
+cases_page.py:520:8: W0612: Unused variable 'save_new_case' (unused-variable)
+cases_page.py:993:26: W0613: Unused argument 'e' (unused-argument)
+cases_page.py:19:0: R0915: Too many statements (276/50) (too-many-statements)
 cases_page.py:6:0: C0411: standard import "datetime.datetime" should be placed before third party import "flet" and first party imports "models.cases.Cases", "models.victims.Victims", "models.suspects.Suspects", "models.detectives.Detective"  (wrong-import-order)
 cases_page.py:7:0: C0411: third party import "fpdf.FPDF" should be placed before first party imports "models.cases.Cases", "models.victims.Victims", "models.suspects.Suspects", "models.detectives.Detective"  (wrong-import-order)
 
 ------------------------------------------------------------------
-Your code has been rated at 7.27/10 (previous run: 7.27/10, +0.00)
+Your code has been rated at 8.84/10 (previous run: 8.93/10, -0.10)
 
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\dashboard_page.py...
 ************* Module dashboard_page
-dashboard_page.py:58:0: C0301: Line too long (108/100) (line-too-long)
-dashboard_page.py:418:0: C0301: Line too long (101/100) (line-too-long)
-dashboard_page.py:431:0: C0301: Line too long (104/100) (line-too-long)
-dashboard_page.py:444:0: C0301: Line too long (110/100) (line-too-long)
-dashboard_page.py:455:0: C0301: Line too long (110/100) (line-too-long)
-dashboard_page.py:487:0: C0301: Line too long (101/100) (line-too-long)
-dashboard_page.py:519:0: C0301: Line too long (104/100) (line-too-long)
-dashboard_page.py:617:0: C0301: Line too long (121/100) (line-too-long)
-dashboard_page.py:718:0: C0301: Line too long (110/100) (line-too-long)
-dashboard_page.py:751:0: C0301: Line too long (103/100) (line-too-long)
-dashboard_page.py:792:0: C0301: Line too long (119/100) (line-too-long)
-dashboard_page.py:873:0: C0303: Trailing whitespace (trailing-whitespace)
 dashboard_page.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 dashboard_page.py:24:0: C0116: Missing function or method docstring (missing-function-docstring)
 dashboard_page.py:24:0: R0914: Too many local variables (30/15) (too-many-locals)
@@ -114,36 +57,13 @@ dashboard_page.py:7:0: C0411: third party import "dateutil.relativedelta.relativ
 dashboard_page.py:8:0: C0411: standard import "calendar" should be placed before third party imports "flet", "dateutil.relativedelta.relativedelta" and first party imports "models.cases.Cases", "models.victims.Victims", "models.suspects.Suspects", "models.detectives.Detective"  (wrong-import-order)
 dashboard_page.py:9:0: C0411: standard import "datetime.datetime" should be placed before third party imports "flet", "dateutil.relativedelta.relativedelta" and first party imports "models.cases.Cases", "models.victims.Victims", "models.suspects.Suspects", "models.detectives.Detective"  (wrong-import-order)
 
------------------------------------
-Your code has been rated at 8.68/10
+------------------------------------------------------------------
+Your code has been rated at 9.25/10 (previous run: 9.25/10, +0.00)
 
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\detectives_page.py...
 ************* Module detectives_page
-detectives_page.py:28:0: C0301: Line too long (143/100) (line-too-long)
-detectives_page.py:44:0: C0301: Line too long (145/100) (line-too-long)
-detectives_page.py:60:0: C0301: Line too long (144/100) (line-too-long)
-detectives_page.py:76:0: C0301: Line too long (149/100) (line-too-long)
-detectives_page.py:101:48: C0303: Trailing whitespace (trailing-whitespace)
-detectives_page.py:102:47: C0303: Trailing whitespace (trailing-whitespace)
-detectives_page.py:112:0: C0301: Line too long (105/100) (line-too-long)
-detectives_page.py:113:0: C0301: Line too long (107/100) (line-too-long)
-detectives_page.py:114:0: C0301: Line too long (106/100) (line-too-long)
-detectives_page.py:116:0: C0301: Line too long (106/100) (line-too-long)
-detectives_page.py:125:0: C0301: Line too long (115/100) (line-too-long)
-detectives_page.py:133:13: C0303: Trailing whitespace (trailing-whitespace)
-detectives_page.py:134:49: C0303: Trailing whitespace (trailing-whitespace)
-detectives_page.py:149:0: C0303: Trailing whitespace (trailing-whitespace)
 detectives_page.py:157:0: C0325: Unnecessary parens after '=' keyword (superfluous-parens)
-detectives_page.py:160:0: C0301: Line too long (104/100) (line-too-long)
-detectives_page.py:194:0: C0303: Trailing whitespace (trailing-whitespace)
-detectives_page.py:223:0: C0301: Line too long (120/100) (line-too-long)
-detectives_page.py:228:0: C0301: Line too long (120/100) (line-too-long)
-detectives_page.py:230:0: C0301: Line too long (131/100) (line-too-long)
-detectives_page.py:231:0: C0301: Line too long (103/100) (line-too-long)
-detectives_page.py:232:0: C0301: Line too long (105/100) (line-too-long)
-detectives_page.py:262:0: C0301: Line too long (109/100) (line-too-long)
-detectives_page.py:314:0: C0303: Trailing whitespace (trailing-whitespace)
 detectives_page.py:429:0: C0304: Final newline missing (missing-final-newline)
 detectives_page.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 detectives_page.py:5:0: C0116: Missing function or method docstring (missing-function-docstring)
@@ -157,8 +77,8 @@ detectives_page.py:222:4: R0915: Too many statements (59/50) (too-many-statement
 detectives_page.py:5:0: R0915: Too many statements (127/50) (too-many-statements)
 detectives_page.py:2:0: C0411: standard import "math" should be placed before third party import "flet" (wrong-import-order)
 
------------------------------------
-Your code has been rated at 7.50/10
+------------------------------------------------------------------
+Your code has been rated at 9.10/10 (previous run: 9.10/10, +0.00)
 
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\main.py...
@@ -173,159 +93,73 @@ Your code has been rated at 9.09/10 (previous run: 9.09/10, +0.00)
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\pylint_script.py...
 ************* Module pylint_script
-pylint_script.py:16:0: C0303: Trailing whitespace (trailing-whitespace)
-pylint_script.py:22:0: C0301: Line too long (116/100) (line-too-long)
-pylint_script.py:28:0: C0303: Trailing whitespace (trailing-whitespace)
 pylint_script.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 pylint_script.py:4:0: C0116: Missing function or method docstring (missing-function-docstring)
 pylint_script.py:17:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
 pylint_script.py:22:25: W1510: 'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)
-pylint_script.py:33:4: C0103: Constant name "output_log" doesn't conform to UPPER_CASE naming style (invalid-name)
+pylint_script.py:38:4: C0103: Constant name "output_log" doesn't conform to UPPER_CASE naming style (invalid-name)
 
------------------------------------
-Your code has been rated at 7.24/10
+------------------------------------------------------------------
+Your code has been rated at 8.28/10 (previous run: 8.28/10, +0.00)
 
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\sidebar.py...
 ************* Module sidebar
-sidebar.py:28:0: C0301: Line too long (111/100) (line-too-long)
-sidebar.py:50:39: C0303: Trailing whitespace (trailing-whitespace)
-sidebar.py:55:35: C0303: Trailing whitespace (trailing-whitespace)
-sidebar.py:60:43: C0303: Trailing whitespace (trailing-whitespace)
-sidebar.py:65:35: C0303: Trailing whitespace (trailing-whitespace)
-sidebar.py:70:35: C0303: Trailing whitespace (trailing-whitespace)
 sidebar.py:82:0: C0304: Final newline missing (missing-final-newline)
 sidebar.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 sidebar.py:12:0: C0116: Missing function or method docstring (missing-function-docstring)
 
 ------------------------------------------------------------------
-Your code has been rated at 4.00/10 (previous run: 4.00/10, +0.00)
+Your code has been rated at 8.00/10 (previous run: 8.00/10, +0.00)
 
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\suspects_page.py...
 ************* Module suspects_page
-suspects_page.py:28:0: C0301: Line too long (143/100) (line-too-long)
-suspects_page.py:44:0: C0301: Line too long (145/100) (line-too-long)
-suspects_page.py:64:0: C0301: Line too long (144/100) (line-too-long)
-suspects_page.py:80:0: C0301: Line too long (145/100) (line-too-long)
-suspects_page.py:104:0: C0301: Line too long (149/100) (line-too-long)
-suspects_page.py:129:48: C0303: Trailing whitespace (trailing-whitespace)
-suspects_page.py:130:47: C0303: Trailing whitespace (trailing-whitespace)
-suspects_page.py:140:0: C0301: Line too long (105/100) (line-too-long)
-suspects_page.py:141:0: C0301: Line too long (107/100) (line-too-long)
-suspects_page.py:142:0: C0301: Line too long (107/100) (line-too-long)
-suspects_page.py:143:0: C0301: Line too long (106/100) (line-too-long)
-suspects_page.py:144:0: C0301: Line too long (107/100) (line-too-long)
-suspects_page.py:145:0: C0301: Line too long (105/100) (line-too-long)
-suspects_page.py:146:0: C0301: Line too long (119/100) (line-too-long)
-suspects_page.py:148:0: C0301: Line too long (106/100) (line-too-long)
-suspects_page.py:157:0: C0301: Line too long (109/100) (line-too-long)
-suspects_page.py:165:13: C0303: Trailing whitespace (trailing-whitespace)
-suspects_page.py:166:49: C0303: Trailing whitespace (trailing-whitespace)
-suspects_page.py:181:0: C0303: Trailing whitespace (trailing-whitespace)
-suspects_page.py:189:0: C0325: Unnecessary parens after '=' keyword (superfluous-parens)
-suspects_page.py:192:0: C0301: Line too long (104/100) (line-too-long)
-suspects_page.py:248:0: C0303: Trailing whitespace (trailing-whitespace)
-suspects_page.py:285:0: C0301: Line too long (110/100) (line-too-long)
-suspects_page.py:294:0: C0301: Line too long (118/100) (line-too-long)
-suspects_page.py:296:0: C0301: Line too long (129/100) (line-too-long)
-suspects_page.py:297:0: C0301: Line too long (101/100) (line-too-long)
-suspects_page.py:298:0: C0301: Line too long (103/100) (line-too-long)
-suspects_page.py:299:0: C0301: Line too long (103/100) (line-too-long)
-suspects_page.py:300:0: C0301: Line too long (104/100) (line-too-long)
-suspects_page.py:301:0: C0301: Line too long (103/100) (line-too-long)
-suspects_page.py:302:0: C0301: Line too long (135/100) (line-too-long)
-suspects_page.py:343:0: C0301: Line too long (107/100) (line-too-long)
-suspects_page.py:425:0: C0303: Trailing whitespace (trailing-whitespace)
-suspects_page.py:553:0: C0304: Final newline missing (missing-final-newline)
+suspects_page.py:204:0: C0325: Unnecessary parens after '=' keyword (superfluous-parens)
 suspects_page.py:1:0: C0114: Missing module docstring (missing-module-docstring)
-suspects_page.py:5:0: C0116: Missing function or method docstring (missing-function-docstring)
-suspects_page.py:5:0: R0914: Too many local variables (22/15) (too-many-locals)
-suspects_page.py:212:29: W0613: Unused argument 'e' (unused-argument)
-suspects_page.py:284:4: R0914: Too many local variables (22/15) (too-many-locals)
-suspects_page.py:312:36: W0613: Unused argument 'e' (unused-argument)
-suspects_page.py:351:24: W0613: Unused argument 'e' (unused-argument)
-suspects_page.py:389:33: W0613: Unused argument 'e' (unused-argument)
-suspects_page.py:439:27: W0613: Unused argument 'e' (unused-argument)
-suspects_page.py:284:4: R0915: Too many statements (106/50) (too-many-statements)
-suspects_page.py:5:0: R0915: Too many statements (193/50) (too-many-statements)
+suspects_page.py:8:0: C0116: Missing function or method docstring (missing-function-docstring)
+suspects_page.py:8:0: R0914: Too many local variables (22/15) (too-many-locals)
+suspects_page.py:240:8: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+suspects_page.py:260:29: W0613: Unused argument 'e' (unused-argument)
+suspects_page.py:220:4: R0915: Too many statements (64/50) (too-many-statements)
+suspects_page.py:334:4: R0914: Too many local variables (25/15) (too-many-locals)
+suspects_page.py:374:36: W0613: Unused argument 'e' (unused-argument)
+suspects_page.py:495:24: E1101: Instance of 'Image' has no 'value' member (no-member)
+suspects_page.py:334:4: R0915: Too many statements (115/50) (too-many-statements)
+suspects_page.py:8:0: R0915: Too many statements (224/50) (too-many-statements)
 suspects_page.py:2:0: C0411: standard import "math" should be placed before third party import "flet" (wrong-import-order)
+suspects_page.py:4:0: C0411: standard import "os" should be placed before third party import "flet" and first party import "models.suspects.Suspects"  (wrong-import-order)
+suspects_page.py:5:0: C0411: third party import "PIL.Image" should be placed before first party import "models.suspects.Suspects"  (wrong-import-order)
 
------------------------------------
-Your code has been rated at 7.75/10
+------------------------------------------------------------------
+Your code has been rated at 9.21/10 (previous run: 9.31/10, -0.11)
 
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\victims_page.py...
 ************* Module victims_page
-victims_page.py:28:0: C0301: Line too long (143/100) (line-too-long)
-victims_page.py:44:0: C0301: Line too long (145/100) (line-too-long)
-victims_page.py:64:0: C0301: Line too long (144/100) (line-too-long)
-victims_page.py:80:0: C0301: Line too long (145/100) (line-too-long)
-victims_page.py:104:0: C0301: Line too long (149/100) (line-too-long)
-victims_page.py:128:48: C0303: Trailing whitespace (trailing-whitespace)
-victims_page.py:129:47: C0303: Trailing whitespace (trailing-whitespace)
-victims_page.py:139:0: C0301: Line too long (105/100) (line-too-long)
-victims_page.py:140:0: C0301: Line too long (107/100) (line-too-long)
-victims_page.py:141:0: C0301: Line too long (107/100) (line-too-long)
-victims_page.py:142:0: C0301: Line too long (106/100) (line-too-long)
-victims_page.py:143:0: C0301: Line too long (107/100) (line-too-long)
-victims_page.py:144:0: C0301: Line too long (105/100) (line-too-long)
-victims_page.py:145:0: C0301: Line too long (117/100) (line-too-long)
-victims_page.py:147:0: C0301: Line too long (106/100) (line-too-long)
-victims_page.py:156:0: C0301: Line too long (106/100) (line-too-long)
-victims_page.py:164:13: C0303: Trailing whitespace (trailing-whitespace)
-victims_page.py:165:49: C0303: Trailing whitespace (trailing-whitespace)
-victims_page.py:180:0: C0303: Trailing whitespace (trailing-whitespace)
-victims_page.py:188:0: C0325: Unnecessary parens after '=' keyword (superfluous-parens)
-victims_page.py:191:0: C0301: Line too long (104/100) (line-too-long)
-victims_page.py:246:0: C0303: Trailing whitespace (trailing-whitespace)
-victims_page.py:282:0: C0301: Line too long (104/100) (line-too-long)
-victims_page.py:291:0: C0301: Line too long (117/100) (line-too-long)
-victims_page.py:293:0: C0301: Line too long (128/100) (line-too-long)
-victims_page.py:295:0: C0301: Line too long (102/100) (line-too-long)
-victims_page.py:296:0: C0301: Line too long (105/100) (line-too-long)
-victims_page.py:297:0: C0301: Line too long (102/100) (line-too-long)
-victims_page.py:298:0: C0301: Line too long (126/100) (line-too-long)
-victims_page.py:337:0: C0301: Line too long (106/100) (line-too-long)
-victims_page.py:417:0: C0303: Trailing whitespace (trailing-whitespace)
-victims_page.py:544:0: C0304: Final newline missing (missing-final-newline)
+victims_page.py:203:0: C0325: Unnecessary parens after '=' keyword (superfluous-parens)
 victims_page.py:1:0: C0114: Missing module docstring (missing-module-docstring)
-victims_page.py:5:0: C0116: Missing function or method docstring (missing-function-docstring)
-victims_page.py:5:0: R0914: Too many local variables (22/15) (too-many-locals)
-victims_page.py:210:28: W0613: Unused argument 'e' (unused-argument)
-victims_page.py:281:4: R0914: Too many local variables (21/15) (too-many-locals)
-victims_page.py:308:35: W0613: Unused argument 'e' (unused-argument)
-victims_page.py:345:24: W0613: Unused argument 'e' (unused-argument)
-victims_page.py:381:32: W0613: Unused argument 'e' (unused-argument)
-victims_page.py:431:26: W0613: Unused argument 'e' (unused-argument)
-victims_page.py:281:4: R0915: Too many statements (101/50) (too-many-statements)
-victims_page.py:5:0: R0915: Too many statements (187/50) (too-many-statements)
+victims_page.py:8:0: C0116: Missing function or method docstring (missing-function-docstring)
+victims_page.py:8:0: R0914: Too many local variables (22/15) (too-many-locals)
+victims_page.py:226:28: W0613: Unused argument 'e' (unused-argument)
+victims_page.py:298:4: R0914: Too many local variables (25/15) (too-many-locals)
+victims_page.py:335:35: W0613: Unused argument 'e' (unused-argument)
+victims_page.py:374:24: W0613: Unused argument 'e' (unused-argument)
+victims_page.py:412:32: W0613: Unused argument 'e' (unused-argument)
+victims_page.py:462:26: W0613: Unused argument 'e' (unused-argument)
+victims_page.py:298:4: R0915: Too many statements (109/50) (too-many-statements)
+victims_page.py:8:0: R0915: Too many statements (195/50) (too-many-statements)
 victims_page.py:2:0: C0411: standard import "math" should be placed before third party import "flet" (wrong-import-order)
+victims_page.py:4:0: C0411: third party import "PIL.Image" should be placed before first party import "models.victims.Victims"  (wrong-import-order)
+victims_page.py:5:0: C0411: standard import "os" should be placed before third party imports "flet", "PIL.Image" and first party import "models.victims.Victims"  (wrong-import-order)
 
------------------------------------
-Your code has been rated at 7.78/10
+------------------------------------------------------------------
+Your code has been rated at 9.28/10 (previous run: 9.29/10, -0.01)
 
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\models\cases.py...
 ************* Module cases
-models\cases.py:42:0: C0301: Line too long (101/100) (line-too-long)
-models\cases.py:60:0: C0303: Trailing whitespace (trailing-whitespace)
-models\cases.py:67:0: C0301: Line too long (111/100) (line-too-long)
-models\cases.py:70:0: C0301: Line too long (106/100) (line-too-long)
-models\cases.py:71:0: C0301: Line too long (103/100) (line-too-long)
-models\cases.py:72:0: C0301: Line too long (112/100) (line-too-long)
-models\cases.py:73:0: C0303: Trailing whitespace (trailing-whitespace)
-models\cases.py:75:0: C0301: Line too long (134/100) (line-too-long)
-models\cases.py:76:0: C0303: Trailing whitespace (trailing-whitespace)
-models\cases.py:78:0: C0301: Line too long (130/100) (line-too-long)
-models\cases.py:79:0: C0303: Trailing whitespace (trailing-whitespace)
-models\cases.py:81:0: C0301: Line too long (142/100) (line-too-long)
-models\cases.py:82:0: C0303: Trailing whitespace (trailing-whitespace)
-models\cases.py:84:0: C0303: Trailing whitespace (trailing-whitespace)
-models\cases.py:94:0: C0303: Trailing whitespace (trailing-whitespace)
-models\cases.py:100:0: C0303: Trailing whitespace (trailing-whitespace)
-models\cases.py:103:0: C0303: Trailing whitespace (trailing-whitespace)
-models\cases.py:106:0: C0303: Trailing whitespace (trailing-whitespace)
+models\cases.py:113:0: C0304: Final newline missing (missing-final-newline)
 models\cases.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 models\cases.py:3:0: E0401: Unable to import 'models.suspects' (import-error)
 models\cases.py:4:0: E0401: Unable to import 'models.victims' (import-error)
@@ -352,8 +186,8 @@ models\cases.py:3:0: W0611: Unused Suspects imported from models.suspects (unuse
 models\cases.py:4:0: W0611: Unused Victims imported from models.victims (unused-import)
 models\cases.py:5:0: W0611: Unused Detective imported from models.detectives (unused-import)
 
------------------------------------
-Your code has been rated at 2.14/10
+------------------------------------------------------------------
+Your code has been rated at 5.00/10 (previous run: 4.71/10, +0.29)
 
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\models\dashboard.py...
@@ -364,16 +198,12 @@ models\dashboard.py:3:0: C0115: Missing class docstring (missing-class-docstring
 models\dashboard.py:3:0: R0903: Too few public methods (0/2) (too-few-public-methods)
 models\dashboard.py:1:0: W0611: Unused pandas imported as pd (unused-import)
 
------------------------------------
-Your code has been rated at 0.00/10
+------------------------------------------------------------------
+Your code has been rated at 0.00/10 (previous run: 0.00/10, +0.00)
 
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\models\detectives.py...
 ************* Module detectives
-models\detectives.py:9:0: C0303: Trailing whitespace (trailing-whitespace)
-models\detectives.py:13:0: C0303: Trailing whitespace (trailing-whitespace)
-models\detectives.py:15:0: C0301: Line too long (109/100) (line-too-long)
-models\detectives.py:60:0: C0303: Trailing whitespace (trailing-whitespace)
 models\detectives.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 models\detectives.py:3:0: C0115: Missing class docstring (missing-class-docstring)
 models\detectives.py:10:4: C0116: Missing function or method docstring (missing-function-docstring)
@@ -387,17 +217,12 @@ models\detectives.py:45:4: C0116: Missing function or method docstring (missing-
 models\detectives.py:48:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
 models\detectives.py:56:4: C0116: Missing function or method docstring (missing-function-docstring)
 
------------------------------------
-Your code has been rated at 6.10/10
+------------------------------------------------------------------
+Your code has been rated at 7.07/10 (previous run: 7.07/10, +0.00)
 
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\models\suspects.py...
 ************* Module suspects
-models\suspects.py:9:0: C0303: Trailing whitespace (trailing-whitespace)
-models\suspects.py:13:0: C0303: Trailing whitespace (trailing-whitespace)
-models\suspects.py:15:0: C0301: Line too long (106/100) (line-too-long)
-models\suspects.py:18:0: C0301: Line too long (135/100) (line-too-long)
-models\suspects.py:60:0: C0303: Trailing whitespace (trailing-whitespace)
 models\suspects.py:62:0: C0304: Final newline missing (missing-final-newline)
 models\suspects.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 models\suspects.py:3:0: C0115: Missing class docstring (missing-class-docstring)
@@ -416,16 +241,12 @@ models\suspects.py:61:4: C0116: Missing function or method docstring (missing-fu
 models\suspects.py:62:15: E1101: Instance of 'Suspects' has no 'suspects_' member (no-member)
 models\suspects.py:61:38: W0613: Unused argument 'id_kasus' (unused-argument)
 
------------------------------------
-Your code has been rated at 3.95/10
+------------------------------------------------------------------
+Your code has been rated at 5.12/10 (previous run: 5.12/10, +0.00)
 
 --------------------------------------------------------------------------------
 Linting C:\Users\Benedict Presley\Semester3\RPL\tubes\IF2150-2024-K01-G01-DetectiveTasksboard\src\models\victims.py...
 ************* Module victims
-models\victims.py:9:0: C0303: Trailing whitespace (trailing-whitespace)
-models\victims.py:16:0: C0301: Line too long (104/100) (line-too-long)
-models\victims.py:19:0: C0301: Line too long (139/100) (line-too-long)
-models\victims.py:21:0: C0303: Trailing whitespace (trailing-whitespace)
 models\victims.py:61:0: C0304: Final newline missing (missing-final-newline)
 models\victims.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 models\victims.py:3:0: C0115: Missing class docstring (missing-class-docstring)
@@ -440,7 +261,7 @@ models\victims.py:46:4: C0116: Missing function or method docstring (missing-fun
 models\victims.py:49:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
 models\victims.py:58:4: C0116: Missing function or method docstring (missing-function-docstring)
 
------------------------------------
-Your code has been rated at 5.85/10
+------------------------------------------------------------------
+Your code has been rated at 6.83/10 (previous run: 6.83/10, +0.00)
 
 --------------------------------------------------------------------------------
