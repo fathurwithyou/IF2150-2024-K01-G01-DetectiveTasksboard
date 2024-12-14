@@ -283,6 +283,7 @@ def dashboard_content(page: ft.Page):
         status_field.value = case["status"]
         status_field.label = case["status"]
         date_field.value = case["tanggal_mulai"]
+        progress_field.value = case["perkembangan_kasus"]
         desc_field.value = case["catatan"]
 
         date_picker = ft.DatePicker(

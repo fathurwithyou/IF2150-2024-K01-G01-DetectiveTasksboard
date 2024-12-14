@@ -5,6 +5,15 @@ from models.suspects import Suspects
 from models.detectives import Detective
 from datetime import datetime
 
+COLORS = {
+    "background_dark": "#111111",     # Almost black, like Daredevil's nighttime backdrop
+    "primary_red": "#B22222",         # Dark red, reminiscent of Daredevil's costume
+    "secondary_red": "#8B0000",       # Deeper red for accents
+    "text_light": "#E6E6E6",          # Light gray for text
+    "divider": "#333333",             # Dark gray for dividers
+    "text_muted": "#999999",
+    "status_gray": "#444444"          # Slightly lighter gray for subtexts
+}
 
 def cases_content(page: ft.Page):
     case_model = Cases()
@@ -25,36 +34,83 @@ def cases_content(page: ft.Page):
         detectives = case_model.get_name_list(detectives)
 
         case["id"] = id_kasus
-        is_expanded = False  # Initial state for dropdown
+        is_expanded = False 
 
         def toggle_expand(e):
             """Toggle the expanded state of the tile."""
             nonlocal is_expanded
             is_expanded = not is_expanded
-            update_tile()  # Refresh the tile content
+            # change_border(e)
+            update_tile()  
 
         def update_tile():
             """Update the content of the tile based on the expanded state."""
-            details_container.visible = is_expanded  # Show or hide details
-            edit_button.visible = is_expanded  # Show or hide edit button
+            details_container.visible = is_expanded  
+            edit_button.visible = is_expanded  
             toggle_button.icon = ft.icons.KEYBOARD_ARROW_UP if is_expanded else ft.icons.KEYBOARD_ARROW_DOWN
             case_tile.update()
 
         details_container = ft.Container(
             content=ft.Column(
                 [
-                    ft.Text(
-                        f"Description: {case.get('catatan', 'Tidak ada catatan')}", size=14),
-                    ft.Text(
-                        f"Progress: {case.get('perkembangan_kasus', 'Tidak ada perkembangan')}", size=14),
-                    ft.Text(
-                        f"Assigned Detective: {', '.join(detectives)}", size=14),
-                    ft.Text(f"Victims: {', '.join(victims)}", size=14),
-                    ft.Text(f"Suspects: {', '.join(suspects)}", size=14),
+                    ft.Row([
+                        ft.Icon(ft.icons.DESCRIPTION, color=COLORS["primary_red"]),
+                        ft.Text(
+                            "Case Description", 
+                            size=16, 
+                            weight=ft.FontWeight.BOLD, 
+                            color=COLORS["primary_red"]
+                        )
+                    ], spacing=10),
+                    ft.Divider(color=COLORS["divider"]),
+                    
+                    ft.Row([
+                        ft.Text("Description:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                        ft.Text(
+                            case.get('catatan', 'No description available'), 
+                            color=COLORS["text_muted"]
+                        )
+                    ]),
+                    
+                    ft.Row([
+                        ft.Text("Progress:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                        ft.Text(
+                            case.get('perkembangan_kasus', 'No progress updates'), 
+                            color=COLORS["text_muted"]
+                        )
+                    ]),
+                    
+                    ft.Row([
+                        ft.Text("Assigned Detective(s):", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                        ft.Text(
+                            ', '.join(detectives) if detectives else 'No detectives assigned', 
+                            color=COLORS["text_muted"]
+                        )
+                    ]),
+                    
+                    ft.Row([
+                        ft.Text("Victims:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                        ft.Text(
+                            ', '.join(victims) if victims else 'No victims recorded', 
+                            color=COLORS["text_muted"]
+                        )
+                    ]),
+                    
+                    ft.Row([
+                        ft.Text("Suspects:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                        ft.Text(
+                            ', '.join(suspects) if suspects else 'No suspects identified', 
+                            color=COLORS["text_muted"]
+                        )
+                    ]),
                 ],
-                spacing=5,
+                spacing=10,
+                horizontal_alignment=ft.CrossAxisAlignment.START,
             ),
-            padding=ft.Padding(10, 10, 10, 10),
+            padding=ft.Padding(0, 10, 0, 15),
+            border_radius=10,
+            border=None,
+            bgcolor=COLORS["background_dark"],
             visible=False,  # Hidden by default
         )
 
@@ -73,6 +129,40 @@ def cases_content(page: ft.Page):
             visible=False,
         )
 
+        def change_border(e):
+            if e.data == "true" or is_expanded:
+                case_tile.border = ft.Border(
+                    top=ft.BorderSide(width=2, color=COLORS["secondary_red"]),
+                    left=ft.BorderSide(width=2, color=COLORS["secondary_red"]),
+                    right=ft.BorderSide(
+                        width=2, color=COLORS["secondary_red"]),
+                    bottom=ft.BorderSide(
+                        width=2, color=COLORS["secondary_red"]),
+                )
+                case_tile.shadow = ft.BoxShadow(
+                    spread_radius=1,
+                    blur_radius=5,
+                    color=COLORS["secondary_red"],
+                    offset=ft.Offset(0, 0),
+                    blur_style=ft.ShadowBlurStyle.OUTER,
+                )
+            else:
+                case_tile.border = ft.Border(
+                    top=ft.BorderSide(
+                        width=2, color=COLORS["background_dark"]),
+                    left=ft.BorderSide(
+                        width=2, color=COLORS["background_dark"]),
+                    right=ft.BorderSide(
+                        width=2, color=COLORS["background_dark"]),
+                    bottom=ft.BorderSide(
+                        width=2, color=COLORS["background_dark"]),
+                )
+                case_tile.shadow = None
+            
+            
+
+            case_tile.update()
+
         case_tile = ft.Container(
             content=ft.Column(
                 [
@@ -85,11 +175,12 @@ def cases_content(page: ft.Page):
                                             f"Case #{case['id']}: {case['judul']}",
                                             size=20,
                                             weight=ft.FontWeight.BOLD,
+                                            color=COLORS["text_light"],
                                         ),
                                         ft.Text(
                                             f"{case['status']}, {case['tanggal_mulai']}",
                                             size=16,
-                                            color="gray",
+                                            color=COLORS["status_gray"],
                                         ),
                                     ]
                                 ),
@@ -100,17 +191,23 @@ def cases_content(page: ft.Page):
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     ),
-                    details_container,  # The hidden container for detailed information
+                    details_container,  
                 ],
             ),
-            padding=ft.Padding(10, 10, 10, 10),
+            padding=ft.Padding(15, 15, 15, 15),
+            bgcolor=COLORS["background_dark"],
             border=ft.Border(
-                top=ft.BorderSide(width=2, color=ft.colors.SURFACE_VARIANT),
-                left=ft.BorderSide(width=2, color=ft.colors.SURFACE_VARIANT),
-                right=ft.BorderSide(width=2, color=ft.colors.SURFACE_VARIANT),
-                bottom=ft.BorderSide(width=2, color=ft.colors.SURFACE_VARIANT),
+                top=ft.BorderSide(width=2, color=COLORS["background_dark"]),
+                left=ft.BorderSide(width=2, color=COLORS["background_dark"]),
+                right=ft.BorderSide(
+                    width=2, color=COLORS["background_dark"]),
+                bottom=ft.BorderSide(
+                    width=2, color=COLORS["background_dark"]),
             ),
-            border_radius=ft.border_radius.all(5),
+            border_radius=ft.border_radius.all(
+                10),  
+            shadow=None,
+            on_hover=lambda e: change_border(e),
         )
 
         return case_tile
@@ -130,7 +227,7 @@ def cases_content(page: ft.Page):
 
         list_container.content = ft.Column(
             [create_case_tile(idx) for idx, case in filtered_cases.iterrows()],
-            scroll="auto",  
+            scroll="auto",
         )
         page.update()
 
@@ -143,7 +240,7 @@ def cases_content(page: ft.Page):
     def edit_case_modal(case):
         """Open a modal to edit the selected case."""
         nonlocal all_cases
-        
+
         suspect_id_df = case_model.get_all_suspects_id()
         victim_id_df = case_model.get_all_victims_id()
         detective_id_df = case_model.get_all_detectives_id()
@@ -156,7 +253,7 @@ def cases_content(page: ft.Page):
         all_victims = set(victim_id_df['id_victim'].tolist())
         set_victim = set(
             victim_id_df[victim_id_df['id_kasus'] == case['id']]['id_victim'].tolist())
-        
+
         all_detectives = set(detective_id_df['id_detective'].tolist())
         set_detective = set(
             detective_id_df[detective_id_df['id_kasus'] == case['id']]['id_detective'].tolist())
@@ -228,7 +325,7 @@ def cases_content(page: ft.Page):
             max_lines=5,
             hint_text="Optional description",
         )
-        
+
         progress_field = ft.TextField(
             label="Progress",
             multiline=True,
@@ -258,6 +355,7 @@ def cases_content(page: ft.Page):
         status_field.value = case["status"]
         status_field.label = case["status"]
         date_field.value = case["tanggal_mulai"]
+        progress_field.value = case["perkembangan_kasus"]
         desc_field.value = case["catatan"]
 
         date_picker = ft.DatePicker(
@@ -318,7 +416,7 @@ def cases_content(page: ft.Page):
                 for id_detective in all_detectives - set_detective
             ],
         )
-        
+
         def update_detective_list():
             detective_field.options = [
                 ft.dropdown.Option(detective_model.get_detective_by_id(
@@ -344,7 +442,7 @@ def cases_content(page: ft.Page):
                 )
                 for id_detective in set_detective
             ]
-            
+
         def detective_remove(id_detective):
             """Remove a detective from the list."""
             set_detective.remove(id_detective)
@@ -452,7 +550,7 @@ def cases_content(page: ft.Page):
             ],
             spacing=5,
         )
-        
+
         detective_list = ft.Column(
             controls=[
                 ft.TextButton(
@@ -488,11 +586,12 @@ def cases_content(page: ft.Page):
                 "catatan": desc_field.value.strip() if desc_field.value else "Tidak ada catatan",
             }
 
-            case_model.update_case(case['id'], updated_case, set_suspect, set_victim, set_detective)
+            case_model.update_case(
+                case['id'], updated_case, set_suspect, set_victim, set_detective)
             all_cases = case_model.get_cases()
             refresh_list()
             page.close(edit_case_modal)
-        
+
         edit_case_modal = ft.AlertDialog(
             title=ft.Text(
                 f"Edit Case #{case['id']}", size=20, weight=ft.FontWeight.BOLD),
@@ -552,27 +651,49 @@ def cases_content(page: ft.Page):
 
         page.open(edit_case_modal)
 
+    
+    def update_border_color(e):
+        if e.data == "true":
+            search_field.border_color = COLORS["secondary_red"]
+            search_field.label_style = ft.TextStyle(color=COLORS["primary_red"])
+        else:
+            search_field.border_color = COLORS["background_dark"]
+            
+        search_field.update()
+
+    search_field = ft.TextField(
+        label="Search Cases...",
+        width=300,
+        border_color=COLORS["background_dark"],
+        focused_border_color=COLORS["secondary_red"],
+        color=COLORS["text_light"],
+        cursor_color=COLORS["text_light"],
+        on_change=handle_search,
+        on_focus=update_border_color,
+        on_blur=update_border_color
+    )
+
     header_controls = ft.Row(
         [
-            ft.TextField(
-                label="Search Cases...",
-                width=300,
-                on_change=handle_search,
+            ft.Container(
+            content=search_field,
             ),
             ft.ElevatedButton(
-                text="Add Case",
-                icon=ft.icons.ADD,
-                bgcolor="white",
-                color="black",
-                style=ft.ButtonStyle(
-                        shape=ft.RoundedRectangleBorder(
-                            radius=10),  # Adjust radius as needed
-                ),
-                on_click=lambda _: open_add_case_modal(),
+            text="Add Case",
+            icon=ft.icons.ADD,
+            bgcolor=COLORS["primary_red"],
+            color=COLORS["text_light"],
+            style=ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(radius=10),
+                overlay_color={
+                ft.MaterialState.HOVERED: COLORS["secondary_red"]
+                }
             ),
+            on_click=lambda _: open_add_case_modal(),
+            )
         ],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-    )
+        )
 
     # List container for displaying cases
     list_container = ft.Container(
@@ -585,7 +706,20 @@ def cases_content(page: ft.Page):
     container = ft.Container(
         content=ft.Column(
             [
-                ft.Text("Cases", size=30, weight=ft.FontWeight.BOLD),
+                ft.ShaderMask(
+                    content=ft.Text(
+                        "Cases",
+                        size=30,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.colors.WHITE,  # Text color should be white for gradient
+                    ),
+                    shader=ft.LinearGradient(
+                        colors=[COLORS["primary_red"], COLORS["secondary_red"], COLORS["primary_red"]],
+                        begin=ft.Alignment(-1, -1),
+                        end=ft.Alignment(1, 1),
+                    ),
+                    blend_mode=ft.BlendMode.SRC_IN,  # Blend mode to apply gradient
+                ),
                 header_controls,
                 list_container,
             ]
@@ -707,10 +841,19 @@ def cases_content(page: ft.Page):
 
         # Modal dialog
         add_case_modal = ft.AlertDialog(
-            title=ft.Text("Add New Case", size=20, weight=ft.FontWeight.BOLD),
+            title=ft.Text(
+                "Add New Case", 
+                size=20, 
+                weight=ft.FontWeight.BOLD,
+                color=COLORS["text_light"]
+            ),
             content=ft.Container(
                 content=ft.Column(
+                    scroll="auto",
                     controls=[
+                        ft.Container(
+                            padding=ft.Padding(0, 5, 0, 0)
+                        ),
                         name_field,
                         status_field,
                         ft.Row(
@@ -724,6 +867,7 @@ def cases_content(page: ft.Page):
                 ),
                 width=500,
                 height=300,
+                bgcolor=COLORS["background_dark"],
             ),
             actions=[
                 ft.Row(
@@ -732,17 +876,23 @@ def cases_content(page: ft.Page):
                             "Cancel",
                             on_click=lambda _: page.close(add_case_modal),
                             style=ft.ButtonStyle(
-                                color=ft.colors.ERROR,
-                                shape=ft.RoundedRectangleBorder(radius=5),
+                                color=COLORS["primary_red"],
+                                shape=ft.RoundedRectangleBorder(radius=10),
+                                overlay_color={
+                                    ft.MaterialState.HOVERED: COLORS["secondary_red"]
+                                }
                             )
                         ),
                         ft.ElevatedButton(
                             "Save",
                             on_click=save_new_case,
                             style=ft.ButtonStyle(
-                                bgcolor=ft.colors.PRIMARY,
-                                color=ft.colors.ON_PRIMARY,
-                                shape=ft.RoundedRectangleBorder(radius=5),
+                                bgcolor=COLORS["primary_red"],
+                                color=COLORS["text_light"],
+                                shape=ft.RoundedRectangleBorder(radius=10),
+                                overlay_color={
+                                    ft.MaterialState.HOVERED: COLORS["secondary_red"]
+                                }
                             )
                         ),
                     ],
@@ -751,7 +901,8 @@ def cases_content(page: ft.Page):
                 )
             ],
             modal=True,
-            shape=ft.RoundedRectangleBorder(radius=5),
+            shape=ft.RoundedRectangleBorder(radius=10),
+            bgcolor=COLORS["background_dark"],
         )
 
         page.open(add_case_modal)

@@ -1,5 +1,4 @@
 id_victim,id_kasus
-1,5
 2,1
 2,3
 2,5
@@ -12,3 +11,5 @@ id_victim,id_kasus
 5,1
 5,2
 1,4
+1,6
+3,6

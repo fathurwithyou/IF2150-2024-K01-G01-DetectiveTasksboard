@@ -1,5 +1,4 @@
 id_suspect,id_kasus
-1,2
 2,1
 2,5
 3,1
@@ -7,3 +6,4 @@ id_suspect,id_kasus
 3,5
 1,4
 2,4
+2,6

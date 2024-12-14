@@ -1,6 +1,10 @@
 # IF2150-2024-K01-G01-DetectiveTasksboard
 
-![Detective Tasksboard Text Logo](https://github.com/user-attachments/assets/a1e7d5db-9ef3-437d-9e41-b69ce7ac5b7c)
+![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)
+![Supported OS](https://img.shields.io/badge/os-windows%20|%20macOS%20|%20linux-lightgrey)
+
+![Detective Tasksboard Text Logo](image.png)
+
 
 Detective Tasksboard adalah perangkat lunak yang dirancang untuk membantu lawyer dalam mengelola berbagai kasus hukum yang ditangani secara efisien dan terstruktur. Dengan perangkat lunak ini, pengelolaan data hukum menjadi lebih mudah, cepat, dan akurat.
 
@@ -11,15 +15,6 @@ Detective Tasksboard adalah perangkat lunak yang dirancang untuk membantu lawyer
 - **Manajemen Entitas:** Penambahan atau penghapusan suspect, victim, dan detective dari kasus yang sedang dikelola.
 - **Real-Time Updates:** Memberikan informasi perkembangan kasus secara langsung.
 
-## Prasyarat Sistem
-### Requirements
-- **Python:** Versi 3.10 atau lebih baru.
-- **Flet:** Framework Python untuk membangun antarmuka pengguna.
-- **OS:** Windows, macOS, atau Linux.
-  
-### Dependencies
-Library Python: Semua dependensi akan dikelola melalui `requirements.txt`.
-
 ## Instalasi Dependensi
 Untuk menginstal perangkat lunak, ikuti langkah-langkah berikut:
 
@@ -27,11 +22,11 @@ Untuk menginstal perangkat lunak, ikuti langkah-langkah berikut:
    ```bash
    git clone https://github.com/fathurwithyou/IF2150-2024-K01-G01-DetectiveTasksboard.git
    cd IF2150-2024-K01-G01-DetectiveTasksboard
-
+   ```
 2. Instalasi Dependensi: Pastikan Anda sudah menginstal Python. Kemudian jalankan perintah berikut:
    ```bash
    pip install -r requirements.txt
-
+   ```
 ## Cara Menjalankan Program
 Setelah semua dependensi terinstal dan directory berada di dalam IF2150-2024-K01-G01-DetectiveTasksboard, jalankan aplikasi dengan perintah:
 
@@ -39,5 +34,6 @@ Setelah semua dependensi terinstal dan directory berada di dalam IF2150-2024-K01
    ```bash
    cd src
    python main.py
-
+   ```
+   
 2. Aplikasi akan berjalan di antarmuka berbasis Flet dengan tampilan responsif dan real-time.
