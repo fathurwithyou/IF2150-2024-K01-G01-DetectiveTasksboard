@@ -8,6 +8,7 @@
 ![FPDF](https://img.shields.io/badge/FPDF-1.7.2-orange?logo=readthedocs)
 ![Pandas](https://img.shields.io/badge/Pandas-1.5.3-teal?logo=pandas)
 ![Pillow](https://img.shields.io/badge/Pillow-10.1.0-green?logo=pillow)
+![pyinstrument](https://img.shields.io/badge/pyinstrument-5.0.0-pink?logo=python)
 ![Pylint](https://img.shields.io/badge/Pylint-3.3.2-red?logo=pylint)
 ![Pytest](https://img.shields.io/badge/Pytest-7.4.0-yellow?logo=pytest)
 ![python-dateutil](https://img.shields.io/badge/python--dateutil-2.8.2-darkblue?logo=python)
