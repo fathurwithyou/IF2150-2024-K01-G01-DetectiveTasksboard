@@ -4,6 +4,7 @@ from models.victims import Victims
 from models.suspects import Suspects
 from models.detectives import Detective
 from datetime import datetime
+from fpdf import FPDF
 
 COLORS = {
     "background_dark": "#111111",     # Almost black, like Daredevil's nighttime backdrop
@@ -47,6 +48,7 @@ def cases_content(page: ft.Page):
             """Update the content of the tile based on the expanded state."""
             details_container.visible = is_expanded  
             edit_button.visible = is_expanded  
+            download_button.visible = is_expanded  
             toggle_button.icon = ft.icons.KEYBOARD_ARROW_UP if is_expanded else ft.icons.KEYBOARD_ARROW_DOWN
             case_tile.update()
 
@@ -138,6 +140,14 @@ def cases_content(page: ft.Page):
             visible=False,
         )
 
+        download_button = ft.IconButton(
+            icon=ft.icons.DOWNLOAD,
+            icon_color="white",
+            tooltip="Download Case",
+            on_click=lambda *_: handle_download(case, suspects, victims, detectives, page),
+            visible=False,
+        )
+
         def change_border(e):
             if e.data == "true" or is_expanded:
                 case_tile.border = ft.Border(
@@ -193,6 +203,7 @@ def cases_content(page: ft.Page):
                                 ),
                                 expand=True,
                             ),
+                            download_button, 
                             edit_button,  # Use the edit_button here
                             toggle_button,  # Use the toggle_button here
                         ],
@@ -218,6 +229,84 @@ def cases_content(page: ft.Page):
         )
 
         return case_tile
+
+    def download_case_as_pdf(case, suspects, victims, detectives, file_path):
+        try:
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", size=12)
+            
+            pdf.cell(200, 10, txt="Case Information", ln=True, align='C')
+            pdf.cell(200, 10, txt=f"Case ID: {case['id']}", ln=True, align='L')
+            pdf.cell(200, 10, txt=f"Case Title: {case['judul']}", ln=True, align='L')
+            pdf.cell(200, 10, txt=f"Status: {case['status']}", ln=True, align='L')
+            pdf.cell(200, 10, txt=f"Start Date: {case['tanggal_mulai']}", ln=True, align='L')
+            pdf.cell(200, 10, txt=f"End Date: {case['tanggal_selesai']}", ln=True, align='L')
+            pdf.cell(200, 10, txt=f"Progress: {case['perkembangan_kasus']}", ln=True, align='L')
+            pdf.cell(200, 10, txt=f"Notes: {case['catatan']}", ln=True, align='L')
+            
+            pdf.cell(200, 10, txt="Assigned Detectives:", ln=True, align='L')
+            for detective in detectives:
+                pdf.cell(200, 10, txt=f"- {detective}", ln=True, align='L')
+            
+            pdf.cell(200, 10, txt="Victims:", ln=True, align='L')
+            for victim in victims:
+                pdf.cell(200, 10, txt=f"- {victim}", ln=True, align='L')
+            
+            pdf.cell(200, 10, txt="Suspects:", ln=True, align='L')
+            for suspect in suspects:
+                pdf.cell(200, 10, txt=f"- {suspect}", ln=True, align='L')
+            
+            # Ensure the full file path is used, including the filename
+            full_path = file_path if file_path.endswith('.pdf') else file_path + '.pdf'
+            pdf.output(full_path)
+            return True
+        except Exception as e:
+            print(f"Error saving PDF: {e}")
+            return False
+    
+    def handle_download(case, suspects, victims, detectives, page):
+        def on_file_save(e):
+            try:
+                # Flet sometimes stores the path in different ways
+                path = (
+                    e.path or  # Direct path attribute
+                    (json.loads(e.data)['path'] if e.data else None) or  # From data
+                    (e.files[0].path if e.files else None)  # From files (if applicable)
+                )
+                
+                if not path:
+                    raise ValueError("No save path found")
+                
+                # Construct full file path
+                full_path = path if path.lower().endswith('.pdf') else os.path.join(path, 'case_information.pdf')
+                
+                success = download_case_as_pdf(case, suspects, victims, detectives, full_path)
+                if success:
+                    page.snack_bar = ft.SnackBar(
+                        content=ft.Text(f"Case PDF saved to {full_path}"),
+                        open=True
+                    )
+                    page.update()
+            except Exception as ex:
+                print(f"Error in file save: {ex}")
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"Failed to save PDF: {ex}"),
+                    open=True
+                )
+                page.update()
+    
+        # Ensure necessary imports
+        import json
+        import os
+    
+        # Create and setup FilePicker
+        file_picker = ft.FilePicker(on_result=on_file_save)
+        page.overlay.append(file_picker)
+        page.update()
+        
+        # Trigger save dialog
+        file_picker.save_file(file_name="case_information.pdf")
 
     def refresh_list():
         """Refresh the displayed list of cases based on the current search query."""
