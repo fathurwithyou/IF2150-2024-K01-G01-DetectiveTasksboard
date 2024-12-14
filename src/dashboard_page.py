@@ -9,6 +9,18 @@ import calendar
 from datetime import datetime, date
 
 
+COLORS = {
+    # Almost black, like Daredevil's nighttime backdrop
+    "background_dark": "#111111",
+    "primary_red": "#B22222",         # Dark red, reminiscent of Daredevil's costume
+    "secondary_red": "#8B0000",       # Deeper red for accents
+    "text_light": "#E6E6E6",          # Light gray for text
+    "divider": "#333333",             # Dark gray for dividers
+    "text_muted": "#999999",
+    "status_gray": "#444444"          # Slightly lighter gray for subtexts
+}
+
+
 def dashboard_content(page: ft.Page):
     case_model = Cases()
     victim_model = Victims()
@@ -30,36 +42,92 @@ def dashboard_content(page: ft.Page):
         detectives = case_model.get_name_list(detectives)
 
         case["id"] = id_kasus
-        is_expanded = False  # Initial state for dropdown
+        is_expanded = False
 
         def toggle_expand(e):
             """Toggle the expanded state of the tile."""
             nonlocal is_expanded
             is_expanded = not is_expanded
-            update_tile()  # Refresh the tile content
+            # change_border(e)
+            update_tile()
 
         def update_tile():
             """Update the content of the tile based on the expanded state."""
-            details_container.visible = is_expanded  # Show or hide details
-            edit_button.visible = is_expanded  # Show or hide edit button
+            details_container.visible = is_expanded
+            edit_button.visible = is_expanded
             toggle_button.icon = ft.icons.KEYBOARD_ARROW_UP if is_expanded else ft.icons.KEYBOARD_ARROW_DOWN
             case_tile.update()
 
         details_container = ft.Container(
             content=ft.Column(
                 [
-                    ft.Text(
-                        f"Description: {case.get('catatan', 'Tidak ada catatan')}", size=14),
-                    ft.Text(
-                        f"Progress: {case.get('perkembangan_kasus', 'Tidak ada perkembangan')}", size=14),
-                    ft.Text(
-                        f"Assigned Detective: {', '.join(detectives)}", size=14),
-                    ft.Text(f"Victims: {', '.join(victims)}", size=14),
-                    ft.Text(f"Suspects: {', '.join(suspects)}", size=14),
+                    ft.Row(
+                        [
+                            ft.Icon(ft.icons.DESCRIPTION,
+                                    color=COLORS["primary_red"]),
+                            ft.Text(
+                                "Case Description",
+                                size=16,
+                                weight=ft.FontWeight.BOLD,
+                                color=COLORS["primary_red"]
+                            )
+                        ],
+                        spacing=10
+                    ),
+                    ft.Divider(color=COLORS["divider"]),
+                    ft.Row(
+                        [
+                            ft.Column(
+                                [
+                                    ft.Text("Description:", weight=ft.FontWeight.BOLD,
+                                            color=COLORS["text_light"]),
+                                    ft.Text(
+                                        case.get(
+                                            'catatan', 'No description available'),
+                                        color=COLORS["text_muted"]
+                                    ),
+                                    ft.Text("Progress:", weight=ft.FontWeight.BOLD,
+                                            color=COLORS["text_light"]),
+                                    ft.Text(
+                                        case.get('perkembangan_kasus',
+                                                 'No progress updates'),
+                                        color=COLORS["text_muted"]
+                                    ),
+                                    ft.Text("Assigned Detective(s):",
+                                            weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                                    ft.Text(
+                                        ', '.join(
+                                            detectives) if detectives else 'No detectives assigned',
+                                        color=COLORS["text_muted"]
+                                    ),
+                                    ft.Text("Victims:", weight=ft.FontWeight.BOLD,
+                                            color=COLORS["text_light"]),
+                                    ft.Text(
+                                        ', '.join(
+                                            victims) if victims else 'No victims recorded',
+                                        color=COLORS["text_muted"]
+                                    ),
+                                    ft.Text("Suspects:", weight=ft.FontWeight.BOLD,
+                                            color=COLORS["text_light"]),
+                                    ft.Text(
+                                        ', '.join(
+                                            suspects) if suspects else 'No suspects identified',
+                                        color=COLORS["text_muted"]
+                                    ),
+                                ],
+                                spacing=10,
+                                horizontal_alignment=ft.CrossAxisAlignment.START,
+                            )
+                        ], scroll="auto", expand=True
+                    )
                 ],
-                spacing=5,
+                spacing=10,
+                horizontal_alignment=ft.CrossAxisAlignment.START,
             ),
-            padding=ft.Padding(10, 10, 10, 10),
+            padding=ft.Padding(0, 10, 0, 0),
+            border_radius=10,
+            border=None,
+            bgcolor=COLORS["background_dark"],
             visible=False,  # Hidden by default
         )
 
@@ -78,6 +146,38 @@ def dashboard_content(page: ft.Page):
             visible=False,
         )
 
+        def change_border(e):
+            if e.data == "true" or is_expanded:
+                case_tile.border = ft.Border(
+                    top=ft.BorderSide(width=2, color=COLORS["secondary_red"]),
+                    left=ft.BorderSide(width=2, color=COLORS["secondary_red"]),
+                    right=ft.BorderSide(
+                        width=2, color=COLORS["secondary_red"]),
+                    bottom=ft.BorderSide(
+                        width=2, color=COLORS["secondary_red"]),
+                )
+                case_tile.shadow = ft.BoxShadow(
+                    spread_radius=1,
+                    blur_radius=5,
+                    color=COLORS["secondary_red"],
+                    offset=ft.Offset(0, 0),
+                    blur_style=ft.ShadowBlurStyle.OUTER,
+                )
+            else:
+                case_tile.border = ft.Border(
+                    top=ft.BorderSide(
+                        width=2, color=COLORS["background_dark"]),
+                    left=ft.BorderSide(
+                        width=2, color=COLORS["background_dark"]),
+                    right=ft.BorderSide(
+                        width=2, color=COLORS["background_dark"]),
+                    bottom=ft.BorderSide(
+                        width=2, color=COLORS["background_dark"]),
+                )
+                case_tile.shadow = None
+
+            case_tile.update()
+
         case_tile = ft.Container(
             content=ft.Column(
                 [
@@ -90,11 +190,12 @@ def dashboard_content(page: ft.Page):
                                             f"Case #{case['id']}: {case['judul']}",
                                             size=20,
                                             weight=ft.FontWeight.BOLD,
+                                            color=COLORS["text_light"],
                                         ),
                                         ft.Text(
                                             f"{case['status']}, {case['tanggal_mulai']}",
                                             size=16,
-                                            color="gray",
+                                            color=COLORS["status_gray"],
                                         ),
                                     ]
                                 ),
@@ -105,17 +206,23 @@ def dashboard_content(page: ft.Page):
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     ),
-                    details_container,  # The hidden container for detailed information
+                    details_container,
                 ],
             ),
-            padding=ft.Padding(10, 10, 10, 10),
+            padding=ft.Padding(15, 15, 15, 15),
+            bgcolor=COLORS["background_dark"],
             border=ft.Border(
-                top=ft.BorderSide(width=2, color=ft.colors.SURFACE_VARIANT),
-                left=ft.BorderSide(width=2, color=ft.colors.SURFACE_VARIANT),
-                right=ft.BorderSide(width=2, color=ft.colors.SURFACE_VARIANT),
-                bottom=ft.BorderSide(width=2, color=ft.colors.SURFACE_VARIANT),
+                top=ft.BorderSide(width=2, color=COLORS["background_dark"]),
+                left=ft.BorderSide(width=2, color=COLORS["background_dark"]),
+                right=ft.BorderSide(
+                    width=2, color=COLORS["background_dark"]),
+                bottom=ft.BorderSide(
+                    width=2, color=COLORS["background_dark"]),
             ),
-            border_radius=ft.border_radius.all(5),
+            border_radius=ft.border_radius.all(
+                10),
+            shadow=None,
+            on_hover=lambda e: change_border(e),
         )
 
         return case_tile
@@ -124,21 +231,21 @@ def dashboard_content(page: ft.Page):
         """Refresh the displayed list of cases based on the current search query."""
         nonlocal filtered_cases
         if search_query.strip():
-            filtered_cases = ongoing_cases[
-                ongoing_cases.apply(
+            filtered_cases = all_cases[
+                all_cases.apply(
                     lambda row: search_query.lower() in str(row.values).lower(),
                     axis=1,
                 )
             ]
         else:
-            filtered_cases = ongoing_cases
+            filtered_cases = all_cases
 
         list_container.content = ft.Column(
             [create_case_tile(idx) for idx, case in filtered_cases.iterrows()],
-            scroll="auto",  
+            scroll="auto",
         )
         page.update()
-    
+
     def refresh_calendar():
         """Refresh the calendar based on the current search query."""
         nonlocal filtered_cases_calender
@@ -155,8 +262,6 @@ def dashboard_content(page: ft.Page):
         build_calendar()
         calendar_container.update()
 
-
-
     def handle_search(e):
         """Handle the search input."""
         nonlocal search_query
@@ -164,11 +269,10 @@ def dashboard_content(page: ft.Page):
         refresh_list()
         refresh_calendar()
 
-
     def edit_case_modal(case):
         """Open a modal to edit the selected case."""
         nonlocal all_cases
-        
+
         suspect_id_df = case_model.get_all_suspects_id()
         victim_id_df = case_model.get_all_victims_id()
         detective_id_df = case_model.get_all_detectives_id()
@@ -181,7 +285,7 @@ def dashboard_content(page: ft.Page):
         all_victims = set(victim_id_df['id_victim'].tolist())
         set_victim = set(
             victim_id_df[victim_id_df['id_kasus'] == case['id']]['id_victim'].tolist())
-        
+
         all_detectives = set(detective_id_df['id_detective'].tolist())
         set_detective = set(
             detective_id_df[detective_id_df['id_kasus'] == case['id']]['id_detective'].tolist())
@@ -253,7 +357,7 @@ def dashboard_content(page: ft.Page):
             max_lines=5,
             hint_text="Optional description",
         )
-        
+
         progress_field = ft.TextField(
             label="Progress",
             multiline=True,
@@ -344,7 +448,7 @@ def dashboard_content(page: ft.Page):
                 for id_detective in all_detectives - set_detective
             ],
         )
-        
+
         def update_detective_list():
             detective_field.options = [
                 ft.dropdown.Option(detective_model.get_detective_by_id(
@@ -370,7 +474,7 @@ def dashboard_content(page: ft.Page):
                 )
                 for id_detective in set_detective
             ]
-            
+
         def detective_remove(id_detective):
             """Remove a detective from the list."""
             set_detective.remove(id_detective)
@@ -478,7 +582,7 @@ def dashboard_content(page: ft.Page):
             ],
             spacing=5,
         )
-        
+
         detective_list = ft.Column(
             controls=[
                 ft.TextButton(
@@ -514,11 +618,12 @@ def dashboard_content(page: ft.Page):
                 "catatan": desc_field.value.strip() if desc_field.value else "Tidak ada catatan",
             }
 
-            case_model.update_case(case['id'], updated_case, set_suspect, set_victim, set_detective)
+            case_model.update_case(
+                case['id'], updated_case, set_suspect, set_victim, set_detective)
             all_cases = case_model.get_cases()
             refresh_list()
             page.close(edit_case_modal)
-        
+
         edit_case_modal = ft.AlertDialog(
             title=ft.Text(
                 f"Edit Case #{case['id']}", size=20, weight=ft.FontWeight.BOLD),
@@ -578,178 +683,15 @@ def dashboard_content(page: ft.Page):
 
         page.open(edit_case_modal)
 
-    def open_add_case_modal():
-        """Open a modal to add a new case with improved validation and UI."""
-        nonlocal all_cases
-
-        def validate_inputs():
-            """Validate all input fields before saving."""
-            is_valid = True
-
-            # Validate name field
-            if not name_field.value or not name_field.value.strip():
-                name_field.error_text = "Case name is required"
-                is_valid = False
-            else:
-                name_field.error_text = None
-
-            # Validate status field
-            if not status_field.value:
-                status_field.error_text = "Status is required"
-                is_valid = False
-            else:
-                status_field.error_text = None
-
-            # Validate date field
-            if not date_field.value:
-                date_field.error_text = "Start date is required"
-                is_valid = False
-            else:
-                date_field.error_text = None
-
-            return is_valid
-
-        def on_date_pick(e):
-            """Handle date selection."""
-            selected_date = e.control.value
-            date_field.value = selected_date.strftime("%Y-%m-%d")
-            date_field.error_text = None
-            page.update()
-
-        def save_new_case(e):
-            """Save the new case after validation."""
-            nonlocal all_cases
-            if not validate_inputs():
-                page.update()
-                return
-
-            new_case = {
-                "judul": name_field.value.strip(),
-                "status": status_field.value,
-                "tanggal_mulai": date_field.value,
-                "tanggal_selesai": None,
-                "perkembangan_kasus": "Tidak ada perkembangan",
-                "catatan": desc_field.value.strip() if desc_field.value else "Tidak ada catatan",
-            }
-
-            case_model.add_case(new_case)
-            all_cases = case_model.get_cases()  # Reload cases
-            refresh_list()
-            page.close(add_case_modal)
-
-        # Input fields with improved styling and validation
-        name_field = ft.TextField(
-            label="Case Name",
-            hint_text="Enter case name",
-        )
-
-        desc_field = ft.TextField(
-            label="Description",
-            multiline=True,
-            max_lines=5,
-            hint_text="Optional description",
-        )
-
-        status_field = ft.Dropdown(
-            label="Status",
-            hint_text="Select case status",
-            options=[
-                ft.dropdown.Option("Selesai"),
-                ft.dropdown.Option("Belum Selesai"),
-                ft.dropdown.Option("On-going"),
-            ],
-        )
-
-        # Date input with picker
-        date_field = ft.TextField(
-            label="Start Date",
-            read_only=True,
-            hint_text="Select start date",
-            expand=True,
-        )
-
-        # Date picker configuration
-        year = datetime.now().year
-        month = datetime.now().month
-        day = datetime.now().day
-        date_picker = ft.DatePicker(
-            first_date=datetime(2021, 1, 1),
-            last_date=datetime(year, month, day),
-            date_picker_mode=ft.DatePickerMode.DAY,
-            on_change=on_date_pick,
-        )
-
-        date_button = ft.IconButton(
-            icon=ft.icons.CALENDAR_MONTH,
-            icon_color=ft.colors.WHITE,
-            on_click=lambda _: page.open(date_picker),
-        )
-
-        date_field.suffix = ft.Container(
-            content=date_button,
-            on_click=lambda _: page.open(date_picker),
-        )
-
-        # Modal dialog
-        add_case_modal = ft.AlertDialog(
-            title=ft.Text("Add New Case", size=20, weight=ft.FontWeight.BOLD),
-            content=ft.Container(
-                content=ft.Column(
-                    controls=[
-                        name_field,
-                        status_field,
-                        ft.Row(
-                            controls=[date_field],
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            spacing=10,
-                        ),
-                        desc_field,
-                    ],
-                    spacing=10,
-                ),
-                width=500,
-                height=300,
-            ),
-            actions=[
-                ft.Row(
-                    controls=[
-                        ft.TextButton(
-                            "Cancel",
-                            on_click=lambda _: page.close(add_case_modal),
-                            style=ft.ButtonStyle(
-                                color=ft.colors.ERROR,
-                                shape=ft.RoundedRectangleBorder(radius=5),
-                            )
-                        ),
-                        ft.ElevatedButton(
-                            "Save",
-                            on_click=save_new_case,
-                            style=ft.ButtonStyle(
-                                bgcolor=ft.colors.PRIMARY,
-                                color=ft.colors.ON_PRIMARY,
-                                shape=ft.RoundedRectangleBorder(radius=5),
-                            )
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.END,
-                    spacing=10,
-                )
-            ],
-            modal=True,
-            shape=ft.RoundedRectangleBorder(radius=5),
-        )
-
-        page.open(add_case_modal)
-
     # Calendar logic directly within show_calendar
     today = datetime.today()
     current_month = today.month
     current_year = today.year
 
     # Set theme
-    border_color = ft.colors.PINK_700
-    text_color = ft.colors.PINK_50
-    date_valid_color = ft.colors.PINK_700
+    border_color = COLORS["secondary_red"]
+    text_color = COLORS["text_light"]
+    date_valid_color = COLORS["secondary_red"]
 
     def get_calendar():
         """Return the calendar for the current month and year."""
@@ -766,41 +708,41 @@ def dashboard_content(page: ft.Page):
         build_calendar()
         main_container.update()
 
-
     def on_date_selected(e):
         """Handle the date selection event."""
         selected_date = e.control.data
         year, month, day = map(int, selected_date.split('-'))
         valid = is_date_valid(year, month, day)
-        # output.value = f"Selected date: {selected_date} - {'Valid' if valid else 'Invalid'}"
-        # output.update()
-    
+
         if valid:
             cases_on_date = filtered_cases_calender[filtered_cases_calender['tanggal_mulai'] == selected_date]
-    
+
             case_modal = ft.AlertDialog(
-                title=ft.Text(f"Cases on {selected_date}", size=20, weight=ft.FontWeight.BOLD),
+                title=ft.Text(f"Cases on {selected_date}", size=20,
+                              weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
                 content=ft.Container(
                     content=ft.Column([create_case_tile(idx)
-                          for idx, case in cases_on_date.iterrows()],
-                          scroll="auto"), expand=True,
+                                       for idx, case in cases_on_date.iterrows()],
+                                      scroll="auto"), expand=True,
                     width=500,
                     height=300,
+                    bgcolor=COLORS["background_dark"],
                 ),
                 actions=[
                     ft.TextButton(
                         "Close",
                         on_click=lambda _: page.close(case_modal),
                         style=ft.ButtonStyle(
-                            color=ft.colors.ERROR,
+                            color=COLORS["primary_red"],
                             shape=ft.RoundedRectangleBorder(radius=5),
                         )
                     ),
                 ],
                 modal=True,
                 shape=ft.RoundedRectangleBorder(radius=5),
+                bgcolor=COLORS["background_dark"],
             )
-    
+
             page.open(case_modal)
 
     def is_date_valid(year, month, day):
@@ -816,17 +758,25 @@ def dashboard_content(page: ft.Page):
         str_date = f"{calendar.month_name[current_month]} {current_year}"
         header = ft.Row(
             controls=[
-                ft.IconButton(icon=ft.icons.CHEVRON_LEFT, on_click=lambda e: change_month(-1)),
+                ft.IconButton(icon=ft.icons.CHEVRON_LEFT,
+                              on_click=lambda e: change_month(-1), icon_color=COLORS["text_light"]),
                 ft.Text(str_date, size=20, color=text_color),
-                ft.IconButton(icon=ft.icons.CHEVRON_RIGHT, on_click=lambda e: change_month(1)),
+                ft.IconButton(icon=ft.icons.CHEVRON_RIGHT, on_click=lambda e: change_month(
+                    1), icon_color=COLORS["text_light"]),
             ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
 
         # Days of the week header
-        week_header = ft.Row(
-            controls=[ft.Text(day[:2], color=text_color) for day in calendar.day_name],
-            alignment=ft.MainAxisAlignment.CENTER
+        week_header = ft.Container(
+            content=ft.Row(
+            controls=[ft.Container(
+                content=ft.Text(day[:2], color=text_color),
+                width=40,
+                alignment=ft.alignment.center
+            ) for day in calendar.day_name],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            )
         )
 
         # Calendar grid
@@ -835,16 +785,20 @@ def dashboard_content(page: ft.Page):
             week_row = ft.Row(spacing=2, alignment=ft.MainAxisAlignment.CENTER)
             for day in week:
                 if day > 0:
-                    date_valid = is_date_valid(current_year, current_month, day)
+                    date_valid = is_date_valid(
+                        current_year, current_month, day)
                     day_button = ft.Container(
-                        content=ft.Text(str(day), color=text_color, weight=ft.FontWeight.BOLD if date_valid else ft.FontWeight.NORMAL),
+                        content=ft.Text(str(
+                            day), color=text_color, weight=ft.FontWeight.BOLD if date_valid else ft.FontWeight.NORMAL),
                         on_click=on_date_selected,
                         data=f"{current_year}-{current_month:02}-{day:02}",
                         width=40,
                         height=40,
                         alignment=ft.alignment.center,
-                        bgcolor=date_valid_color if date_valid else ft.colors.TRANSPARENT,
-                        border_radius=ft.border_radius.all(5)
+                        bgcolor=date_valid_color if date_valid else COLORS["background_dark"],
+                        border_radius=ft.border_radius.all(5),
+                        border=ft.border.all(
+                            1, COLORS["divider"]) if date_valid else None,
                     )
                 else:
                     day_button = ft.Container(width=40, height=40)
@@ -858,19 +812,20 @@ def dashboard_content(page: ft.Page):
             alignment=ft.MainAxisAlignment.START
         )
 
-        calendar_container.content = calendar_column
-
-    # Output for selected date
-    # output = ft.Text()
+        calendar_container.content = ft.Column(
+            [calendar_column],
+            alignment=ft.MainAxisAlignment.START,
+            expand=True
+        )
 
     # Main calendar container
     calendar_container = ft.Container(
-        width=355,
-        height=300,
+        width=300,
         padding=ft.padding.all(2),
         border=ft.border.all(2, border_color),
         border_radius=ft.border_radius.all(10),
-        alignment=ft.alignment.bottom_center
+        alignment=ft.alignment.bottom_center,
+        bgcolor=COLORS["background_dark"],
     )
 
     # Build the initial calendar view
@@ -883,48 +838,37 @@ def dashboard_content(page: ft.Page):
                           scroll="auto"), height=200, expand=True
     )
 
-    main_container = ft.Container(expand=True, padding=20)
+    main_container = ft.Container(
+        expand=True,
+        content=ft.Row(
+            [
+                ft.Column([
+                    ft.Text("Ongoing Cases", size=16,
+                            weight=ft.FontWeight.BOLD),
+                    list_container],
+                    alignment=ft.MainAxisAlignment.START,
+                    width=400,
+                    expand=True),
+                ft.Container(
+                    padding=ft.Padding(10, 0, 0, 0)),
+                ft.Column([
+                    ft.Text("Calendar", size=16, weight=ft.FontWeight.BOLD),
+                    calendar_container])
+            ],
 
-    main_container.content = ft.Column(
-        [
-            ft.Text("Calendar", size=30, weight=ft.FontWeight.BOLD),
-            calendar_container,
-            ft.Text("Ongoing Cases", size=30, weight=ft.FontWeight.BOLD),
-            list_container,
-        ],
-    )
-
-    header_controls = ft.Row(
-        [
-            ft.TextField(
-                label="Search Cases...",
-                width=300,
-                on_change=handle_search,
-            ),
-            ft.ElevatedButton(
-                text="Add Case",
-                icon=ft.icons.ADD,
-                bgcolor="white",
-                color="black",
-                style=ft.ButtonStyle(
-                        shape=ft.RoundedRectangleBorder(
-                            radius=10),
-                ),
-                on_click=lambda _: open_add_case_modal(),
-            ),
-        ],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        )
     )
 
     container = ft.Container(
         content=ft.Column(
             [
                 ft.Text("Dashboard", size=30, weight=ft.FontWeight.BOLD),
-                header_controls,
+                ft.Container(padding=ft.Padding(0, 10, 0, 0)),
                 main_container,
             ],
         ),
         expand=True,
     )
-
+    
     return container
