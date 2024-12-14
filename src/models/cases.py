@@ -96,12 +96,22 @@ class Cases:
         return df['nama'].tolist()
 
     def get_all_suspects_id(self) -> pd.DataFrame:
-        return self.suspect_id
+        return self.suspects_df.index
     
     def get_all_victims_id(self) -> pd.DataFrame:
-        return self.victim_id
+        return self.victims_df.index
     
     def get_all_detectives_id(self) -> pd.DataFrame:
+        # convert to list
+        return self.detectives_df.index
+    
+    def get_all_suspects_selected(self):
+        return self.suspect_id
+    
+    def get_all_victims_selected(self):
+        return self.victim_id
+    
+    def get_all_detectives_selected(self):
         return self.detective_id
     
     def delete_case_by_id(self, id_kasus: int):
