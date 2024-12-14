@@ -3,6 +3,7 @@ import math
 from models.suspects import Suspects
 import os
 from PIL import Image
+import time
 
 COLORS = {
     "background_dark": "#111111",     # Almost black, like Daredevil's nighttime backdrop
@@ -451,7 +452,13 @@ def suspects_content(page: ft.Page):
             
         nik_field = ft.TextField(label="NIK")
         age_field = ft.TextField(label="Age")
-        gender_field = ft.TextField(label="Gender")
+        gender_field = ft.Dropdown(
+            label="Gender",
+            options=[
+                ft.dropdown.Option("Laki-laki"),
+                ft.dropdown.Option("Perempuan"),
+            ]
+        )
         criminal_record_field = ft.TextField(label="Criminal Record")
 
         def save_new_suspect(e):
@@ -542,16 +549,26 @@ def suspects_content(page: ft.Page):
         case_id_text = ft.Text(f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), suspect["id_kasus"]))}')
     
         photo_path = os.path.join("data", "suspects", suspect["foto"])
-        tmp_path = f"data/suspects/resized_photo_{suspect_id}.jpg"
-    
+        # Generate a unique file name by appending a timestamp
+        unique_filename = f"resized_photo_{suspect_id}_{int(time.time())}.jpg"
+        tmp_path = os.path.join("data", "suspects", unique_filename)
+        
         def resize_image(image_path, width, height, output_path=None):
-            with Image.open(image_path) as img:
-                img_resized = img.resize((width, height), Image.Resampling.LANCZOS)
-                if output_path:
-                    img_resized.save(output_path)
-    
+            try:
+                with Image.open(image_path) as img:
+                    img_resized = img.resize((width, height), Image.Resampling.LANCZOS)
+                    if output_path:
+                        img_resized.save(output_path)
+            except FileNotFoundError:
+                print(f"Error: File {image_path} not found.")
+                return None
+            except IOError as e:
+                print(f"Error: Cannot open or read file {image_path}. {e}")
+                return None
+        
         resize_image(photo_path, 170, 220, tmp_path)
-        photo_field = ft.Image(src=f'{tmp_path}', fit=ft.ImageFit.CONTAIN)
+        
+        photo_field = ft.Image(src=tmp_path, fit=ft.ImageFit.CONTAIN) if os.path.exists(tmp_path) else ft.Text("No photo available")
     
         view_modal_dialog.content = ft.Container(
             content=ft.Row(
