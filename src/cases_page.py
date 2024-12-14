@@ -1,3 +1,5 @@
+import io
+from PyPDF2 import PdfReader, PdfWriter, PageObject
 import flet as ft
 from models.cases import Cases
 from models.victims import Victims
@@ -240,37 +242,136 @@ def cases_content(page: ft.Page):
         )
     
         return case_tile
+    def check_page_break(pdf, height_needed):
+        if pdf.get_y() + height_needed > pdf.h - 50:  # 50px from the bottom
+            pdf.add_page()
+            pdf.set_y(50)  # 50px padding from the top
 
-    def download_case_as_pdf(case, suspects, victims, detectives, file_path):
+    def download_case_as_pdf(case, suspects, victims, detectives, file_path, template_path):
         try:
+            # Ensure all inputs are strings or properly joined strings
+            case = {k: str(v) for k, v in case.items()}
+            suspects = [str(suspect) for suspect in suspects]
+            victims = [str(victim) for victim in victims]
+            detectives = [str(detective) for detective in detectives]
+
+            # Create initial PDF with case details
             pdf = FPDF()
             pdf.add_page()
             pdf.set_font("Arial", size=12)
-            
-            pdf.cell(200, 10, txt="Case Information", ln=True, align='C')
-            pdf.cell(200, 10, txt=f"Case ID: {case['id']}", ln=True, align='L')
-            pdf.cell(200, 10, txt=f"Case Title: {case['judul']}", ln=True, align='L')
-            pdf.cell(200, 10, txt=f"Status: {case['status']}", ln=True, align='L')
-            pdf.cell(200, 10, txt=f"Start Date: {case['tanggal_mulai']}", ln=True, align='L')
-            pdf.cell(200, 10, txt=f"End Date: {case['tanggal_selesai']}", ln=True, align='L')
-            pdf.cell(200, 10, txt=f"Progress: {case['perkembangan_kasus']}", ln=True, align='L')
-            pdf.cell(200, 10, txt=f"Notes: {case['catatan']}", ln=True, align='L')
-            
-            pdf.cell(200, 10, txt="Assigned Detectives:", ln=True, align='L')
-            for detective in detectives:
-                pdf.cell(200, 10, txt=f"- {detective}", ln=True, align='L')
-            
-            pdf.cell(200, 10, txt="Victims:", ln=True, align='L')
-            for victim in victims:
-                pdf.cell(200, 10, txt=f"- {victim}", ln=True, align='L')
-            
-            pdf.cell(200, 10, txt="Suspects:", ln=True, align='L')
-            for suspect in suspects:
-                pdf.cell(200, 10, txt=f"- {suspect}", ln=True, align='L')
-            
+
+            # Move down to avoid overlapping with header
+            pdf.set_y(50)  # Adjust this value to move content down
+
+            # Page Title - Centered and bold
+            pdf.set_font("Arial", 'B', 16)
+            pdf.cell(0, 10, txt="Detective Taskboard", ln=True, align='C')
+            pdf.ln(10)  # Add some extra spacing
+
+            # Case Details with bold labels and normal data
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(50, 10, txt="Case ID", ln=False)
+            pdf.cell(2, 10, txt=":", ln=False)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, txt=case['id'])
+
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(50, 10, txt="Case Title", ln=False)
+            pdf.cell(2, 10, txt=":", ln=False)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, txt=case['judul'])
+
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(50, 10, txt="Status", ln=False)
+            pdf.cell(2, 10, txt=":", ln=False)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, txt=case['status'])
+
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(50, 10, txt="Start Date", ln=False)
+            pdf.cell(2, 10, txt=":", ln=False)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, txt=case['tanggal_mulai'])
+
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(50, 10, txt="End Date", ln=False)
+            pdf.cell(2, 10, txt=":", ln=False)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, txt=case['tanggal_selesai'])
+
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(50, 10, txt="Progress", ln=False)
+            pdf.cell(2, 10, txt=":", ln=False)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, txt=case['perkembangan_kasus'])
+
+            # Notes
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(50, 10, txt="Notes", ln=False)
+            pdf.cell(2, 10, txt=":", ln=False)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, txt=case['catatan'])
+
+            pdf.ln(2)  # Add some extra spacing
+
+            # Assigned Detectives
+            check_page_break(pdf, 20)
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(50, 10, txt="Assigned Detectives", ln=False, align='L')
+            pdf.cell(2, 10, txt=":", ln=True)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, txt=", ".join(detectives))
+            pdf.ln(2)
+
+            # Victims
+            check_page_break(pdf, 20)
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(50, 10, txt="Victims", ln=False, align='L')
+            pdf.cell(2, 10, txt=":", ln=True)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, txt=", ".join(victims))
+            pdf.ln(2)
+
+            # Suspects
+            check_page_break(pdf, 20)
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(50, 10, txt="Suspects", ln=False, align='L')
+            pdf.cell(2, 10, txt=":", ln=True)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, txt=", ".join(suspects))
+
+            # Save the initial PDF to a bytes buffer
+            pdf_bytes = pdf.output(dest='S').encode('latin-1')
+
+            # Create BytesIO object
+            pdf_buffer = io.BytesIO(pdf_bytes)
+
+            # Read the template PDF
+            template_reader = PdfReader(open(template_path, 'rb'))
+            content_reader = PdfReader(pdf_buffer)
+
+            # Create a new PDF writer
+            pdf_writer = PdfWriter()
+
+            # Merge each page of the content with the template
+            for page_num in range(len(content_reader.pages)):
+                template_page = template_reader.pages[0]
+                content_page = content_reader.pages[page_num]
+
+                # Create a new page with the template as background
+                new_page = PageObject.create_blank_page(width=template_page.mediabox.width, height=template_page.mediabox.height)
+                new_page.merge_page(template_page)
+                new_page.merge_page(content_page)
+
+                pdf_writer.add_page(new_page)
+
             # Ensure the full file path is used, including the filename
             full_path = file_path if file_path.endswith('.pdf') else file_path + '.pdf'
-            pdf.output(full_path)
+
+            # Write the final PDF
+            with open(full_path, 'wb') as output_pdf:
+                pdf_writer.write(output_pdf)
+
             return True
         except Exception as e:
             print(f"Error saving PDF: {e}")
@@ -301,7 +402,7 @@ def cases_content(page: ft.Page):
                 else:
                     full_path = path
                 
-                success = download_case_as_pdf(case, suspects, victims, detectives, full_path)
+                success = download_case_as_pdf(case, suspects, victims, detectives, full_path, "../pdf/template.pdf")
                 if success:
                     page.snack_bar = ft.SnackBar(
                         content=ft.Text(f"Case PDF saved to {full_path}"),
