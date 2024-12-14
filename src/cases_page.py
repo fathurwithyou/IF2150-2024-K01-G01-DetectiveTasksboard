@@ -53,61 +53,70 @@ def cases_content(page: ft.Page):
         details_container = ft.Container(
             content=ft.Column(
                 [
-                    ft.Row([
-                        ft.Icon(ft.icons.DESCRIPTION, color=COLORS["primary_red"]),
-                        ft.Text(
-                            "Case Description", 
-                            size=16, 
-                            weight=ft.FontWeight.BOLD, 
-                            color=COLORS["primary_red"]
-                        )
-                    ], spacing=10),
+                    ft.Row(
+                        [
+                            ft.Icon(ft.icons.DESCRIPTION,
+                                    color=COLORS["primary_red"]),
+                            ft.Text(
+                                "Case Description",
+                                size=16,
+                                weight=ft.FontWeight.BOLD,
+                                color=COLORS["primary_red"]
+                            )
+                        ],
+                        spacing=10
+                    ),
                     ft.Divider(color=COLORS["divider"]),
-                    
-                    ft.Row([
-                        ft.Text("Description:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
-                        ft.Text(
-                            case.get('catatan', 'No description available'), 
-                            color=COLORS["text_muted"]
-                        )
-                    ]),
-                    
-                    ft.Row([
-                        ft.Text("Progress:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
-                        ft.Text(
-                            case.get('perkembangan_kasus', 'No progress updates'), 
-                            color=COLORS["text_muted"]
-                        )
-                    ]),
-                    
-                    ft.Row([
-                        ft.Text("Assigned Detective(s):", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
-                        ft.Text(
-                            ', '.join(detectives) if detectives else 'No detectives assigned', 
-                            color=COLORS["text_muted"]
-                        )
-                    ]),
-                    
-                    ft.Row([
-                        ft.Text("Victims:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
-                        ft.Text(
-                            ', '.join(victims) if victims else 'No victims recorded', 
-                            color=COLORS["text_muted"]
-                        )
-                    ]),
-                    
-                    ft.Row([
-                        ft.Text("Suspects:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
-                        ft.Text(
-                            ', '.join(suspects) if suspects else 'No suspects identified', 
-                            color=COLORS["text_muted"]
-                        )
-                    ]),
+                    ft.Row(
+                        [
+                            ft.Column(
+                                [
+                                    ft.Text("Description:", weight=ft.FontWeight.BOLD,
+                                            color=COLORS["text_light"]),
+                                    ft.Text(
+                                        case.get(
+                                            'catatan', 'No description available'),
+                                        color=COLORS["text_muted"]
+                                    ),
+                                    ft.Text("Progress:", weight=ft.FontWeight.BOLD,
+                                            color=COLORS["text_light"]),
+                                    ft.Text(
+                                        case.get('perkembangan_kasus',
+                                                 'No progress updates'),
+                                        color=COLORS["text_muted"]
+                                    ),
+                                    ft.Text("Assigned Detective(s):",
+                                            weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                                    ft.Text(
+                                        ', '.join(
+                                            detectives) if detectives else 'No detectives assigned',
+                                        color=COLORS["text_muted"]
+                                    ),
+                                    ft.Text("Victims:", weight=ft.FontWeight.BOLD,
+                                            color=COLORS["text_light"]),
+                                    ft.Text(
+                                        ', '.join(
+                                            victims) if victims else 'No victims recorded',
+                                        color=COLORS["text_muted"]
+                                    ),
+                                    ft.Text("Suspects:", weight=ft.FontWeight.BOLD,
+                                            color=COLORS["text_light"]),
+                                    ft.Text(
+                                        ', '.join(
+                                            suspects) if suspects else 'No suspects identified',
+                                        color=COLORS["text_muted"]
+                                    ),
+                                ],
+                                spacing=10,
+                                horizontal_alignment=ft.CrossAxisAlignment.START,
+                            )
+                        ], scroll="auto", expand=True
+                    )
                 ],
                 spacing=10,
                 horizontal_alignment=ft.CrossAxisAlignment.START,
             ),
-            padding=ft.Padding(0, 10, 0, 15),
+            padding=ft.Padding(0, 10, 0, 0),
             border_radius=10,
             border=None,
             bgcolor=COLORS["background_dark"],
@@ -158,8 +167,6 @@ def cases_content(page: ft.Page):
                         width=2, color=COLORS["background_dark"]),
                 )
                 case_tile.shadow = None
-            
-            
 
             case_tile.update()
 
