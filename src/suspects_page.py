@@ -15,112 +15,163 @@ def suspects_content(page: ft.Page):
     add_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Add Suspect"))
     view_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("View Suspect"))
 
+    def build_table_header():
+        return ft.Column(
+            [
+                ft.Row(
+                    [
+                        ft.Container(
+                            ft.Row(
+                                [
+                                    ft.Text("ID"),
+                                    ft.IconButton(
+                                        icon=ft.icons.ARROW_UPWARD if sort_column == "id" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                                        on_click=lambda _: sort_data("id"),
+                                        icon_color="white",
+                                        tooltip="Sort by ID",
+                                    ),
+                                ],
+                                alignment=ft.MainAxisAlignment.START,
+                                tight=True
+                            ),
+                            expand=1
+                        ),
+                        ft.Container(
+                            ft.Row(
+                                [
+                                    ft.Text("Name"),
+                                    ft.IconButton(
+                                        icon=ft.icons.ARROW_UPWARD if sort_column == "nama" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                                        on_click=lambda _: sort_data("nama"),
+                                        icon_color="white",
+                                        tooltip="Sort by Name",
+                                    ),
+                                ],
+                                alignment=ft.MainAxisAlignment.START,
+                                tight=True
+                            ),
+                            expand=2
+                        ),
+                        ft.Container(
+                            ft.Text("Photo"),
+                            expand=2
+                        ),
+                        ft.Container(
+                            ft.Row(
+                                [
+                                    ft.Text("NIK"),
+                                    ft.IconButton(
+                                        icon=ft.icons.ARROW_UPWARD if sort_column == "nik" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                                        on_click=lambda _: sort_data("nik"),
+                                        icon_color="white",
+                                        tooltip="Sort by NIK",
+                                    ),
+                                ],
+                                alignment=ft.MainAxisAlignment.START,
+                                tight=True
+                            ),
+                            expand=2
+                        ),
+                        ft.Container(
+                            ft.Row(
+                                [
+                                    ft.Text("Age"),
+                                    ft.IconButton(
+                                        icon=ft.icons.ARROW_UPWARD if sort_column == "usia" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                                        on_click=lambda _: sort_data("usia"),
+                                        icon_color="white",
+                                        tooltip="Sort by Age",
+                                    ),
+                                ],
+                                alignment=ft.MainAxisAlignment.START,
+                                tight=True
+                            ),
+                            expand=1
+                        ),
+                        ft.Container(
+                            ft.Text("Gender"),
+                            expand=1
+                        ),
+                        ft.Container(
+                            ft.Text("Criminal Record"),
+                            expand=2
+                        ),
+                        ft.Container(
+                            ft.Row(
+                                [
+                                    ft.Text("Case IDs"),
+                                    ft.IconButton(
+                                        icon=ft.icons.ARROW_UPWARD if sort_column == "id_kasus" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                                        on_click=lambda _: sort_data("id_kasus"),
+                                        icon_color="white",
+                                        tooltip="Sort by Case IDs",
+                                    ),
+                                ],
+                                alignment=ft.MainAxisAlignment.START,
+                                tight=True
+                            ),
+                            expand=2
+                        ),
+                        ft.Container(
+                            ft.Text("Details"),
+                            expand=1,
+                            alignment=ft.alignment.center
+                        ),
+                    ],
+                    spacing=0,  # No additional spacing inside the header row
+                ),
+                ft.Divider(thickness=1, color="grey"),  # Line under the header
+            ],
+            spacing=0,  # Minimize space between header elements
+        )
+
     def build_table(page_index):
-        start_index = page_index * rows_per_page
-        end_index = start_index + rows_per_page
+        start_index = page_index * rows_per_page    
+        end_index = start_index + rows_per_page 
         page_data = filtered_data.iloc[start_index:end_index]
 
-        table_rows = [
-            ft.DataRow(
-                cells=[
-                    ft.DataCell(ft.Text(str(row["id"]))),
-                    ft.DataCell(ft.Text(str(row["nama"]))),
-                    ft.DataCell(ft.Text(str(row["foto"]))),
-                    ft.DataCell(ft.Text(str(row["nik"]))),
-                    ft.DataCell(ft.Text(str(row["usia"]))),
-                    ft.DataCell(ft.Text(str(row["jk"]))),
-                    ft.DataCell(ft.Text(str(row["catatan_kriminal"]))),
-                    ft.DataCell(ft.Text(", ".join(map(lambda x: '-' if x == 0 else str(x), row["id_kasus"])))),
-                    ft.DataCell(
-                        ft.IconButton(
-                            icon=ft.icons.VISIBILITY,
-                            icon_color="white",
-                            tooltip="View",
-                            on_click=lambda e, suspect_id=row["id"]: open_view_suspect_modal(suspect_id),
-                        )
-                    ),
-                ]
-            )
-            for _, row in page_data.iterrows()
-        ]
+        # Table rows with reduced gap
+        table_rows = []
+        for _, row in page_data.iterrows():
+            # Add the data row
+            table_rows.append(
+                ft.Row(
+                    [
+                        ft.Container(ft.Text(str(row["id"])), expand=1, alignment=ft.alignment.top_left),
+                        ft.Container(ft.Text(str(row["nama"])), expand=2, alignment=ft.alignment.top_left),
+                        ft.Container(ft.Text(str(row["foto"])), expand=2, alignment=ft.alignment.top_left),
+                        ft.Container(ft.Text(str(row["nik"])), expand=2, alignment=ft.alignment.top_left),
+                        ft.Container(ft.Text(str(row["usia"])), expand=1, alignment=ft.alignment.top_left),
+                        ft.Container(ft.Text(str(row["jk"])), expand=1, alignment=ft.alignment.top_left),
+                        ft.Container(ft.Text(str(row["catatan_kriminal"])), expand=2, alignment=ft.alignment.top_left),
+                        ft.Container(
+                            ft.Text(", ".join(map(lambda x: '-' if x == 0 else str(x), row["id_kasus"]))),
+                            expand=2,
+                            alignment=ft.alignment.top_left,
+                        ),
+                        ft.Container(
+                            ft.IconButton(
+                                icon=ft.icons.VISIBILITY,
+                                icon_color="white",
+                                tooltip="View",
+                                on_click=lambda e, suspect_id=row["id"]: open_view_suspect_modal(suspect_id),
+                            ),
+                            expand=1,
+                            alignment=ft.alignment.center,
+                        ),
+                    ],
+                    spacing=0,  # Minimize space inside the row
+                )
+            )   
+            # Add a separator line after each row   
+            table_rows.append(ft.Divider(thickness=1, color="grey"))
 
-        columns = [
-            ft.DataColumn(
-                ft.Row(
-                    [
-                        ft.Text("ID"),
-                        ft.IconButton(
-                            icon=ft.icons.ARROW_UPWARD if sort_column == "id" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
-                            on_click=lambda _: sort_data("id"),
-                            icon_color="white",
-                            tooltip="Sort by ID",
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.START,
-                )
-            ),
-            ft.DataColumn(
-                ft.Row(
-                    [
-                        ft.Text("Name"),
-                        ft.IconButton(
-                            icon=ft.icons.ARROW_UPWARD if sort_column == "nama" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
-                            on_click=lambda _: sort_data("nama"),
-                            icon_color="white",
-                            tooltip="Sort by Name",
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.START,
-                )
-            ),
-            ft.DataColumn(ft.Text("Photo")),
-            ft.DataColumn(
-                ft.Row(
-                    [
-                        ft.Text("NIK"),
-                        ft.IconButton(
-                            icon=ft.icons.ARROW_UPWARD if sort_column == "nik" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
-                            on_click=lambda _: sort_data("nik"),
-                            icon_color="white",
-                            tooltip="Sort by NIK",
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.START,
-                )
-            ),
-            ft.DataColumn(
-                ft.Row(
-                    [
-                        ft.Text("Age"),
-                        ft.IconButton(
-                            icon=ft.icons.ARROW_UPWARD if sort_column == "usia" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
-                            on_click=lambda _: sort_data("usia"),
-                            icon_color="white",
-                            tooltip="Sort by Age",
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.START,
-                )
-            ),
-            ft.DataColumn(ft.Text("Gender")),
-            ft.DataColumn(ft.Text("Criminal Record")),
-            ft.DataColumn(
-                ft.Row(
-                    [
-                        ft.Text("Case ID"),
-                        ft.IconButton(
-                            icon=ft.icons.ARROW_UPWARD if sort_column == "id_kasus" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
-                            on_click=lambda _: sort_data("id_kasus"),
-                            icon_color="white",
-                            tooltip="Sort by Case ID",
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.START,
-                )
-            ),
-            ft.DataColumn(ft.Text("Details")),
-        ]
-        return ft.DataTable(columns=columns, rows=table_rows)
+        return ft.Column(
+            table_rows,
+            spacing=2,
+            expand=True,
+            scroll="auto",  # Explicitly set scroll here
+        )
 
     def refresh_table():
         nonlocal filtered_data, total_pages
@@ -138,6 +189,8 @@ def suspects_content(page: ft.Page):
         filtered_data = filtered_data.sort_values(by=column, ascending=(sort_order == "asc"))
         current_page = 0
         update_content(current_page)
+        table_header.content = build_table_header()  # Rebuild the table header to update the sort icons
+        page.update()  # Ensure the page updates to reflect the new sort order
 
     def update_content(page_index):
         nonlocal current_page, total_pages
@@ -247,8 +300,15 @@ def suspects_content(page: ft.Page):
         age_field = ft.TextField(label="Age", value=str(suspect["usia"]), read_only=True, visible=False)
         gender_field = ft.TextField(label="Gender", value=suspect["jk"], read_only=True, visible=False)
         criminal_record_field = ft.TextField(label="Criminal Record", value=suspect["catatan_kriminal"], read_only=True, visible=False)
-        case_id_field = ft.TextField(label="Case ID", value=", ".join(map(lambda x: '-' if x == 0 else str(x), suspect["id_kasus"])), read_only=True, visible=False, disabled=True, color="grey")
-        
+        case_id_field = ft.TextField(
+            label="Case ID",
+            value=", ".join(map(lambda x: '-' if x == 0 else str(x), suspect["id_kasus"])),
+            read_only=True,
+            visible=False,
+            disabled=True,
+            color="grey"
+        )
+
         def open_edit_suspect_modal(e):
             id_text.visible = False
             name_text.visible = False
@@ -437,7 +497,19 @@ def suspects_content(page: ft.Page):
         alignment=ft.MainAxisAlignment.CENTER,
     )
 
-    table_container = ft.Container(content=build_table(current_page))
+    table_header = build_table_header()
+
+    table_container = ft.Container(
+        content=ft.Column(
+            [
+                build_table(current_page)
+            ],
+            expand=True,
+            scroll="auto"  # Ensure scroll is applied to the entire container
+        ),
+        expand=True,
+        height=450,  # Adjust the height as needed
+    )
 
     container = ft.Container(
         content=ft.Column(
@@ -455,14 +527,27 @@ def suspects_content(page: ft.Page):
                             icon=ft.icons.ADD,
                             bgcolor="white",
                             color="black",
+                            style=ft.ButtonStyle(
+                                    shape=ft.RoundedRectangleBorder(
+                                        radius=10),
+                            ),
                             on_click=lambda _: open_add_suspect_modal(),
                         ),
                     ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 ),
+                table_header,
                 table_container,
-                pagination_controls,
-            ]
-        )
+                ft.Container(
+                    content=pagination_controls,
+                    alignment=ft.alignment.center,
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            expand=True
+        ),
+        expand=True,
+        padding=10,
     )
 
     return container
