@@ -570,19 +570,23 @@ def cases_content(page: ft.Page):
         suspect_id_df = case_model.get_all_suspects_id()
         victim_id_df = case_model.get_all_victims_id()
         detective_id_df = case_model.get_all_detectives_id()
-
+        
+        suspect_id_df_selected = case_model.get_all_suspects_selected()
+        victim_id_df_selected = case_model.get_all_victims_selected()
+        detective_id_df_selected = case_model.get_all_detectives_selected()
+    
         # include by id_kasus is same as case id in this case
-        all_suspects = set(suspect_id_df['id_suspect'].tolist())
+        all_suspects = set(suspect_id_df.tolist())
         set_suspect = set(
-            suspect_id_df[suspect_id_df['id_kasus'] == case['id']]['id_suspect'].tolist())
+            suspect_id_df_selected[suspect_id_df_selected['id_kasus'] == case['id']]['id_suspect'].tolist())
 
-        all_victims = set(victim_id_df['id_victim'].tolist())
+        all_victims = set(victim_id_df.tolist())
         set_victim = set(
-            victim_id_df[victim_id_df['id_kasus'] == case['id']]['id_victim'].tolist())
+            victim_id_df_selected[victim_id_df_selected['id_kasus'] == case['id']]['id_victim'].tolist())
 
-        all_detectives = set(detective_id_df['id_detective'].tolist())
+        all_detectives = set(detective_id_df.tolist())
         set_detective = set(
-            detective_id_df[detective_id_df['id_kasus'] == case['id']]['id_detective'].tolist())
+            detective_id_df_selected[detective_id_df_selected['id_kasus'] == case['id']]['id_detective'].tolist())
 
         def validate_inputs():
             """Validate all input fields before saving."""
