@@ -16,7 +16,7 @@
 ![Typing](https://img.shields.io/badge/Typing-3.7.4.3-brown?logo=typeform)
 
 
-![Detective Tasksboard Text Logo](image.png)
+![Detective Tasksboard Text Logo](img/Logo.png)
 
 ## Deskripsi Singkat
 
