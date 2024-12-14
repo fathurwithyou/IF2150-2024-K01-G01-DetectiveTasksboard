@@ -33,6 +33,81 @@ def dashboard_content(page: ft.Page):
     filtered_cases_calender = all_cases.copy()
     search_query = ""
 
+    """
+    Statistics to display:
+    Total Not Started Cases:
+    Total On-going Cases: cnt (%)
+    Total Solved Cases: cnt (%)
+    Total Suspects:
+    Total Victims:
+    Total Detectives:
+    """
+
+    stat_container = ft.Container(
+        content=ft.Column(
+            [
+                ft.Row(
+                    [
+                        ft.Text("Total Not Started Cases: "),
+                        ft.Text(str(len(all_cases[all_cases['status'] == 'Belum Selesai'])),
+                                color=COLORS["text_muted"]),
+                        ft.Text(
+                            f" ({len(all_cases[all_cases['status'] == 'Belum Selesai']) / len(all_cases) * 100:.0f}%)"),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    # spacing=10
+                ),
+                ft.Row(
+                    [
+                        ft.Text("Total On-going Cases: "),
+                        ft.Text(str(len(all_cases[all_cases['status'] == 'On-going'])),
+                                color=COLORS["text_muted"]),
+                        ft.Text(
+                            f" ({len(all_cases[all_cases['status'] == 'On-going']) / len(all_cases) * 100:.0f}%)"),
+                    ],
+          
+                    # spacing=10
+                ),
+                ft.Row(
+                    [
+                        ft.Text("Total Solved Cases: "),
+                        ft.Text(str(len(all_cases[all_cases['status'] == 'Selesai'])),
+                                color=COLORS["text_muted"]),
+                        ft.Text(
+                            f" ({len(all_cases[all_cases['status'] == 'Selesai']) / len(all_cases) * 100:.0f}%)"),
+                    ],
+                ),
+                ft.Row(
+                    [
+                        ft.Text("Total Suspects: "),
+                        ft.Text(str(len(suspect_model.get_suspects())),
+                                color=COLORS["text_muted"])
+                    ],
+                ),
+                ft.Row(
+                    [
+                        ft.Text("Total Victims: "),
+                        ft.Text(str(len(victim_model.get_victims())),
+                                color=COLORS["text_muted"])
+                    ],
+                ),
+                ft.Row(
+                    [
+                        ft.Text("Total Detectives: "),
+                        ft.Text(str(len(detective_model.get_detectives())),
+                                color=COLORS["text_muted"])
+                    ],
+                ),
+            ],
+            spacing=10,
+            alignment=ft.MainAxisAlignment.START
+        ),
+        padding=ft.Padding(10, 10, 10, 10),
+        border_radius=10,
+        bgcolor=COLORS["background_dark"],
+        border=ft.border.all(2, COLORS["secondary_red"]),
+    )
+
     def create_case_tile(id_kasus):
         """Create a case tile with expandable details."""
         case, suspects, victims, detectives = case_model.get_cases_info(
@@ -193,7 +268,7 @@ def dashboard_content(page: ft.Page):
                                             color=COLORS["text_light"],
                                         ),
                                         ft.Text(
-                                            f"{case['status']}, {case['tanggal_mulai']}",
+                                            f"{case['tanggal_mulai']}",
                                             size=16,
                                             color=COLORS["status_gray"],
                                         ),
@@ -770,12 +845,12 @@ def dashboard_content(page: ft.Page):
         # Days of the week header
         week_header = ft.Container(
             content=ft.Row(
-            controls=[ft.Container(
-                content=ft.Text(day[:2], color=text_color),
-                width=40,
-                alignment=ft.alignment.center
-            ) for day in calendar.day_name],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                controls=[ft.Container(
+                    content=ft.Text(day[:2], color=text_color),
+                    width=40,
+                    alignment=ft.alignment.center
+                ) for day in calendar.day_name],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             )
         )
 
@@ -843,19 +918,46 @@ def dashboard_content(page: ft.Page):
         content=ft.Row(
             [
                 ft.Column([
-                    ft.Text("Ongoing Cases", size=16,
-                            weight=ft.FontWeight.BOLD),
-                    list_container],
+                    ft.Row(
+                        [
+                            ft.Icon(ft.icons.CASES,
+                                    color=COLORS["primary_red"]),
+                            ft.Text("Ongoing Cases", size=16,
+                                    weight=ft.FontWeight.BOLD),
+                        ],
+                        alignment=ft.MainAxisAlignment.START,
+                    ),
+                    list_container
+                ],
                     alignment=ft.MainAxisAlignment.START,
                     width=400,
                     expand=True),
                 ft.Container(
                     padding=ft.Padding(10, 0, 0, 0)),
                 ft.Column([
-                    ft.Text("Calendar", size=16, weight=ft.FontWeight.BOLD),
-                    calendar_container])
+                    ft.Row(
+                        [
+                            ft.Icon(ft.icons.INSERT_CHART_OUTLINED_OUTLINED,
+                                    color=COLORS["primary_red"]),
+                            ft.Text("Statistics", size=16,
+                                    weight=ft.FontWeight.BOLD),
+                        ],
+                        alignment=ft.MainAxisAlignment.START,
+                    ),
+                    stat_container,
+                    ft.Row(
+                        [
+                            ft.Icon(ft.icons.CALENDAR_MONTH,
+                                    color=COLORS["primary_red"]),
+                            ft.Text("Calendar", size=16,
+                                    weight=ft.FontWeight.BOLD),
+                        ],
+                        alignment=ft.MainAxisAlignment.START,
+                    ),
+                    calendar_container
+                ], scroll="auto", alignment=ft.MainAxisAlignment.START
+                )
             ],
-
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN
         )
     )
@@ -868,7 +970,7 @@ def dashboard_content(page: ft.Page):
                 main_container,
             ],
         ),
-        expand=True,
+        # expand=True,
     )
-    
+
     return container
