@@ -776,12 +776,13 @@ def dashboard_content(page: ft.Page):
     
         if valid:
             cases_on_date = filtered_cases_calender[filtered_cases_calender['tanggal_mulai'] == selected_date]
-            case_tiles = [create_case_tile(idx) for idx, case in cases_on_date.iterrows()]
     
             case_modal = ft.AlertDialog(
                 title=ft.Text(f"Cases on {selected_date}", size=20, weight=ft.FontWeight.BOLD),
                 content=ft.Container(
-                    content=ft.Column(case_tiles, spacing=10),
+                    content=ft.Column([create_case_tile(idx)
+                          for idx, case in cases_on_date.iterrows()],
+                          scroll="auto"), expand=True,
                     width=500,
                     height=300,
                 ),
