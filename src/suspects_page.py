@@ -204,7 +204,7 @@ def suspects_content(page: ft.Page):
                             alignment=ft.alignment.center,
                         ),
                     ],
-                    spacing=0,  # Add spacing between columns
+                    spacing=10,  # Add spacing between columns
                 )
             )
             # Add a separator line after each row
@@ -675,7 +675,7 @@ def suspects_content(page: ft.Page):
             [
                 ft.ShaderMask(
                     content=ft.Text(
-                        "Victims",
+                        "Suspects",
                         size=30,
                         weight=ft.FontWeight.BOLD,
                         color=ft.colors.WHITE,  # Text color should be white for gradient
