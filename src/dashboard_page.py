@@ -204,6 +204,7 @@ def dashboard_content(page: ft.Page):
             border=None,
             bgcolor=COLORS["background_dark"],
             visible=False,  # Hidden by default
+
         )
 
         toggle_button = ft.IconButton(
@@ -955,21 +956,21 @@ def dashboard_content(page: ft.Page):
                         alignment=ft.MainAxisAlignment.START,
                     ),
                     calendar_container
-                ], expand=False, tight=True, scroll="auto", alignment=ft.MainAxisAlignment.START
+                ], scroll="auto", alignment=ft.MainAxisAlignment.START
                 )
             ],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN
         )
     )
-
     container = ft.Container(
         content=ft.Column(
             [
                 ft.Text("Dashboard", size=30, weight=ft.FontWeight.BOLD),
-                ft.Text("Ongoing Cases"),
-                *cases,
+                ft.Container(padding=ft.Padding(0, 10, 0, 0)),
+                main_container,
             ],
         ),
-        expand=True,
-        padding=20,
+        # expand=True,
     )
+
+    return container

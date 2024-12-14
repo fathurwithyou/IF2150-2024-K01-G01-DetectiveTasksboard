@@ -6,29 +6,82 @@ from victims_page import victims_content
 from suspects_page import suspects_content
 from detectives_page import detectives_content
 
+# Daredevil-inspired color palette
+COLORS = {
+    # Almost black, like Daredevil's nighttime backdrop
+    "background_dark": "#111111",
+    "primary_red": "#B22222",         # Dark red, reminiscent of Daredevil's costume
+    "secondary_red": "#8B0000",       # Deeper red for accents
+    "text_light": "#E6E6E6",          # Light gray for text
+    "divider": "#333333",             # Dark gray for dividers
+}
+
+
 def main(page: ft.Page):
-    page.title = "Dashboard"
+    page.title = "Detective Tasksboard"
     page.theme_mode = ft.ThemeMode.DARK
+    page.bgcolor = COLORS["background_dark"]
     page.padding = 10
     page.window_min_width = 1200 
+
+    # Custom theme to match Daredevil palette
+    page.theme = ft.Theme(
+        color_scheme=ft.ColorScheme(
+            primary=COLORS["primary_red"],
+            secondary=COLORS["secondary_red"],
+            surface=COLORS["background_dark"],
+            background=COLORS["background_dark"],
+        )
+    )
 
     # Function to handle navigation
     def on_navigate(page_name):
         page.controls.clear()  # Clear the current content
+
+        # Create sidebar
         sidebar = create_sidebar(on_navigate)
+
+        # Create vertical divider with custom color
+        divider = ft.VerticalDivider(
+            width=1,
+            color=COLORS["divider"]
+        )
+
+        # Dynamic content selection
+        content = None
         if page_name == "dashboard":
-            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), dashboard_content()], expand=True))
+            content = dashboard_content(page)
         elif page_name == "cases":
-            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), cases_content()], expand=True))
+            content = cases_content(page)
         elif page_name == "victims":
-            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), victims_content(page)], expand=True))
+            content = victims_content(page)
         elif page_name == "suspects":
-            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), suspects_content(page)], expand=True))
+            content = suspects_content(page)
         elif page_name == "detectives":
-            page.add(ft.Row([sidebar, ft.VerticalDivider(width=1), detectives_content(page)], expand=True))
+            content = detectives_content(page)
+
+        # Add content with dark, gritty layout
+        page.add(
+            ft.Row(
+                [
+                    sidebar,
+                    ft.Container(
+                        content=content,
+                        bgcolor=COLORS["background_dark"],
+                        padding=15,
+                        border_radius=15,  # Rounded corners for a modern look
+                        border=ft.border.all(
+                            1, COLORS["divider"]),  # Subtle border
+                        expand=True
+                    )
+                ],
+                expand=True
+            )
+        )
         page.update()
 
     # Initialize to Dashboard
     on_navigate("dashboard")
+
 
 ft.app(target=main)

@@ -242,7 +242,6 @@ def cases_content(page: ft.Page):
         )
     
         return case_tile
-
     def check_page_break(pdf, height_needed):
         if pdf.get_y() + height_needed > pdf.h - 50:  # 50px from the bottom
             pdf.add_page()
@@ -1033,10 +1032,205 @@ def cases_content(page: ft.Page):
     container = ft.Container(
         content=ft.Column(
             [
-                ft.Text("Cases Page", size=30, weight=ft.FontWeight.BOLD),
-                ft.Text("This page contains details about cases."),
-            ],
+                ft.ShaderMask(
+                    content=ft.Text(
+                        "Cases",
+                        size=30,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.colors.WHITE,  # Text color should be white for gradient
+                    ),
+                    shader=ft.LinearGradient(
+                        colors=[COLORS["primary_red"], COLORS["secondary_red"], COLORS["primary_red"]],
+                        begin=ft.Alignment(-1, -1),
+                        end=ft.Alignment(1, 1),
+                    ),
+                    blend_mode=ft.BlendMode.SRC_IN,  # Blend mode to apply gradient
+                ),
+                header_controls,
+                list_container,
+            ]
         ),
         expand=True,
-        padding=20,
     )
+
+    def open_add_case_modal():
+        """Open a modal to add a new case with improved validation and UI."""
+        nonlocal all_cases
+
+        def validate_inputs():
+            """Validate all input fields before saving."""
+            is_valid = True
+
+            # Validate name field
+            if not name_field.value or not name_field.value.strip():
+                name_field.error_text = "Case name is required"
+                is_valid = False
+            else:
+                name_field.error_text = None
+
+            # Validate status field
+            if not status_field.value:
+                status_field.error_text = "Status is required"
+                is_valid = False
+            else:
+                status_field.error_text = None
+
+            # Validate date field
+            if not date_field.value:
+                date_field.error_text = "Start date is required"
+                is_valid = False
+            else:
+                date_field.error_text = None
+
+            return is_valid
+
+        def on_date_pick(e):
+            """Handle date selection."""
+            selected_date = e.control.value
+            date_field.value = selected_date.strftime("%Y-%m-%d")
+            date_field.error_text = None
+            page.update()
+
+        def save_new_case(e):
+            """Save the new case after validation."""
+            nonlocal all_cases
+            if not validate_inputs():
+                page.update()
+                return
+
+            new_case = {
+                "judul": name_field.value.strip(),
+                "status": status_field.value,
+                "tanggal_mulai": date_field.value,
+                "tanggal_selesai": None,
+                "perkembangan_kasus": "Tidak ada perkembangan",
+                "catatan": desc_field.value.strip() if desc_field.value else "Tidak ada catatan",
+            }
+
+            case_model.add_case(new_case)
+            all_cases = case_model.get_cases()  # Reload cases
+            refresh_list()
+            page.close(add_case_modal)
+
+        # Input fields with improved styling and validation
+        name_field = ft.TextField(
+            label="Case Name",
+            hint_text="Enter case name",
+        )
+
+        desc_field = ft.TextField(
+            label="Description",
+            multiline=True,
+            max_lines=5,
+            hint_text="Optional description",
+        )
+
+        status_field = ft.Dropdown(
+            label="Status",
+            hint_text="Select case status",
+            options=[
+                ft.dropdown.Option("Selesai"),
+                ft.dropdown.Option("Belum Selesai"),
+                ft.dropdown.Option("On-going"),
+            ],
+        )
+
+        # Date input with picker
+        date_field = ft.TextField(
+            label="Start Date",
+            read_only=True,
+            hint_text="Select start date",
+            expand=True,
+        )
+
+        # Date picker configuration
+        year = datetime.now().year
+        month = datetime.now().month
+        day = datetime.now().day
+        date_picker = ft.DatePicker(
+            first_date=datetime(2021, 1, 1),
+            last_date=datetime(year, month, day),
+            date_picker_mode=ft.DatePickerMode.DAY,
+            on_change=on_date_pick,
+        )
+
+        date_button = ft.IconButton(
+            icon=ft.icons.CALENDAR_MONTH,
+            icon_color=ft.colors.WHITE,
+            on_click=lambda _: page.open(date_picker),
+        )
+
+        date_field.suffix = ft.Container(
+            content=date_button,
+            on_click=lambda _: page.open(date_picker),
+        )
+
+        # Modal dialog
+        add_case_modal = ft.AlertDialog(
+            title=ft.Text(
+                "Add New Case", 
+                size=20, 
+                weight=ft.FontWeight.BOLD,
+                color=COLORS["text_light"]
+            ),
+            content=ft.Container(
+                content=ft.Column(
+                    scroll="auto",
+                    controls=[
+                        ft.Container(
+                            padding=ft.Padding(0, 5, 0, 0)
+                        ),
+                        name_field,
+                        status_field,
+                        ft.Row(
+                            controls=[date_field],
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            spacing=10,
+                        ),
+                        desc_field,
+                    ],
+                    spacing=10,
+                ),
+                width=500,
+                height=300,
+                bgcolor=COLORS["background_dark"],
+            ),
+            actions=[
+                ft.Row(
+                    controls=[
+                        ft.TextButton(
+                            "Cancel",
+                            on_click=lambda _: page.close(add_case_modal),
+                            style=ft.ButtonStyle(
+                                color=COLORS["primary_red"],
+                                shape=ft.RoundedRectangleBorder(radius=10),
+                                overlay_color={
+                                    ft.MaterialState.HOVERED: COLORS["secondary_red"]
+                                }
+                            )
+                        ),
+                        ft.ElevatedButton(
+                            "Save",
+                            on_click=save_new_case,
+                            style=ft.ButtonStyle(
+                                bgcolor=COLORS["primary_red"],
+                                color=COLORS["text_light"],
+                                shape=ft.RoundedRectangleBorder(radius=10),
+                                overlay_color={
+                                    ft.MaterialState.HOVERED: COLORS["secondary_red"]
+                                }
+                            )
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                    spacing=10,
+                )
+            ],
+            modal=True,
+            shape=ft.RoundedRectangleBorder(radius=10),
+            bgcolor=COLORS["background_dark"],
+        )
+
+        page.open(add_case_modal)
+
+    return container
