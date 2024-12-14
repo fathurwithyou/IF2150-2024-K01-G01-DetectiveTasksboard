@@ -10,6 +10,7 @@
 ![Pillow](https://img.shields.io/badge/Pillow-10.1.0-green?logo=pillow)
 ![pyinstrument](https://img.shields.io/badge/pyinstrument-5.0.0-pink?logo=python)
 ![Pylint](https://img.shields.io/badge/Pylint-3.3.2-red?logo=pylint)
+![PyPDF2](https://img.shields.io/badge/PyPDF2-3.0.1-cyan?logo=AdobeAcrobatReader)
 ![Pytest](https://img.shields.io/badge/Pytest-7.4.0-yellow?logo=pytest)
 ![python-dateutil](https://img.shields.io/badge/python--dateutil-2.8.2-darkblue?logo=python)
 ![Typing](https://img.shields.io/badge/Typing-3.7.4.3-brown?logo=typeform)
@@ -48,11 +49,11 @@ Setelah semua dependensi terinstal dan directory berada di dalam IF2150-2024-K01
 
 | Modul       | Penanggung Jawab             | Snapshot          |
 |-------------|-------------------------------|-------------------|
-| **Cases**   | Muhammad Fathur Rizky        | ![Cases](<img file>)  |
-| **Victims** | Nathaniel Jonathan Rusli     | ![Victims](<img file>) |
-| **Suspects**| Dave Daniel Yanni            | ![Suspects](<img file>)|
-| **Detectives** | Alvin Christopher         | ![Detectives](<img file>)|
-| **Dashboard** | Benedict Presley           | ![Dashboard](<img file>)|
+| **Cases**   | Muhammad Fathur Rizky        | ![Cases](img/Cases.png)  |
+| **Victims** | Nathaniel Jonathan Rusli     | ![Victims](<img/Victims.png>) |
+| **Suspects**| Dave Daniel Yanni            | ![Suspects](<img/Suspects.png>)|
+| **Detectives** | Alvin Christopher         | ![Detectives](img/Detectives.png)|
+| **Dashboard** | Benedict Presley           | ![Dashboard](img/Dashboard.png)|
 
 
 ## Daftar Tabel Basis Data
