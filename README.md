@@ -1,7 +1,5 @@
 # IF2150-2024-K01-G01-DetectiveTasksboard
 
-# Badges for Project Requirements
-
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python)
 ![OS](https://img.shields.io/badge/Supported%20OS-Windows%20|%20macOS%20|%20Linux-lightgrey?logo=windows)
 ![Flet](https://img.shields.io/badge/Flet-0.25.1-purple?logo=flet)
