@@ -3,10 +3,14 @@ import pandas as pd
 class Suspects:
     def __init__(self):
         self.suspects_path = "data/suspects.csv"
-        self.cases_path = "data/suspects_cases.csv"
+        self.cases_path = "data/suspect_cases.csv"
         self.suspects_df = pd.read_csv(self.suspects_path)
         self.cases_df = pd.read_csv(self.cases_path)
-
+        
+    def get_suspect_by_id(self, id):
+        _df = self.suspects_df[self.suspects_df["id"] == id]
+        return _df.to_dict(orient="records")[0] if not _df.empty else {}
+        
     def get_suspects(self):
         merged_df = self.suspects_df.merge(self.cases_df, left_on='id', right_on='id_suspect', how='left')
         merged_df['id_kasus'] = merged_df['id_kasus'].fillna(0).astype(int)
@@ -16,8 +20,8 @@ class Suspects:
 
     def search_suspects(self, term):
         term = term.lower()
-        return self.suspects_df[
-            self.suspects_df.apply(
+        return self.get_suspects()[
+            self.get_suspects().apply(
                 lambda row: term in str(row.values).lower(), axis=1
             )
         ]
@@ -53,3 +57,6 @@ class Suspects:
         if not self.suspects_df.empty:
             return self.suspects_df["id"].max()
         return 0
+    
+    def get_suspect_by_id_kasus(self, id_kasus):
+        return self.suspects_

@@ -227,10 +227,18 @@ def detectives_content(page: ft.Page):
         nik_text = ft.Text(f"NIK: {detective['nik']}")
         case_id_text = ft.Text(f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), detective["id_kasus"]))}')
 
-        id_field = ft.TextField(label="ID", value=str(detective["id"]), read_only=True, visible=False)
+        id_field = ft.TextField(label="ID", value=str(detective["id"]), read_only=True, visible=False, disabled=True, color="grey")
         name_field = ft.TextField(label="Name", value=detective["nama"], read_only=True, visible=False)
         nik_field = ft.TextField(label="NIK", value=str(detective["nik"]), read_only=True, visible=False)
-        case_id_field = ft.TextField(label="Case ID", value=", ".join(map(lambda x: '-' if x == 0 else str(x), detective["id_kasus"])), read_only=True, visible=False)
+        case_id_field = ft.TextField(
+            label="Case ID",
+            value=", ".join(map(lambda x: '-' if x == 0 else str(x), detective["id_kasus"])),
+            read_only=True,
+            visible=False,
+            disabled=True,
+            color="grey"
+        )
+
 
         def open_edit_detective_modal(e):
             id_text.visible = False
@@ -383,8 +391,7 @@ def detectives_content(page: ft.Page):
     container = ft.Container(
         content=ft.Column(
             [
-                ft.Text("Detectives", size=30, weight=ft.FontWeight.BOLD, color="white"),
-                ft.Row(
+                ft.Column(
                     [
                         ft.TextField(
                             label="Search Detectives...",

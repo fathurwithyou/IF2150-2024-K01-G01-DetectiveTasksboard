@@ -6,6 +6,10 @@ class Victims:
         self.cases_path = "data/victim_cases.csv"
         self.victims_df = pd.read_csv(self.victims_path)
         self.cases_df = pd.read_csv(self.cases_path)
+        
+    def get_victim_by_id(self, victim_id) -> dict:
+        _df = self.victims_df.loc[self.victims_df["id"] == victim_id]
+        return _df.to_dict(orient="records")[0] if not _df.empty else {}
 
 
     def get_victims(self):
@@ -17,8 +21,8 @@ class Victims:
     
     def search_victims(self, term):
         term = term.lower()
-        return self.victims_df[
-            self.victims_df.apply(
+        return self.get_victims()[
+            self.get_victims().apply(
                 lambda row: term in str(row.values).lower(), axis=1
             )
         ]

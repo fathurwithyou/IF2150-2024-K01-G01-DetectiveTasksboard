@@ -7,6 +7,10 @@ class Detective:
         self.detective_df = pd.read_csv(self.detective_path)
         self.cases_df = pd.read_csv(self.cases_path)
         
+    def get_detective_by_id(self, detective_id):
+        _df = self.detective_df[self.detective_df["id"] == detective_id]
+        return _df.to_dict(orient="records")[0] if not _df.empty else {}
+        
     def get_detectives(self):
         merged_df = self.detective_df.merge(self.cases_df, left_on='id', right_on='id_detective', how='left')
         merged_df['id_kasus'] = merged_df['id_kasus'].fillna(0).astype(int)
@@ -53,3 +57,4 @@ class Detective:
         if not self.detective_df.empty:
             return self.detective_df["id"].max()
         return 0
+    
