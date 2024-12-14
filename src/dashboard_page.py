@@ -54,7 +54,6 @@ def dashboard_content(page: ft.Page):
                         ft.Text(
                             f" ({len(all_cases[all_cases['status'] == 'Belum Selesai']) / len(all_cases) * 100:.0f}%)"),
                     ],
-                    # spacing=10
                 ),
                 ft.Row(
                     [
@@ -961,10 +960,30 @@ def dashboard_content(page: ft.Page):
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN
         )
     )
+    
+    dashboard_text = ft.ShaderMask(
+            content=ft.Text(
+                "Dashboard",
+                size=30,
+                weight=ft.FontWeight.BOLD,
+                color=ft.colors.WHITE,  # Ensures gradient visibility
+            ),
+            shader=ft.LinearGradient(
+                colors=[
+                    COLORS["primary_red"],
+                    COLORS["secondary_red"],
+                    COLORS["primary_red"],
+                ],
+                begin=ft.Alignment(-1, -1),  # Top-left
+                end=ft.Alignment(1, 1),     # Bottom-right
+            ),
+            blend_mode=ft.BlendMode.SRC_IN,  # Apply gradient only within text
+        )
+
     container = ft.Container(
         content=ft.Column(
             [
-                ft.Text("Dashboard", size=30, weight=ft.FontWeight.BOLD),
+                dashboard_text,
                 ft.Container(padding=ft.Padding(0, 10, 0, 0)),
                 main_container,
             ],
