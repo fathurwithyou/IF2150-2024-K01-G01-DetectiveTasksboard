@@ -104,4 +104,10 @@ class Cases:
     def get_all_detectives_id(self) -> pd.DataFrame:
         return self.detective_id
     
-    
+    def delete_case_by_id(self, id_kasus: int):
+        """Delete a case and its associated records by case ID"""
+        self.cases_df.drop(self.cases_df[self.cases_df.index == id_kasus].index, inplace=True)
+        self.suspect_id.drop(self.suspect_id[self.suspect_id['id_kasus'] == id_kasus].index, inplace=True)
+        self.victim_id.drop(self.victim_id[self.victim_id['id_kasus'] == id_kasus].index, inplace=True)
+        self.detective_id.drop(self.detective_id[self.detective_id['id_kasus'] == id_kasus].index, inplace=True)
+        self.write_updated_case()

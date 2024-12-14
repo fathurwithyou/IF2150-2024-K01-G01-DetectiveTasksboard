@@ -40,7 +40,7 @@ def create_sidebar(on_navigate):
         content=ft.Column(
             [
                 ft.Image(
-                    src="../image.png",
+                    src="../img/Logo.png",
                     width=200,
                     height=50,
                     fit=ft.ImageFit.CONTAIN
