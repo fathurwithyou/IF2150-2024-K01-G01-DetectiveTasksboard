@@ -37,6 +37,7 @@ def detectives_content(page: ft.Page):
     )
 
     def build_table_header():
+        nonlocal sort_column, sort_order
         return ft.Column(
             [
                 ft.Row(
@@ -62,7 +63,7 @@ def detectives_content(page: ft.Page):
                                 [
                                     ft.Text("Name"),
                                     ft.IconButton(
-                                        icon=ft.icons.ARROW_UPWARD if sort_column == "nama" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
+                                        icon=ft.icons.ARROW_UPWARD if (sort_column == "nama" and sort_order == "asc") else ft.icons.ARROW_DOWNWARD,
                                         on_click=lambda _: sort_data("nama"),
                                         icon_color="white",
                                         tooltip="Sort by Name",
@@ -181,12 +182,14 @@ def detectives_content(page: ft.Page):
         else:
             sort_column = column
             sort_order = "asc"
+        
         filtered_data = filtered_data.sort_values(
             by=column, ascending=(sort_order == "asc"))
         current_page = 0
         update_content(current_page)
         # Rebuild the table header to update the sort icons
         table_header.content = build_table_header()
+        table_header.update()  # Ensure the header updates to reflect the new sort order
         page.update()  # Ensure the page updates to reflect the new sort order
 
     def update_content(page_index):
@@ -429,7 +432,11 @@ def detectives_content(page: ft.Page):
         alignment=ft.MainAxisAlignment.CENTER,
     )
 
-    table_header = build_table_header()
+    table_header = ft.Container(
+        content=build_table_header(),
+        bgcolor=COLORS["background_dark"],
+        padding=5,
+    )
 
     table_container = ft.Container(
         content=ft.Column(
