@@ -52,7 +52,7 @@ Setelah semua dependensi terinstal dan directory berada di dalam IF2150-2024-K01
 | **Cases**   | Muhammad Fathur Rizky        | ![Cases](img/Cases.png)  |
 | **Victims** | Nathaniel Jonathan Rusli     | ![Victims](<img/Victims.png>) |
 | **Suspects**| Dave Daniel Yanni            | ![Suspects](<img/Suspects.png>)|
-| **Detectives** | Alvin Christopher         | ![Detectives](img/Detectives.png)|
+| **Detectives** | Alvin Christopher Santausa        | ![Detectives](img/Detectives.png)|
 | **Dashboard** | Benedict Presley           | ![Dashboard](img/Dashboard.png)|
 
 
