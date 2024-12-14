@@ -10,6 +10,7 @@ def main(page: ft.Page):
     page.title = "Dashboard"
     page.theme_mode = ft.ThemeMode.DARK
     page.padding = 10
+    page.window_min_width = 1200 
 
     # Function to handle navigation
     def on_navigate(page_name):

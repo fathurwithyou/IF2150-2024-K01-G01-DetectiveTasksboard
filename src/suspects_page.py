@@ -1,6 +1,19 @@
 import flet as ft
 import math
 from models.suspects import Suspects
+import os
+from PIL import Image
+
+COLORS = {
+    "background_dark": "#111111",     # Almost black, like Daredevil's nighttime backdrop
+    "primary_red": "#B22222",         # Dark red, reminiscent of Daredevil's costume
+    "secondary_red": "#8B0000",       # Deeper red for accents
+    "text_light": "#E6E6E6",          # Light gray for text
+    "divider": "#333333",             # Dark gray for dividers
+    "text_muted": "#999999",
+    "status_gray": "#444444"          # Slightly lighter gray for subtexts
+}
+
 
 def suspects_content(page: ft.Page):
     suspects_model = Suspects()
@@ -28,11 +41,13 @@ def suspects_content(page: ft.Page):
                                         icon=ft.icons.ARROW_UPWARD if sort_column == "id" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
                                         on_click=lambda _: sort_data("id"),
                                         icon_color="white",
+                                        icon_size=16,
                                         tooltip="Sort by ID",
                                     ),
                                 ],
                                 alignment=ft.MainAxisAlignment.START,
-                                tight=True
+                                tight=True,
+                                spacing=5  # Add spacing between elements
                             ),
                             expand=1
                         ),
@@ -44,17 +59,19 @@ def suspects_content(page: ft.Page):
                                         icon=ft.icons.ARROW_UPWARD if sort_column == "nama" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
                                         on_click=lambda _: sort_data("nama"),
                                         icon_color="white",
+                                        icon_size=16,
                                         tooltip="Sort by Name",
                                     ),
                                 ],
                                 alignment=ft.MainAxisAlignment.START,
-                                tight=True
+                                tight=True,
+                                spacing=5  # Add spacing between elements
                             ),
                             expand=2
                         ),
                         ft.Container(
                             ft.Text("Photo"),
-                            expand=2
+                            expand=1
                         ),
                         ft.Container(
                             ft.Row(
@@ -64,13 +81,15 @@ def suspects_content(page: ft.Page):
                                         icon=ft.icons.ARROW_UPWARD if sort_column == "nik" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
                                         on_click=lambda _: sort_data("nik"),
                                         icon_color="white",
+                                        icon_size=16,
                                         tooltip="Sort by NIK",
                                     ),
                                 ],
                                 alignment=ft.MainAxisAlignment.START,
-                                tight=True
+                                tight=True,
+                                spacing=5  # Add spacing between elements
                             ),
-                            expand=2
+                            expand=True
                         ),
                         ft.Container(
                             ft.Row(
@@ -80,11 +99,13 @@ def suspects_content(page: ft.Page):
                                         icon=ft.icons.ARROW_UPWARD if sort_column == "usia" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
                                         on_click=lambda _: sort_data("usia"),
                                         icon_color="white",
+                                        icon_size=16,
                                         tooltip="Sort by Age",
                                     ),
                                 ],
                                 alignment=ft.MainAxisAlignment.START,
-                                tight=True
+                                tight=True,
+                                spacing=5  # Add spacing between elements
                             ),
                             expand=1
                         ),
@@ -104,13 +125,15 @@ def suspects_content(page: ft.Page):
                                         icon=ft.icons.ARROW_UPWARD if sort_column == "id_kasus" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
                                         on_click=lambda _: sort_data("id_kasus"),
                                         icon_color="white",
+                                        icon_size=16,
                                         tooltip="Sort by Case IDs",
                                     ),
                                 ],
                                 alignment=ft.MainAxisAlignment.START,
-                                tight=True
+                                tight=True,
+                                spacing=5  # Add spacing between elements
                             ),
-                            expand=2
+                            expand=True
                         ),
                         ft.Container(
                             ft.Text("Details"),
@@ -118,13 +141,14 @@ def suspects_content(page: ft.Page):
                             alignment=ft.alignment.center
                         ),
                     ],
-                    spacing=0,  # No additional spacing inside the header row
+                    spacing=10,  # Add spacing between columns
                 ),
                 ft.Divider(thickness=1, color="grey"),  # Line under the header
             ],
             spacing=0,  # Minimize space between header elements
         )
 
+    
     def build_table(page_index):
         start_index = page_index * rows_per_page    
         end_index = start_index + rows_per_page 
@@ -145,22 +169,51 @@ def suspects_content(page: ft.Page):
                         ft.Container(ft.Text(str(row["jk"])), expand=1, alignment=ft.alignment.top_left),
                         ft.Container(ft.Text(str(row["catatan_kriminal"])), expand=2, alignment=ft.alignment.top_left),
                         ft.Container(
-                            ft.Text(", ".join(map(lambda x: '-' if x == 0 else str(x), row["id_kasus"]))),
-                            expand=2,
+                            ft.Text(str(row["id"]), overflow=ft.TextOverflow.ELLIPSIS), expand=1, alignment=ft.alignment.top_left),
+                        ft.Container(
+                            ft.Text(str(row["nama"]), overflow=ft.TextOverflow.ELLIPSIS), expand=2, alignment=ft.alignment.top_left),
+                        ft.Container(
+                            ft.Text(str(row["foto"]), overflow=ft.TextOverflow.ELLIPSIS), expand=1, alignment=ft.alignment.top_left),
+                        ft.Container(
+                            ft.Text(str(row["nik"]), overflow=ft.TextOverflow.ELLIPSIS), expand=True, alignment=ft.alignment.top_left),
+                        ft.Container(
+                            ft.Text(str(row["usia"]), overflow=ft.TextOverflow.ELLIPSIS), expand=1, alignment=ft.alignment.top_left),
+                        ft.Container(
+                            ft.Text(str(row["jk"]), overflow=ft.TextOverflow.ELLIPSIS), expand=1, alignment=ft.alignment.top_left),
+                        ft.Container(ft.Text(
+                            str(row["catatan_kriminal"]), overflow=ft.TextOverflow.ELLIPSIS), expand=2, alignment=ft.alignment.top_left),
+                        ft.Container(
+                            ft.Text(", ".join(map(lambda x: '-' if x == 0 else str(x), row["id_kasus"])), overflow=ft.TextOverflow.ELLIPSIS),
+                            expand=True,
                             alignment=ft.alignment.top_left,
                         ),
                         ft.Container(
-                            ft.IconButton(
-                                icon=ft.icons.VISIBILITY,
-                                icon_color="white",
-                                tooltip="View",
-                                on_click=lambda e, suspect_id=row["id"]: open_view_suspect_modal(suspect_id),
+                            ft.Row([
+                                ft.IconButton(
+                                    icon=ft.icons.EDIT,
+                                    icon_color="white",
+                                    tooltip="View",
+                                    icon_size=16,
+                                    on_click=lambda e, suspect_id=row["id"]: open_edit_suspect_modal(
+                                        suspect_id),
+                                ),
+                                ft.IconButton(
+                                    icon=ft.icons.VISIBILITY,
+                                    icon_color="white",
+                                    tooltip="View",
+                                    icon_size=16,
+                                    on_click=lambda e, suspect_id=row["id"]: open_view_suspect_modal(
+                                        suspect_id),
+                                ),
+                            ],
+                            spacing=5,
+                            alignment=ft.MainAxisAlignment.CENTER # Add spacing between buttons
                             ),
                             expand=1,
                             alignment=ft.alignment.center,
                         ),
                     ],
-                    spacing=0,  # Minimize space inside the row
+                    spacing=10,  # Add spacing between columns
                 )
             )   
             # Add a separator line after each row   
@@ -525,11 +578,13 @@ def suspects_content(page: ft.Page):
                         ft.ElevatedButton(
                             text="Add Suspect",
                             icon=ft.icons.ADD,
-                            bgcolor="white",
-                            color="black",
+                            bgcolor=COLORS["primary_red"],
+                            color=COLORS["text_light"],
                             style=ft.ButtonStyle(
-                                    shape=ft.RoundedRectangleBorder(
-                                        radius=10),
+                                shape=ft.RoundedRectangleBorder(radius=10),
+                                overlay_color={
+                                    ft.MaterialState.HOVERED: COLORS["secondary_red"]
+                                }
                             ),
                             on_click=lambda _: open_add_suspect_modal(),
                         ),
@@ -543,8 +598,8 @@ def suspects_content(page: ft.Page):
                     alignment=ft.alignment.center,
                 ),
             ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            expand=True
+            alignment=ft.MainAxisAlignment.START,
+            spacing=20  # Add spacing between elements
         ),
         expand=True,
         padding=10,
