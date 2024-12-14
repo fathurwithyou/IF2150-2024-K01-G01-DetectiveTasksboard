@@ -4,7 +4,6 @@ from models.suspects import Suspects
 import os
 from PIL import Image
 
-
 def suspects_content(page: ft.Page):
     suspects_model = Suspects()
     filtered_data = suspects_model.get_suspects()
@@ -14,8 +13,9 @@ def suspects_content(page: ft.Page):
     sort_column = None
     sort_order = "asc"
 
-    # Separate modals for adding and viewing suspects
+    # Separate modals for adding and editing suspects
     add_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Add Suspect"))
+    edit_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Edit Suspect"))
     view_modal_dialog = ft.AlertDialog(
         modal=True, title=ft.Text("Suspect Detail", size=20, weight=ft.FontWeight.BOLD))
 
@@ -118,7 +118,7 @@ def suspects_content(page: ft.Page):
                             expand=2
                         ),
                         ft.Container(
-                            ft.Text("Details"),
+                            ft.Text("Actions"),
                             expand=1,
                             alignment=ft.alignment.center
                         ),
@@ -163,13 +163,23 @@ def suspects_content(page: ft.Page):
                             alignment=ft.alignment.top_left,
                         ),
                         ft.Container(
-                            ft.IconButton(
+                            ft.Row([
+                                ft.IconButton(
+                                icon=ft.icons.EDIT,
+                                icon_color="white",
+                                tooltip="View",
+                                on_click=lambda e, suspect_id=row["id"]: open_edit_suspect_modal(
+                                    suspect_id),
+                            ),
+                                ft.IconButton(
                                 icon=ft.icons.VISIBILITY,
                                 icon_color="white",
                                 tooltip="View",
                                 on_click=lambda e, suspect_id=row["id"]: open_view_suspect_modal(
                                     suspect_id),
                             ),
+                            ]),
+                            
                             expand=1,
                             alignment=ft.alignment.center,
                         ),
@@ -187,12 +197,178 @@ def suspects_content(page: ft.Page):
             scroll="auto",  # Explicitly set scroll here
         )
 
+    def open_edit_suspect_modal(suspect_id):
+        suspect = suspects_model.get_suspects().loc[suspects_model.get_suspects()["id"] == suspect_id].iloc[0]
+    
+        id_field = ft.TextField(label="ID", value=str(suspect["id"]), read_only=True, visible=False, disabled=True, color="grey")
+        name_field = ft.TextField(label="Name", value=suspect["nama"])
+        result_text = ft.Text()
+        result_text.visible = False
+    
+        def handle_file_picker_result(e: ft.FilePickerResultEvent):
+            if e.files:
+                photo_path = convert_to_jpg(e.files[0])  # Convert uploaded file to JPG
+                if photo_path:
+                    result_text.value = f"Image saved at: {photo_path}"
+                else:
+                    result_text.value = "Failed to convert image."
+            else:
+                result_text.value = "No file selected."
+            result_text.visible = True
+            page.update()
+    
+        file_picker = ft.FilePicker(on_result=handle_file_picker_result)
+        photo_field = ft.ElevatedButton("Upload Photo", on_click=lambda _: file_picker.pick_files())
+        page.overlay.append(file_picker)
+    
+        def convert_to_jpg(file):
+            if file:
+                # ensure filename always unique using hash
+                img = Image.open(file.path)
+                photo_field.value = f"{hash(file.path)}.jpg"
+                jpg_path = f"data/suspects/{photo_field.value}"
+    
+                if img.mode in ("RGBA", "P"):
+                    img = img.convert("RGB")
+    
+                img.save(jpg_path, "JPEG")
+    
+                page.update()
+                return jpg_path
+    
+        nik_field = ft.TextField(label="NIK", value=suspect["nik"])
+        age_field = ft.TextField(label="Age", value=suspect["usia"])
+        gender_field = ft.Dropdown(
+            label="Gender",
+            options=[
+                ft.dropdown.Option("Laki-laki"),
+                ft.dropdown.Option("Perempuan"),
+            ],
+            value=suspect["jk"]
+        )
+        criminal_record_field = ft.TextField(label="Criminal Record", value=suspect["catatan_kriminal"])
+    
+        def save_updated_suspect(e):
+            errors = []
+            if not name_field.value.strip():
+                name_field.error_text = "Name is required"
+                errors.append("name")
+            else:
+                name_field.error_text = None
+    
+            if not nik_field:
+                nik_field.error_text = "NIK is required"
+                errors.append("nik")
+            else:
+                nik_field.error_text = None
+    
+            if not age_field.value:
+                age_field.error_text = "Valid age is required"
+                errors.append("age")
+            else:
+                age_field.error_text = None
+    
+            if not gender_field.value:
+                gender_field.error_text = "Gender is required"
+                errors.append("gender")
+            else:
+                gender_field.error_text = None
+    
+            if not criminal_record_field.value.strip():
+                criminal_record_field.error_text = "Criminal Record is required"
+                errors.append("criminal_record")
+            else:
+                criminal_record_field.error_text = None
+    
+            page.update()
+    
+            if errors:
+                return
+    
+            updated_suspect = {
+                "id": int(id_field.value),
+                "nama": name_field.value,
+                "foto": photo_field.value,
+                "nik": nik_field.value,
+                "usia": int(age_field.value),
+                "jk": gender_field.value,
+                "catatan_kriminal": criminal_record_field.value,
+            }
+            suspects_model.update_suspect(updated_suspect)
+            refresh_table()
+            page.close(edit_modal_dialog)
+    
+        def delete_suspect(e):
+            suspects_model.delete_suspect(suspect["id"])
+            refresh_table()
+            page.close(edit_modal_dialog)
+    
+        edit_modal_dialog = ft.AlertDialog(
+            title=ft.Text(f"Edit Suspect #{suspect['id']}", size=20, weight=ft.FontWeight.BOLD),
+            content=ft.Container(
+                content=ft.Column(
+                    controls=[
+                        id_field,
+                        name_field,
+                        photo_field,
+                        result_text,
+                        nik_field,
+                        age_field,
+                        gender_field,
+                        criminal_record_field,
+                    ],
+                    tight=True,
+                    scroll="auto"
+                ),
+                width=500,
+                height=300,
+            ),
+            actions=[
+                ft.Row(
+                    controls=[
+                        ft.ElevatedButton(
+                            "Delete",
+                            on_click=delete_suspect,
+                            style=ft.ButtonStyle(
+                                bgcolor=ft.colors.ERROR,
+                                color=ft.colors.ON_ERROR,
+                                shape=ft.RoundedRectangleBorder(radius=5),
+                            )
+                        ),
+                        ft.ElevatedButton(
+                            "Save",
+                            on_click=save_updated_suspect,
+                            style=ft.ButtonStyle(
+                                bgcolor=ft.colors.PRIMARY,
+                                color=ft.colors.ON_PRIMARY,
+                                shape=ft.RoundedRectangleBorder(radius=5),
+                            )
+                        ),
+                        ft.TextButton(
+                            "Cancel",
+                            on_click=lambda _: page.close(edit_modal_dialog),
+                            style=ft.ButtonStyle(
+                                color=ft.colors.ERROR,
+                                shape=ft.RoundedRectangleBorder(radius=5),
+                            )
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                    spacing=10,
+                )
+            ],
+            modal=True,
+            shape=ft.RoundedRectangleBorder(radius=5),
+        )
+    
+        page.open(edit_modal_dialog)
+
     def refresh_table():
         nonlocal filtered_data, total_pages
         filtered_data = suspects_model.get_suspects()
         total_pages = math.ceil(len(filtered_data) / rows_per_page)
         update_content(current_page)
-
+        
     def sort_data(column):
         nonlocal filtered_data, sort_column, sort_order, current_page
         if sort_column == column:
@@ -200,13 +376,9 @@ def suspects_content(page: ft.Page):
         else:
             sort_column = column
             sort_order = "asc"
-        filtered_data = filtered_data.sort_values(
-            by=column, ascending=(sort_order == "asc"))
+        filtered_data = filtered_data.sort_values(by=column, ascending=(sort_order == "asc"))
         current_page = 0
         update_content(current_page)
-        # Rebuild the table header to update the sort icons
-        table_header.content = build_table_header()
-        page.update()  # Ensure the page updates to reflect the new sort order
 
     def update_content(page_index):
         nonlocal current_page, total_pages
@@ -333,229 +505,54 @@ def suspects_content(page: ft.Page):
 
     def open_view_suspect_modal(suspect_id):
         print(f"Viewing suspect with ID: {suspect_id}")
-        suspect = suspects_model.get_suspects().loc[suspects_model.get_suspects()[
-            "id"] == suspect_id].iloc[0]
-
+        suspect = suspects_model.get_suspects().loc[suspects_model.get_suspects()["id"] == suspect_id].iloc[0]
+    
         id_text = ft.Text(f"ID: {suspect['id']}")
         name_text = ft.Text(f"Name: {suspect['nama']}")
         photo_text = ft.Text(f"Photo: {suspect['foto']}")
         nik_text = ft.Text(f"NIK: {suspect['nik']}")
         age_text = ft.Text(f"Age: {suspect['usia']}")
         gender_text = ft.Text(f"Gender: {suspect['jk']}")
-        criminal_record_text = ft.Text(
-            f"Criminal Record: {suspect['catatan_kriminal']}")
-        case_id_text = ft.Text(
-            f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), suspect["id_kasus"]))}')
-
-        id_field = ft.TextField(label="ID", value=str(
-            suspect["id"]), read_only=True, visible=False, disabled=True, color="grey")
-        name_field = ft.TextField(
-            label="Name", value=suspect["nama"], read_only=True, visible=False)
-        photo_field = ft.TextField(
-            label="Photo", value=suspect["foto"], read_only=True, visible=False)
-        nik_field = ft.TextField(label="NIK", value=str(
-            suspect["nik"]), read_only=True, visible=False)
-        age_field = ft.TextField(label="Age", value=str(
-            suspect["usia"]), read_only=True, visible=False)
-        gender_field = ft.TextField(
-            label="Gender", value=suspect["jk"], read_only=True, visible=False)
-        criminal_record_field = ft.TextField(
-            label="Criminal Record", value=suspect["catatan_kriminal"], read_only=True, visible=False)
-        case_id_field = ft.TextField(
-            label="Case ID",
-            value=", ".join(
-                map(lambda x: '-' if x == 0 else str(x), suspect["id_kasus"])),
-            read_only=True,
-            visible=False,
-            disabled=True,
-            color="grey"
-        )
-
-        def open_edit_suspect_modal(e):
-            id_text.visible = False
-            name_text.visible = False
-            photo_text.visible = False
-            nik_text.visible = False
-            age_text.visible = False
-            gender_text.visible = False
-            criminal_record_text.visible = False
-            case_id_text.visible = False
-
-            id_field.visible = True
-            name_field.visible = True
-            photo_field.visible = False
-            nik_field.visible = True
-            age_field.visible = True
-            gender_field.visible = True
-            criminal_record_field.visible = True
-            case_id_field.visible = True
-
-            name_field.read_only = False
-            photo_field.read_only = False
-            nik_field.read_only = False
-            age_field.read_only = False
-            gender_field.read_only = False
-            criminal_record_field.read_only = False
-
-            view_modal_dialog.title = ft.Text("Edit Suspect")
-            view_modal_dialog.actions = [
-                ft.Row(
-                    [
-                        ft.ElevatedButton(
-                            "Save", on_click=save_updated_suspect),
-                        ft.ElevatedButton(
-                            "Delete", bgcolor="red", color="white", on_click=delete_suspect),
-                        ft.TextButton("Cancel", on_click=cancel_edit),
-                    ],
-                    alignment=ft.MainAxisAlignment.END,
-                )
-            ]
-            page.update()
-
-        def cancel_edit():
-            id_text.visible = True
-            name_text.visible = True
-            photo_text.visible = True
-            nik_text.visible = True
-            age_text.visible = True
-            gender_text.visible = True
-            criminal_record_text.visible = True
-            case_id_text.visible = True
-
-            id_field.visible = False
-            name_field.visible = False
-            photo_field.visible = False
-            nik_field.visible = False
-            age_field.visible = False
-            gender_field.visible = False
-            criminal_record_field.visible = False
-            case_id_field.visible = False
-
-            name_field.read_only = True
-            photo_field.read_only = True
-            nik_field.read_only = True
-            age_field.read_only = True
-            gender_field.read_only = True
-            criminal_record_field.read_only = True
-
-            view_modal_dialog.title = ft.Text("Suspect Detail", size=20, weight=ft.FontWeight.BOLD)
-            view_modal_dialog.actions = [
-                ft.Row(
-                    [
-                        ft.ElevatedButton(
-                            "Edit", on_click=open_edit_suspect_modal),
-                        ft.TextButton(
-                            "Close", on_click=lambda _: page.close(view_modal_dialog)),
-                    ],
-                    alignment=ft.MainAxisAlignment.END,
-                )
-            ]
-            page.update()
-
-        def save_updated_suspect():
-            errors = []
-            if not name_field.value.strip():
-                name_field.error_text = "Name is required"
-                errors.append("name")
-            else:
-                name_field.error_text = None
-
-            if not nik_field.value.strip():
-                nik_field.error_text = "NIK is required"
-                errors.append("nik")
-            else:
-                nik_field.error_text = None
-
-            if not age_field.value.strip() or not age_field.value.isdigit():
-                age_field.error_text = "Valid age is required"
-                errors.append("age")
-            else:
-                age_field.error_text = None
-
-            if not gender_field.value.strip():
-                gender_field.error_text = "Gender is required"
-                errors.append("gender")
-            else:
-                gender_field.error_text = None
-
-            if not criminal_record_field.value.strip():
-                criminal_record_field.error_text = "Criminal Record is required"
-                errors.append("criminal_record")
-            else:
-                criminal_record_field.error_text = None
-
-            page.update()
-
-            if errors:
-                return
-
-            updated_suspect = {
-                "id": int(id_field.value),
-                "nama": name_field.value,
-                "foto": photo_field.value,
-                "nik": nik_field.value,
-                "usia": int(age_field.value),
-                "jk": gender_field.value,
-                "catatan_kriminal": criminal_record_field.value,
-            }
-            suspects_model.update_suspect(updated_suspect)
-            refresh_table()
-            page.close(view_modal_dialog)
-
-        def delete_suspect():
-            suspects_model.delete_suspect(suspect["id"])
-            refresh_table()
-            page.close(view_modal_dialog)
-
+        criminal_record_text = ft.Text(f"Criminal Record: {suspect['catatan_kriminal']}")
+        case_id_text = ft.Text(f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), suspect["id_kasus"]))}')
+    
         photo_path = os.path.join("data", "suspects", suspect["foto"])
-
         tmp_path = f"data/suspects/resized_photo_{suspect_id}.jpg"
-
+    
         def resize_image(image_path, width, height, output_path=None):
             with Image.open(image_path) as img:
                 img_resized = img.resize((width, height), Image.Resampling.LANCZOS)
-
                 if output_path:
                     img_resized.save(output_path)
-
+    
         resize_image(photo_path, 170, 220, tmp_path)
-
         photo_field = ft.Image(src=f'{tmp_path}', fit=ft.ImageFit.CONTAIN)
-
+    
         view_modal_dialog.content = ft.Container(
             content=ft.Row(
-            [
-                photo_field if os.path.exists(photo_path) else ft.Text("No photo available"),
-                ft.Column(
                 [
-                    id_text,
-                    name_text,
-                    photo_text,
-                    nik_text,
-                    age_text,
-                    gender_text,
-                    criminal_record_text,
-                    case_id_text,
-                    id_field,
-                    name_field,
-                    nik_field,
-                    age_field,
-                    gender_field,
-                    criminal_record_field,
-                    case_id_field,
-                ],
-                tight=True,
-                ),
-            ]
+                    photo_field if os.path.exists(photo_path) else ft.Text("No photo available"),
+                    ft.Column(
+                        [
+                            id_text,
+                            name_text,
+                            photo_text,
+                            nik_text,
+                            age_text,
+                            gender_text,
+                            criminal_record_text,
+                            case_id_text,
+                        ],
+                        tight=True,
+                    ),
+                ]
             ),
             border_radius=ft.border_radius.all(5),
         )
-
+    
         view_modal_dialog.actions = [
             ft.Row(
                 [
-                    ft.ElevatedButton(
-                        "Edit", on_click=open_edit_suspect_modal),
                     ft.TextButton(
                         "Close", on_click=lambda _: page.close(view_modal_dialog)),
                 ],
@@ -602,6 +599,8 @@ def suspects_content(page: ft.Page):
         expand=True,
         height=450,  # Adjust the height as needed
     )
+
+    table_container = ft.Container(content=build_table(current_page))
 
     container = ft.Container(
         content=ft.Column(
