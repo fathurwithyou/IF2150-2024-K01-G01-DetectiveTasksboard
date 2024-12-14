@@ -278,8 +278,17 @@ def cases_content(page: ft.Page):
                 if not path:
                     raise ValueError("No save path found")
                 
-                # Construct full file path
-                full_path = path if path.lower().endswith('.pdf') else os.path.join(path, 'case_information.pdf')
+                # Get the filename from the dialog or use default
+                filename = getattr(e.control, 'filename', 'case_information.pdf')
+                
+                # Sanitize and process filename
+                filename = filename.replace('.pdf', '').strip() + '.pdf'
+                
+                # Ensure path is a directory, not a file path
+                if os.path.isdir(path):
+                    full_path = os.path.join(path, filename)
+                else:
+                    full_path = path
                 
                 success = download_case_as_pdf(case, suspects, victims, detectives, full_path)
                 if success:
@@ -287,6 +296,7 @@ def cases_content(page: ft.Page):
                         content=ft.Text(f"Case PDF saved to {full_path}"),
                         open=True
                     )
+                    page.dialog.open = False  # Close the dialog
                     page.update()
             except Exception as ex:
                 print(f"Error in file save: {ex}")
@@ -296,17 +306,125 @@ def cases_content(page: ft.Page):
                 )
                 page.update()
     
+        def show_filename_dialog(e):
+            def close_dlg(e):
+                filename_dlg.open = False
+                page.update()
+    
+            def save_filename(e):
+                custom_filename = filename_input.value.strip()
+                
+                # Ensure filename is valid
+                if custom_filename:
+                    # Remove any existing .pdf and add it back to ensure consistency
+                    custom_filename = custom_filename.replace('.pdf', '').strip() + '.pdf'
+                else:
+                    custom_filename = 'case_information.pdf'
+                
+                close_dlg(e)
+                
+                # Create and setup FilePicker
+                file_picker = ft.FilePicker(on_result=on_file_save)
+                file_picker.filename = custom_filename  # Set the filename here
+                page.overlay.append(file_picker)
+                page.update()
+                
+                # Trigger save dialog with custom filename
+                file_picker.save_file(file_name=custom_filename)
+    
+            # Create filename input dialog
+            filename_input = ft.TextField(
+                label="Enter PDF Filename", 
+                hint_text="case_information",
+                width=300
+            )
+            
+            filename_dlg = ft.AlertDialog(
+                modal=True,
+                title=ft.Text("Custom Filename"),
+                content=ft.Column([
+                    ft.Text("Enter a custom filename for the PDF (optional):"),
+                    filename_input,
+                    ft.Text(".pdf will be added automatically", style=ft.TextThemeStyle.BODY_SMALL)
+                ], width=300, tight=True),
+                actions=[
+                    ft.TextButton("Cancel", on_click=close_dlg),
+                    ft.TextButton("Save", on_click=save_filename)
+                ],
+                actions_alignment=ft.MainAxisAlignment.END
+            )
+    
+            # Add dialog to page and show it
+            page.dialog = filename_dlg
+            filename_dlg.open = True
+            page.update()
+    
         # Ensure necessary imports
         import json
         import os
     
-        # Create and setup FilePicker
-        file_picker = ft.FilePicker(on_result=on_file_save)
-        page.overlay.append(file_picker)
-        page.update()
-        
-        # Trigger save dialog
-        file_picker.save_file(file_name="case_information.pdf")
+        # Show filename dialog first
+        show_filename_dialog(None)
+
+        def show_filename_dialog(e):
+            def close_dlg(e):
+                filename_dlg.open = False
+                page.update()
+
+            def save_filename(e):
+                custom_filename = filename_input.value.strip()
+                
+                # Ensure filename is valid
+                if custom_filename:
+                    # Remove any existing .pdf and add it back to ensure consistency
+                    custom_filename = custom_filename.replace('.pdf', '').strip() + '.pdf'
+                else:
+                    custom_filename = 'case_information.pdf'
+                
+                close_dlg(e)
+                
+                # Create and setup FilePicker
+                file_picker = ft.FilePicker(on_result=on_file_save)
+                file_picker.filename = custom_filename  # Set the filename here
+                page.overlay.append(file_picker)
+                page.update()
+                
+                # Trigger save dialog with custom filename
+                file_picker.save_file(file_name=custom_filename)
+
+            # Create filename input dialog
+            filename_input = ft.TextField(
+                label="Enter PDF Filename", 
+                hint_text="case_information",
+                width=300
+            )
+            
+            filename_dlg = ft.AlertDialog(
+                modal=True,
+                title=ft.Text("Custom Filename"),
+                content=ft.Column([
+                    ft.Text("Enter a custom filename for the PDF (optional):"),
+                    filename_input,
+                    ft.Text(".pdf will be added automatically", style=ft.TextThemeStyle.BODY_SMALL)
+                ], width=300, tight=True),
+                actions=[
+                    ft.TextButton("Cancel", on_click=close_dlg),
+                    ft.TextButton("Save", on_click=save_filename)
+                ],
+                actions_alignment=ft.MainAxisAlignment.END
+            )
+
+            # Add dialog to page and show it
+            page.dialog = filename_dlg
+            filename_dlg.open = True
+            page.update()
+
+        # Ensure necessary imports
+        import json
+        import os
+
+        # Show filename dialog first
+        show_filename_dialog(None)
 
     def refresh_list():
         """Refresh the displayed list of cases based on the current search query."""
