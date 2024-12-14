@@ -1,6 +1,16 @@
 import flet as ft
 import math
 from models.detectives import Detective
+COLORS = {
+    "background_dark": "#111111",
+    "primary_red": "#B22222",
+    "secondary_red": "#8B0000",
+    "text_light": "#E6E6E6",
+    "divider": "#333333",
+    "text_muted": "#999999",
+    "status_gray": "#444444"
+}
+
 
 def detectives_content(page: ft.Page):
     detective_model = Detective()
@@ -12,8 +22,19 @@ def detectives_content(page: ft.Page):
     sort_order = "asc"
 
     # Separate modals for adding and editing detectives
-    add_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("Add Detective"))
-    view_modal_dialog = ft.AlertDialog(modal=True, title=ft.Text("View Detective"))
+    add_modal_dialog = ft.AlertDialog(
+        modal=True,
+        title=ft.Text("Add Detective", color=COLORS["text_light"], weight=ft.FontWeight.BOLD),
+        bgcolor=COLORS["background_dark"],
+        shape=ft.RoundedRectangleBorder(radius=5),
+    )
+
+    view_modal_dialog = ft.AlertDialog(
+        modal=True,
+        title=ft.Text("View Detective", color=COLORS["text_light"]),
+        bgcolor=COLORS["background_dark"],
+        shape=ft.RoundedRectangleBorder(radius=5),
+    )
 
     def build_table_header():
         return ft.Column(
@@ -74,7 +95,8 @@ def detectives_content(page: ft.Page):
                                     ft.Text("Case IDs"),
                                     ft.IconButton(
                                         icon=ft.icons.ARROW_UPWARD if sort_column == "id_kasus" and sort_order == "asc" else ft.icons.ARROW_DOWNWARD,
-                                        on_click=lambda _: sort_data("id_kasus"),
+                                        on_click=lambda _: sort_data(
+                                            "id_kasus"),
                                         icon_color="white",
                                         tooltip="Sort by Case IDs",
                                     ),
@@ -98,8 +120,8 @@ def detectives_content(page: ft.Page):
         )
 
     def build_table(page_index):
-        start_index = page_index * rows_per_page    
-        end_index = start_index + rows_per_page 
+        start_index = page_index * rows_per_page
+        end_index = start_index + rows_per_page
         page_data = filtered_data.iloc[start_index:end_index]
 
         # Table rows with reduced gap
@@ -109,11 +131,15 @@ def detectives_content(page: ft.Page):
             table_rows.append(
                 ft.Row(
                     [
-                        ft.Container(ft.Text(str(row["id"])), expand=1, alignment=ft.alignment.top_left),
-                        ft.Container(ft.Text(str(row["nama"])), expand=2, alignment=ft.alignment.top_left),
-                        ft.Container(ft.Text(str(row["nik"])), expand=2, alignment=ft.alignment.top_left),
                         ft.Container(
-                            ft.Text(", ".join(map(lambda x: '-' if x == 0 else str(x), row["id_kasus"]))),
+                            ft.Text(str(row["id"])), expand=1, alignment=ft.alignment.top_left),
+                        ft.Container(
+                            ft.Text(str(row["nama"])), expand=2, alignment=ft.alignment.top_left),
+                        ft.Container(
+                            ft.Text(str(row["nik"])), expand=2, alignment=ft.alignment.top_left),
+                        ft.Container(
+                            ft.Text(", ".join(map(lambda x: '-' if x ==
+                                    0 else str(x), row["id_kasus"]))),
                             expand=3,
                             alignment=ft.alignment.top_left,
                         ),
@@ -122,7 +148,8 @@ def detectives_content(page: ft.Page):
                                 icon=ft.icons.VISIBILITY,
                                 icon_color="white",
                                 tooltip="View",
-                                on_click=lambda e, detective_id=row["id"]: open_view_detective_modal(detective_id),
+                                on_click=lambda e, detective_id=row["id"]: open_view_detective_modal(
+                                    detective_id),
                             ),
                             expand=1,
                             alignment=ft.alignment.center,
@@ -130,8 +157,8 @@ def detectives_content(page: ft.Page):
                     ],
                     spacing=0,  # Minimize space inside the row
                 )
-            )   
-            # Add a separator line after each row   
+            )
+            # Add a separator line after each row
             table_rows.append(ft.Divider(thickness=1, color="grey"))
 
         return ft.Column(
@@ -146,7 +173,7 @@ def detectives_content(page: ft.Page):
         filtered_data = detective_model.get_detectives()
         total_pages = math.ceil(len(filtered_data) / rows_per_page)
         update_content(current_page)
-        
+
     def sort_data(column):
         nonlocal filtered_data, sort_column, sort_order, current_page
         if sort_column == column:
@@ -154,10 +181,12 @@ def detectives_content(page: ft.Page):
         else:
             sort_column = column
             sort_order = "asc"
-        filtered_data = filtered_data.sort_values(by=column, ascending=(sort_order == "asc"))
+        filtered_data = filtered_data.sort_values(
+            by=column, ascending=(sort_order == "asc"))
         current_page = 0
         update_content(current_page)
-        table_header.content = build_table_header()  # Rebuild the table header to update the sort icons
+        # Rebuild the table header to update the sort icons
+        table_header.content = build_table_header()
         page.update()  # Ensure the page updates to reflect the new sort order
 
     def update_content(page_index):
@@ -191,7 +220,7 @@ def detectives_content(page: ft.Page):
 
             if errors:
                 return
-            
+
             new_detective = {
                 "id": detective_model.get_last_detective_id() + 1,
                 "nama": name_field.value,
@@ -211,8 +240,22 @@ def detectives_content(page: ft.Page):
         add_modal_dialog.actions = [
             ft.Row(
                 [
-                    ft.ElevatedButton("Save", on_click=save_new_detective),
-                    ft.TextButton("Cancel", on_click=lambda _: page.close(add_modal_dialog)),
+                    ft.TextButton(
+                        "Cancel",
+                        on_click=lambda _: page.close(add_modal_dialog),
+                        style=ft.ButtonStyle(
+                            color=COLORS["primary_red"],
+                            shape=ft.RoundedRectangleBorder(radius=5),
+                        )),
+                    ft.ElevatedButton(
+                        "Save",
+                        on_click=save_new_detective,
+                        style=ft.ButtonStyle(
+                            bgcolor=COLORS["primary_red"],
+                            color=COLORS["text_light"],
+                            shape=ft.RoundedRectangleBorder(radius=5),
+                        ),
+                    ),
                 ],
                 alignment=ft.MainAxisAlignment.END,
             )
@@ -220,25 +263,30 @@ def detectives_content(page: ft.Page):
         page.open(add_modal_dialog)
 
     def open_view_detective_modal(detective_id):
-        detective = detective_model.get_detectives().loc[detective_model.get_detectives()["id"] == detective_id].iloc[0]
+        detective = detective_model.get_detectives().loc[detective_model.get_detectives()[
+            "id"] == detective_id].iloc[0]
 
         id_text = ft.Text(f"ID: {detective['id']}")
         name_text = ft.Text(f"Name: {detective['nama']}")
         nik_text = ft.Text(f"NIK: {detective['nik']}")
-        case_id_text = ft.Text(f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), detective["id_kasus"]))}')
+        case_id_text = ft.Text(
+            f'Case ID: {", ".join(map(lambda x: "-" if x == 0 else str(x), detective["id_kasus"]))}')
 
-        id_field = ft.TextField(label="ID", value=str(detective["id"]), read_only=True, visible=False, disabled=True, color="grey")
-        name_field = ft.TextField(label="Name", value=detective["nama"], read_only=True, visible=False)
-        nik_field = ft.TextField(label="NIK", value=str(detective["nik"]), read_only=True, visible=False)
+        id_field = ft.TextField(label="ID", value=str(
+            detective["id"]), read_only=True, visible=False, disabled=True, color="grey")
+        name_field = ft.TextField(
+            label="Name", value=detective["nama"], read_only=True, visible=False)
+        nik_field = ft.TextField(label="NIK", value=str(
+            detective["nik"]), read_only=True, visible=False)
         case_id_field = ft.TextField(
             label="Case ID",
-            value=", ".join(map(lambda x: '-' if x == 0 else str(x), detective["id_kasus"])),
+            value=", ".join(
+                map(lambda x: '-' if x == 0 else str(x), detective["id_kasus"])),
             read_only=True,
             visible=False,
             disabled=True,
             color="grey"
         )
-
 
         def open_edit_detective_modal(e):
             id_text.visible = False
@@ -258,8 +306,10 @@ def detectives_content(page: ft.Page):
             view_modal_dialog.actions = [
                 ft.Row(
                     [
-                        ft.ElevatedButton("Save", on_click=save_updated_detective),
-                        ft.ElevatedButton("Delete", bgcolor="red", color="white", on_click=delete_detective),
+                        ft.ElevatedButton(
+                            "Save", on_click=save_updated_detective),
+                        ft.ElevatedButton(
+                            "Delete", bgcolor="red", color="white", on_click=delete_detective),
                         ft.TextButton("Cancel", on_click=cancel_edit),
                     ],
                     alignment=ft.MainAxisAlignment.END,
@@ -285,8 +335,10 @@ def detectives_content(page: ft.Page):
             view_modal_dialog.actions = [
                 ft.Row(
                     [
-                        ft.ElevatedButton("Edit", on_click=open_edit_detective_modal),
-                        ft.TextButton("Close", on_click=lambda _: page.close(view_modal_dialog)),
+                        ft.ElevatedButton(
+                            "Edit", on_click=open_edit_detective_modal),
+                        ft.TextButton(
+                            "Close", on_click=lambda _: page.close(view_modal_dialog)),
                     ],
                     alignment=ft.MainAxisAlignment.END,
                 )
@@ -311,7 +363,7 @@ def detectives_content(page: ft.Page):
 
             if errors:
                 return
-            
+
             updated_detective = {
                 "id": int(id_field.value),
                 "nama": name_field.value,
@@ -342,8 +394,10 @@ def detectives_content(page: ft.Page):
         view_modal_dialog.actions = [
             ft.Row(
                 [
-                    ft.ElevatedButton("Edit", on_click=open_edit_detective_modal),
-                    ft.TextButton("Close", on_click=lambda _: page.close(view_modal_dialog)),
+                    ft.ElevatedButton(
+                        "Edit", on_click=open_edit_detective_modal),
+                    ft.TextButton(
+                        "Close", on_click=lambda _: page.close(view_modal_dialog)),
                 ],
                 alignment=ft.MainAxisAlignment.END,
             )
@@ -364,7 +418,8 @@ def detectives_content(page: ft.Page):
                 on_click=lambda _: update_content(current_page - 1),
                 disabled=current_page == 0,
             ),
-            ft.Text(value=f"Page {current_page + 1} of {total_pages}", size=18),
+            ft.Text(
+                value=f"Page {current_page + 1} of {total_pages}", size=18),
             ft.IconButton(
                 ft.icons.CHEVRON_RIGHT,
                 on_click=lambda _: update_content(current_page + 1),
@@ -388,42 +443,79 @@ def detectives_content(page: ft.Page):
         height=450,  # Adjust the height as needed
     )
 
+    def update_border_color(e):
+        if e.data == "true":
+            search_field.border_color = COLORS["secondary_red"]
+            search_field.label_style = ft.TextStyle(
+                color=COLORS["primary_red"])
+        else:
+            search_field.border_color = COLORS["background_dark"]
+
+        search_field.update()
+
+    search_field = ft.TextField(
+        label="Search Detectives...",
+        width=300,
+        border_color=COLORS["background_dark"],
+        focused_border_color=COLORS["secondary_red"],
+        color=COLORS["text_light"],
+        cursor_color=COLORS["text_light"],
+        on_change=handle_search,
+        on_focus=update_border_color,
+        on_blur=update_border_color
+    )
+
     container = ft.Container(
         content=ft.Column(
             [
+                ft.ShaderMask(
+                    content=ft.Text(
+                        "Detectives",
+                        size=30,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.colors.WHITE,  # Text color should be white for gradient
+                    ),
+                    shader=ft.LinearGradient(
+                        colors=[COLORS["primary_red"],
+                                COLORS["secondary_red"], COLORS["primary_red"]],
+                        begin=ft.Alignment(-1, -1),
+                        end=ft.Alignment(1, 1),
+                    ),
+                    blend_mode=ft.BlendMode.SRC_IN,  # Blend mode to apply gradient
+                ),
                 ft.Column(
                     [
-                        ft.TextField(
-                            label="Search Detectives...",
-                            width=300,
-                            on_change=handle_search,
+                        ft.Row(
+                            [
+                                search_field,
+                                ft.ElevatedButton(
+                                    text="Add Detective",
+                                    icon=ft.icons.ADD,
+                                    bgcolor=COLORS["primary_red"],
+                                    color=COLORS["text_light"],
+                                    style=ft.ButtonStyle(
+                                        shape=ft.RoundedRectangleBorder(
+                                            radius=10),
+                                    ),
+                                    on_click=lambda _: open_add_detective_modal(),
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         ),
-                        ft.ElevatedButton(
-                            text="Add Detective",
-                            icon=ft.icons.ADD,
-                            bgcolor="white",
-                            color="black",
-                            style=ft.ButtonStyle(
-                                    shape=ft.RoundedRectangleBorder(
-                                        radius=10),
-                            ),
-                            on_click=lambda _: open_add_detective_modal(),
+                        table_header,
+                        table_container,
+                        ft.Container(
+                            content=pagination_controls,
+                            alignment=ft.alignment.center,
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                ),
-                table_header,
-                table_container,
-                ft.Container(
-                    content=pagination_controls,
-                    alignment=ft.alignment.center,
+                    expand=True
                 ),
             ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             expand=True
         ),
-        expand=True,
-        padding=10,
+        bgcolor=COLORS["background_dark"],
     )
 
     return container
