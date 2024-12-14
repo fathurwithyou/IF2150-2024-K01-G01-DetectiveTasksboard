@@ -1,2 +1,4 @@
 flet==0.25.1
+fpdf==1.7.2
 pylint==3.3.2
+pytest==7.4.0
