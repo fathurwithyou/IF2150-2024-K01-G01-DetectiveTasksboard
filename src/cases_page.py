@@ -28,37 +28,73 @@ def cases_content(page: ft.Page):
 
     def create_case_tile(id_kasus):
         """Create a case tile with expandable details."""
-        case, suspects, victims, detectives = case_model.get_cases_info(
-            id_kasus)
+        case, suspects, victims, detectives = case_model.get_cases_info(id_kasus)
         suspects = case_model.get_name_list(suspects)
         victims = case_model.get_name_list(victims)
         detectives = case_model.get_name_list(detectives)
-
+    
         case["id"] = id_kasus
         is_expanded = False 
-
+    
         def toggle_expand(e):
             """Toggle the expanded state of the tile."""
             nonlocal is_expanded
             is_expanded = not is_expanded
-            # change_border(e)
             update_tile()  
-
+    
         def update_tile():
             """Update the content of the tile based on the expanded state."""
             details_container.visible = is_expanded  
             edit_button.visible = is_expanded  
             download_button.visible = is_expanded  
+            delete_button.visible = is_expanded  
             toggle_button.icon = ft.icons.KEYBOARD_ARROW_UP if is_expanded else ft.icons.KEYBOARD_ARROW_DOWN
             case_tile.update()
+    
+        def handle_delete(e):
+            """Handle the delete button click event."""
+            def confirm_delete(e):
+                # Perform the deletion
+                case_model.delete_case_by_id(id_kasus)
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"Case #{id_kasus} deleted successfully"),
+                    open=True,
+                )
+                
+                confirmation_dialog.open = False
+                all_cases = case_model.get_cases()  # Reload cases
+                refresh_list()
+                page.update()
 
+            def cancel_delete(e):
+                confirmation_dialog.open = False
+                refresh_list()
+                page.update()
+
+            # Create confirmation dialog
+            confirmation_dialog = ft.AlertDialog(
+                modal=True,
+                title=ft.Text("Confirm Deletion"),
+                content=ft.Text(f"Are you sure you want to delete Case #{id_kasus}?"),
+                actions=[
+                    ft.TextButton("Cancel", on_click=cancel_delete),
+                    ft.TextButton("Delete", on_click=confirm_delete, style=ft.ButtonStyle(color=ft.colors.RED)),
+                ],
+                actions_alignment=ft.MainAxisAlignment.END,
+            )
+
+            # Add dialog to the page and open it
+            page.dialog = confirmation_dialog
+            confirmation_dialog.open = True
+            page.update()
+
+    
         details_container = ft.Container(
             content=ft.Column(
                 [
                     ft.Row(
                         [
-                            ft.Icon(ft.icons.DESCRIPTION,
-                                    color=COLORS["primary_red"]),
+                            ft.Icon(ft.icons.DESCRIPTION, color=COLORS["primary_red"]),
                             ft.Text(
                                 "Case Description",
                                 size=16,
@@ -73,41 +109,16 @@ def cases_content(page: ft.Page):
                         [
                             ft.Column(
                                 [
-                                    ft.Text("Description:", weight=ft.FontWeight.BOLD,
-                                            color=COLORS["text_light"]),
-                                    ft.Text(
-                                        case.get(
-                                            'catatan', 'No description available'),
-                                        color=COLORS["text_muted"]
-                                    ),
-                                    ft.Text("Progress:", weight=ft.FontWeight.BOLD,
-                                            color=COLORS["text_light"]),
-                                    ft.Text(
-                                        case.get('perkembangan_kasus',
-                                                 'No progress updates'),
-                                        color=COLORS["text_muted"]
-                                    ),
-                                    ft.Text("Assigned Detective(s):",
-                                            weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
-                                    ft.Text(
-                                        ', '.join(
-                                            detectives) if detectives else 'No detectives assigned',
-                                        color=COLORS["text_muted"]
-                                    ),
-                                    ft.Text("Victims:", weight=ft.FontWeight.BOLD,
-                                            color=COLORS["text_light"]),
-                                    ft.Text(
-                                        ', '.join(
-                                            victims) if victims else 'No victims recorded',
-                                        color=COLORS["text_muted"]
-                                    ),
-                                    ft.Text("Suspects:", weight=ft.FontWeight.BOLD,
-                                            color=COLORS["text_light"]),
-                                    ft.Text(
-                                        ', '.join(
-                                            suspects) if suspects else 'No suspects identified',
-                                        color=COLORS["text_muted"]
-                                    ),
+                                    ft.Text("Description:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                                    ft.Text(case.get('catatan', 'No description available'), color=COLORS["text_muted"]),
+                                    ft.Text("Progress:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                                    ft.Text(case.get('perkembangan_kasus', 'No progress updates'), color=COLORS["text_muted"]),
+                                    ft.Text("Assigned Detective(s):", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                                    ft.Text(', '.join(detectives) if detectives else 'No detectives assigned', color=COLORS["text_muted"]),
+                                    ft.Text("Victims:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                                    ft.Text(', '.join(victims) if victims else 'No victims recorded', color=COLORS["text_muted"]),
+                                    ft.Text("Suspects:", weight=ft.FontWeight.BOLD, color=COLORS["text_light"]),
+                                    ft.Text(', '.join(suspects) if suspects else 'No suspects identified', color=COLORS["text_muted"]),
                                 ],
                                 spacing=10,
                                 horizontal_alignment=ft.CrossAxisAlignment.START,
@@ -124,14 +135,14 @@ def cases_content(page: ft.Page):
             bgcolor=COLORS["background_dark"],
             visible=False,  # Hidden by default
         )
-
+    
         toggle_button = ft.IconButton(
             icon=ft.icons.KEYBOARD_ARROW_DOWN,
             icon_color="white",
             tooltip="Expand/Collapse",
             on_click=toggle_expand,
         )
-
+    
         edit_button = ft.IconButton(
             icon=ft.icons.EDIT,
             icon_color="white",
@@ -139,7 +150,7 @@ def cases_content(page: ft.Page):
             on_click=lambda _: edit_case_modal(case),
             visible=False,
         )
-
+    
         download_button = ft.IconButton(
             icon=ft.icons.DOWNLOAD,
             icon_color="white",
@@ -147,16 +158,22 @@ def cases_content(page: ft.Page):
             on_click=lambda *_: handle_download(case, suspects, victims, detectives, page),
             visible=False,
         )
-
+    
+        delete_button = ft.IconButton(
+            icon=ft.icons.DELETE,
+            icon_color="white",
+            tooltip="Delete Case",
+            on_click=handle_delete,
+            visible=False,
+        )
+    
         def change_border(e):
             if e.data == "true" or is_expanded:
                 case_tile.border = ft.Border(
                     top=ft.BorderSide(width=2, color=COLORS["secondary_red"]),
                     left=ft.BorderSide(width=2, color=COLORS["secondary_red"]),
-                    right=ft.BorderSide(
-                        width=2, color=COLORS["secondary_red"]),
-                    bottom=ft.BorderSide(
-                        width=2, color=COLORS["secondary_red"]),
+                    right=ft.BorderSide(width=2, color=COLORS["secondary_red"]),
+                    bottom=ft.BorderSide(width=2, color=COLORS["secondary_red"]),
                 )
                 case_tile.shadow = ft.BoxShadow(
                     spread_radius=1,
@@ -167,19 +184,15 @@ def cases_content(page: ft.Page):
                 )
             else:
                 case_tile.border = ft.Border(
-                    top=ft.BorderSide(
-                        width=2, color=COLORS["background_dark"]),
-                    left=ft.BorderSide(
-                        width=2, color=COLORS["background_dark"]),
-                    right=ft.BorderSide(
-                        width=2, color=COLORS["background_dark"]),
-                    bottom=ft.BorderSide(
-                        width=2, color=COLORS["background_dark"]),
+                    top=ft.BorderSide(width=2, color=COLORS["background_dark"]),
+                    left=ft.BorderSide(width=2, color=COLORS["background_dark"]),
+                    right=ft.BorderSide(width=2, color=COLORS["background_dark"]),
+                    bottom=ft.BorderSide(width=2, color=COLORS["background_dark"]),
                 )
                 case_tile.shadow = None
-
+    
             case_tile.update()
-
+    
         case_tile = ft.Container(
             content=ft.Column(
                 [
@@ -205,6 +218,7 @@ def cases_content(page: ft.Page):
                             ),
                             download_button, 
                             edit_button,  # Use the edit_button here
+                            delete_button,
                             toggle_button,  # Use the toggle_button here
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -217,17 +231,14 @@ def cases_content(page: ft.Page):
             border=ft.Border(
                 top=ft.BorderSide(width=2, color=COLORS["background_dark"]),
                 left=ft.BorderSide(width=2, color=COLORS["background_dark"]),
-                right=ft.BorderSide(
-                    width=2, color=COLORS["background_dark"]),
-                bottom=ft.BorderSide(
-                    width=2, color=COLORS["background_dark"]),
+                right=ft.BorderSide(width=2, color=COLORS["background_dark"]),
+                bottom=ft.BorderSide(width=2, color=COLORS["background_dark"]),
             ),
-            border_radius=ft.border_radius.all(
-                10),  
+            border_radius=ft.border_radius.all(10),  
             shadow=None,
             on_hover=lambda e: change_border(e),
         )
-
+    
         return case_tile
 
     def download_case_as_pdf(case, suspects, victims, detectives, file_path):
